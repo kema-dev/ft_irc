@@ -54,27 +54,27 @@ clean_main:
 
 remain: clean_main all
 
-debug: $(OBJECTS)
+debug: directories $(OBJECTS)
 	$(CC) $(DEBUGFLAG) -o $(TARGETDIR)/$(DEBUGOUT) $(OBJECTS)
 	@clear
 	./$(TARGETDIR)/$(DEBUGOUT) $(ARG)
 
-ddebug:	$(OBJECTS)
+ddebug:	directories $(OBJECTS)
 	$(CC) $(DEBUGFLAG) -o $(TARGETDIR)/$(DEBUGOUT) $(OBJECTS)
 	@printf "\ec"
 	./$(TARGETDIR)/$(DEBUGOUT) $(ARG)
 
-test: $(OBJECTS)
+test: directories $(OBJECTS)
 	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@clear
 	./$(TARGETDIR)/$(TARGET) $(ARG)
 
-ttest: $(OBJECTS)
+ttest: directories $(OBJECTS)
 	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@printf "\ec"
 	./$(TARGETDIR)/$(TARGET) $(ARG)
 
-leaks: $(OBJECTS)
+leaks: directories $(OBJECTS)
 	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@clear
 	leaks --atExit -- ./$(TARGETDIR)/$(TARGET) $(ARG)
