@@ -67,9 +67,13 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
   apt install clang
   ```
 
-* IRC Client
+* IRC Client (for Mac OS)
   ```sh
-  apt install <your_irc_client>
+  wget https://github.com/xchataqua/xchataqua/releases/download/1.18.9/X-Chat.Aqua.app.zip
+
+  tar -xf X-Chat.Aqua.app.zip
+
+  open X-Chat\ Aqua.app
   ```
 
 ### Installation
