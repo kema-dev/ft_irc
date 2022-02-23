@@ -63,17 +63,14 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
 ### Prerequisites
 
 * clang
-  ```sh
-  apt install clang
-  ```
 
 * IRC Client (for Mac OS)
   ```sh
-  wget https://github.com/xchataqua/xchataqua/releases/download/1.18.9/X-Chat.Aqua.app.zip
+  wget https://github.com/xchataqua/xchataqua/releases/download/1.18.9/X-Chat.Aqua.app.zip;
 
-  tar -xf X-Chat.Aqua.app.zip
+  tar -xf X-Chat.Aqua.app.zip;
 
-  open X-Chat\ Aqua.app
+  open X-Chat\ Aqua.app;
   ```
 
 ### Installation
@@ -96,7 +93,7 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
    ```sh
    ./bin/irc_server <port> <password>
    ```
-2. Connect your IRC client to the server
+2. Connect your IRC client to the server using appropriate port and password
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
