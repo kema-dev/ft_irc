@@ -3,8 +3,7 @@
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/kemadev/ft_irc">
   <img alt="GitHub issues" src="https://img.shields.io/github/issues/kemadev/ft_irc">
   <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed/kemadev/ft_irc">
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kemadev/ft_irc/main-tests">
-  <img alt="GitHub commits since tagged version" src="https://img.shields.io/github/commits-since/kemadev/ft_irc/0.0.0">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kemadev/ft_irc/C++ CI">
   <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/kemadev/ft_irc">
   <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/kemadev/ft_irc">
 </p>
@@ -101,9 +100,10 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
 ## Roadmap
 
 - [X] Create the core of the project (Makefile, folders...)
-- [ ] Create GitHub Actions to automate testing
-- [ ] Learn how an IRC server works
+- [X] Create GitHub Actions to automate testing
+- [X] Learn how an IRC server works
 - [ ] Create the first basic server
+- [ ] Make server / client connection work
 - [ ] Add user capabilities
 - [ ] Add operator capabilities
 

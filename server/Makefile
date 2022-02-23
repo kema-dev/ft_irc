@@ -42,6 +42,7 @@ directories:
 #Clean only Objecst
 clean:
 	@$(RM) -rf $(OBJDIR)
+	@$(RM) -rf $(CHECKOUTDIR)
 
 #Full Clean, Objects and Binaries
 fclean:	clean
@@ -79,10 +80,8 @@ leaks: $(OBJECTS)
 	leaks --atExit -- ./$(TARGETDIR)/$(TARGET) $(ARG)
 
 check: all
-	@mkdir $(CHECKOUTDIR) > /dev/null 2>&1
+	@mkdir -p $(CHECKOUTDIR)
 # test 1
-	./$(TARGETDIR)/$(TARGET) $(ARG) > $(CHECKOUTDIR)/test1.out
-	diff $(CHECKDIR)/test1.chk $(CHECKOUTDIR)/test1.out
 
 #Link
 $(TARGETDIR)/$(TARGET): $(OBJECTS)
