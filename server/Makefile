@@ -13,10 +13,13 @@ TARGETDIR	:=	bin
 SRCEXT		:=	cpp
 HDEXT		:=	hpp
 OBJEXT		:=	o
+CHECKDIR	:=	check
+CHECKOUTDIR	:=	tmp
 
 #Flags, Libraries and Includes
 CFLAGS		:=	-Wall -Wextra -Werror -std=c++98
 DEBUGFLAG	:=	-Wall -Wextra -fsanitize=address
+ARG			:=	4242 password
 
 #---------------------------------------------------------------------------------
 #DO NOT EDIT BELOW THIS LINE
@@ -63,17 +66,23 @@ ddebug:	$(OBJECTS)
 test: $(OBJECTS)
 	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@clear
-	./$(TARGETDIR)/$(TARGET)
+	./$(TARGETDIR)/$(TARGET) $(ARG)
 
 ttest: $(OBJECTS)
 	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@printf "\ec"
-	./$(TARGETDIR)/$(TARGET)
+	./$(TARGETDIR)/$(TARGET) $(ARG)
 
 leaks: $(OBJECTS)
 	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@clear
 	leaks --atExit -- ./$(TARGETDIR)/$(TARGET) $(ARG)
+
+check: all
+	@mkdir $(CHECKOUTDIR) > /dev/null 2>&1
+# test 1
+	./$(TARGETDIR)/$(TARGET) $(ARG) > $(CHECKOUTDIR)/test1.out
+	diff $(CHECKDIR)/test1.chk $(CHECKOUTDIR)/test1.out
 
 #Link
 $(TARGETDIR)/$(TARGET): $(OBJECTS)
@@ -85,4 +94,4 @@ $(OBJDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 #Non-File Targets
-.PHONY: all re directories clean fclean clean_main remain norme norme_check debug test leaks
+.PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check
