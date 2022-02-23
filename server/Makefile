@@ -13,15 +13,10 @@ TARGETDIR	:=	bin
 SRCEXT		:=	cpp
 HDEXT		:=	hpp
 OBJEXT		:=	o
-LIBDIR		:=
-ARG			:=	
 
 #Flags, Libraries and Includes
 CFLAGS		:=	-Wall -Wextra -Werror -std=c++98
 DEBUGFLAG	:=	-Wall -Wextra -fsanitize=address
-LIB			:=	
-INC			:=	
-SPECIALLIB	:=	
 
 #---------------------------------------------------------------------------------
 #DO NOT EDIT BELOW THIS LINE
@@ -31,7 +26,7 @@ SOURCES		:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS		:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 
 #Defauilt Make
-all:	$(TARGETDIR)/$(TARGET)
+all: directories $(TARGETDIR)/$(TARGET)
 
 #Remake
 re:	fclean all
@@ -56,38 +51,38 @@ clean_main:
 remain: clean_main all
 
 debug: $(OBJECTS)
-	$(CC) $(DEBUGFLAG) $(INC) -o $(TARGETDIR)/$(DEBUGOUT) $(OBJECTS)
+	$(CC) $(DEBUGFLAG) -o $(TARGETDIR)/$(DEBUGOUT) $(OBJECTS)
 	@clear
 	./$(TARGETDIR)/$(DEBUGOUT) $(ARG)
 
 ddebug:	$(OBJECTS)
-	$(CC) $(DEBUGFLAG) $(INC) -o $(TARGETDIR)/$(DEBUGOUT) $(OBJECTS)
+	$(CC) $(DEBUGFLAG) -o $(TARGETDIR)/$(DEBUGOUT) $(OBJECTS)
 	@printf "\ec"
 	./$(TARGETDIR)/$(DEBUGOUT) $(ARG)
 
 test: $(OBJECTS)
-	$(CC) $(INC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
+	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@clear
 	./$(TARGETDIR)/$(TARGET)
 
 ttest: $(OBJECTS)
-	$(CC) $(INC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
+	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@printf "\ec"
 	./$(TARGETDIR)/$(TARGET)
 
 leaks: $(OBJECTS)
-	$(CC) $(INC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
+	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@clear
 	leaks --atExit -- ./$(TARGETDIR)/$(TARGET) $(ARG)
 
 #Link
 $(TARGETDIR)/$(TARGET): $(OBJECTS)
-	$(CC) $(INC) -o $(TARGETDIR)/$(TARGET) $^
+	$(CC) -o $(TARGETDIR)/$(TARGET) $^
 
 #Compile
 $(OBJDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 #Non-File Targets
 .PHONY: all re directories clean fclean clean_main remain norme norme_check debug test leaks
