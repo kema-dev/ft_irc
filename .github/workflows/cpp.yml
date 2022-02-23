@@ -13,7 +13,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: build
-      run: make -C server
     - name: check
-      run: make check -C server
+      run: make check -C server -i
