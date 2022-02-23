@@ -11,8 +11,19 @@ int main(int argc, char **argv)
     }
     catch(const BadNumberArgs e) {
         std::cerr << e.info() << std::endl;
-        return (-1);
+        return (BAD_NUMBER_ARGS);
     }
-    std::cout << "HELLO WORLD!" << std::endl;
+    try {
+        if (std::atoi(argv[1]) < 1 || std::atoi(argv[1]) > 65535)
+            throw(InvalidPort());
+    }
+    catch (const InvalidPort e) {
+        std::cerr << e.info() << std::endl;
+        return (INVALID_PORT);
+    }
+
+    std::cout << "Port: " << argv[1] << std::endl;
+    std::cout << "Password: " << argv[2] << std::endl;
+    
     return (0);
 }

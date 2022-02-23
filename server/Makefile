@@ -19,7 +19,7 @@ CHECKOUTDIR	:=	tmp
 #Flags, Libraries and Includes
 CFLAGS		:=	-Wall -Wextra -Werror -std=c++98
 DEBUGFLAG	:=	-Wall -Wextra -fsanitize=address
-ARG			:=	4242 password
+ARG			:=	abc password
 
 #---------------------------------------------------------------------------------
 #DO NOT EDIT BELOW THIS LINE
