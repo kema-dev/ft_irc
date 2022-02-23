@@ -4,7 +4,6 @@
   <img alt="GitHub issues" src="https://img.shields.io/github/issues/kemadev/ft_irc">
   <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed/kemadev/ft_irc">
   <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kemadev/ft_irc/C++ CI">
-  <img alt="GitHub commits since tagged version" src="https://img.shields.io/github/commits-since/kemadev/ft_irc/0.0.0">
   <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/kemadev/ft_irc">
   <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/kemadev/ft_irc">
 </p>
