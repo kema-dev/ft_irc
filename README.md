@@ -100,9 +100,10 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
 ## Roadmap
 
 - [X] Create the core of the project (Makefile, folders...)
-- [ ] Create GitHub Actions to automate testing
-- [ ] Learn how an IRC server works
+- [X] Create GitHub Actions to automate testing
+- [X] Learn how an IRC server works
 - [ ] Create the first basic server
+- [ ] Make server / client connection work
 - [ ] Add user capabilities
 - [ ] Add operator capabilities
 
