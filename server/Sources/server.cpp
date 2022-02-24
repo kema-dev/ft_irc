@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../Classes/server.hpp"
 #include "../Classes/error.hpp"
+#include "../Classes/commandHandler.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -117,6 +118,8 @@ void *task1 (void *dummyPt)
 		bzero(test, 256);	 
 		int n = read(connFd, test, 255);
 		if (n < 0) error("ERROR reading from socket");
+		if (command_check(test) < 0)
+			std::cout << "Invalid command" << std::endl;
 		printf("Here is the message: %s\n",test);			
 	}
 	cout << "\nClosing thread and conn" << endl;
