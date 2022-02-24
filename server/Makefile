@@ -1,5 +1,5 @@
 #Compiler and Linker
-CC			:= clang++
+CC			:=	c++
 
 #The Target Binary Program
 TARGET		:=	irc_server
@@ -19,7 +19,7 @@ CHECKOUTDIR	:=	tmp
 #Flags, Libraries and Includes
 CFLAGS		:=	-Wall -Wextra -Werror -std=c++98
 DEBUGFLAG	:=	-Wall -Wextra -fsanitize=address
-ARG			:=	abc password
+ARG			:=	4242 password
 
 #---------------------------------------------------------------------------------
 #DO NOT EDIT BELOW THIS LINE
