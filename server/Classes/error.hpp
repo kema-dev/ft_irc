@@ -53,4 +53,25 @@ class CannotAcceptConnection : public std::exception
 		}
 };
 
+#define NOT_COMMAND -6
+class NotACommand : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("What you just typed is not a command.");
+		}
+};
+
+#define UNKNOWN_COMMAND -7
+class InvalidCommand : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("The comamnd you entered is unknown.");
+		}
+};
+
+
 #endif

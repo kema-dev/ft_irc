@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../Classes/server.hpp"
 #include "../Classes/error.hpp"
+#include "../Classes/commandHandler.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
