@@ -27,7 +27,7 @@ User::User(string name, string role) {
 			throw (WrongUserName());
 		}
 	}
-	catch (WrongRoleName& e) {
+	catch (WrongRoleNameUser& e) {
 		cerr << e.info() << std::endl;
 		return ;
 	}

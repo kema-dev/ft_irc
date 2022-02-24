@@ -1,8 +1,9 @@
-#ifndef _Channel_HPP
- #define _Channel_HPP
+#ifndef _CHANNEL_HPP
+ #define _CHANNEL_HPP
 
 #include <sys/types.h>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -33,6 +34,6 @@ class Channel {
 	public:
 	Channel(string name, string pass);
 	~Channel();
-}
+};
 
 #endif

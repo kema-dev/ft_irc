@@ -1,5 +1,5 @@
-#ifndef _Channel_HPP
- #define _Channel_HPP
+#ifndef _UID_POOL_HPP
+ #define _UID_POOL_HPP
 
 #include <sys/types.h>
 #include <iostream>
@@ -22,8 +22,8 @@ class UidPool {
 
 	public:
 	UidPool();
-	~UidPool();
+	~UidPool() {};
 	size_t	generate();
-}
+};
 
 #endif
