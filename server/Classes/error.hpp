@@ -23,4 +23,34 @@ class InvalidPort : public std::exception
 		}
 };
 
+#define ERR_SOCKET_CREATION -3
+class ErrorInSocketCreation : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Cannot open socket.");
+		}
+};
+
+#define ERR_BIND -4
+class ErrorInBinding : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Cannot bind the socket.");
+		}
+};
+
+#define ERR_CONNECTION -5
+class CannotAcceptConnection : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Connection cannot be established.");
+		}
+};
+
 #endif
