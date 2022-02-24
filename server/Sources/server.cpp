@@ -117,7 +117,11 @@ void *task1 (void *dummyPt)
 		bzero(test, 256);	 
 		int n = read(connFd, test, 255);
 		if (n < 0) error("ERROR reading from socket");
-		printf("Here is the message: %s\n",test);			
+		printf("Input: %s\n",test);
+		char str1[50] = "PASS :001 001";
+        write(connFd, str1, strlen(str1));
+		char str2[50] = "SERVER :localhost 001 Welcome, GLHF!";
+        write(connFd, str2, strlen(str2));
 	}
 	cout << "\nClosing thread and conn" << endl;
 	close(connFd);
