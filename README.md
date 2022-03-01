@@ -64,14 +64,8 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
 
 * clang
 
-* IRC Client (for Mac OS)
-  ```sh
-  wget https://github.com/xchataqua/xchataqua/releases/download/1.18.9/X-Chat.Aqua.app.zip ;
-
-  tar -xf X-Chat.Aqua.app.zip ;
-
-  open X-Chat\ Aqua.app ;
-  ```
+* Lime Chat (for Mac OS)
+  install it from MSC
 
 ### Installation
 

@@ -15,11 +15,12 @@ HDEXT		:=	hpp
 OBJEXT		:=	o
 CHECKDIR	:=	check
 CHECKOUTDIR	:=	tmp
+# SPECIALLIB	:=	/Users/jjourdan/.brew/Cellar/openssl@3/3.0.1/include/
 
 #Flags, Libraries and Includes
 CFLAGS		:=	-Wall -Wextra -Werror -std=c++98
 DEBUGFLAG	:=	-Wall -Wextra -fsanitize=address
-ARG			:= 	6697 password
+ARG			:= 	4242 password
 
 #---------------------------------------------------------------------------------
 #DO NOT EDIT BELOW THIS LINE
@@ -81,7 +82,11 @@ leaks: directories $(OBJECTS)
 
 check: all
 	@mkdir -p $(CHECKOUTDIR)
-# test 1
+
+kema:
+	@printf "\ec"
+	c++ Sources/user.cpp Sources/uid_pool.cpp -o kema.out
+	./kema.out
 
 #Link
 $(TARGETDIR)/$(TARGET): $(OBJECTS)

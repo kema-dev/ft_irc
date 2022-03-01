@@ -18,12 +18,12 @@ class PoolFull : public exception
 
 class UidPool {
 	private:
-	size_t	_count;
+	ssize_t	_count;
 
 	public:
 	UidPool();
 	~UidPool() {};
-	size_t	generate();
+	ssize_t	generate();
 };
 
 #endif
