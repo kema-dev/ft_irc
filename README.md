@@ -65,7 +65,6 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
 * clang
 
 * Lime Chat (for Mac OS)
-  install it from MSC
 
 ### Installation
 
