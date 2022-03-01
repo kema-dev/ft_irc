@@ -3,13 +3,13 @@
 using namespace std;
 
 UidPool::UidPool() {
-	_count = 1;
+	_count = 0;
 }
 
-size_t	UidPool::generate() {
+ssize_t	UidPool::generate() {
 	if (_count >= ULONG_MAX) {
 		throw (PoolFull());
-		return (0);
+		return (-1);
 	}
 	_count += 1;
 	return (_count - 1);
