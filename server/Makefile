@@ -7,7 +7,7 @@ DEBUGOUT	:=	debug.out
 KEMAOUT		:=	kema.out
 
 #The Directories, Source, Includes, Objects, Binary and Resources
-SRCDIR		:=	Sources
+SRCDIR		:=	Classes
 INCDIR		:=	Classes
 OBJDIR		:=	obj
 TARGETDIR	:=	bin

@@ -7,7 +7,7 @@ UidPool::UidPool() {
 }
 
 ssize_t	UidPool::generate() {
-	if (_count >= ULONG_MAX) {
+	if (_count >= SSIZE_MAX) {
 		throw (PoolFull());
 		return (-1);
 	}

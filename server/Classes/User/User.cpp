@@ -126,20 +126,3 @@ bool	User::log_in(string pass) {
 		return true;
 	return false;
 }
-
-int main(void) {
-	string name("name");
-	string role("user");
-	string pass("password");
-	UidPool	pool = UidPool();
-	User usr = User(name, role, pass, pool);
-	cout << usr << endl << endl;
-	if (usr.log_in("password") == true)
-		cout << "true" << endl;
-	else
-		cout << "false" << endl;
-}
-
-
-// TODO ANCHOR User database / User search in db
-// TODO ANCHOR Dont forget to branch

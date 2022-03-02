@@ -2,6 +2,7 @@
  #define _ERROR_HPP_
 
 #include <stdexcept>
+#include <string>
 
 #define BAD_NUMBER_ARGS -1
 class BadNumberArgs : public std::exception

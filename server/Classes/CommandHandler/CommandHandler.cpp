@@ -1,4 +1,4 @@
-#include "../Classes/commandHandler.hpp"
+#include "CommandHandler.hpp"
 
 int command_check(std::string message, int fd)
 {
