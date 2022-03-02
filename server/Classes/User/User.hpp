@@ -1,5 +1,7 @@
 #ifndef _USER_HPP
  #define _USER_HPP
+
+class User;
 #include "../UidPool/UidPool.hpp"
 #include "../Channel/Channel.hpp"
 #include "../Crypto/Crypto.hpp"
@@ -37,7 +39,7 @@ class User {
 	string		_hash;
 
 	public:
-	User(string name, string role, string pass, UidPool pool);
+	User(string name, string role, string pass, UidPool& pool);
 	~User() {};
 	
 	string	getName(void);
@@ -57,8 +59,9 @@ class User {
 	bool	setHash(string new_hash);
 	bool	setPass(string new_pass);
 
-	bool	log_in(string pass);
-	void	sendMessage(std::string msg, Channel& chan);
+	bool	logIn(string pass);
+	bool	sendMessage(string content, Channel& chan);
+	bool	joinChannel(Channel& chan, string pass);
 };
 
 std::ostream &	operator<<(std::ostream &stream, User &rhs);

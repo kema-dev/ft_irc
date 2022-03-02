@@ -1,9 +1,14 @@
 #ifndef _CHANNEL_HPP
  #define _CHANNEL_HPP
 
-#include <sys/types.h>
-#include <iostream>
+class Channel;
+#include "../Message/Message.hpp"
+#include "../Crypto/Crypto.hpp"
+#include "../User/User.hpp"
 #include <vector>
+#include <string>
+#include <iostream>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -16,24 +21,26 @@ class WrongChannelName : public exception
 		}
 };
 
-class WrongRoleName : public exception
-{
-	public:
-		virtual const string	info() const throw()
-		{
-			return ("Role should either be 'user' or 'operator'");
-		}
-};
-
 class Channel {
 	private:
-	string 			_name;
-	string			_pass_hash;
-	vector<string>	_msg_hist;
+	string			_name;
+	string			_hash;
+	ssize_t			_next_uid;
+	vector<Message>	_hist;
+	vector<pair<ssize_t, timeval> >	_log;
 
 	public:
-	Channel(string name, string pass);
-	~Channel();
+	Channel(string name, string pass, string motd);
+	~Channel() {};
+
+	ssize_t	getUidAfter(timeval time);
+	ssize_t	getNextUid(void);
+	bool	userJoin(User usr, string pass);
+	bool	userLeave(User usr);
+	void	receiveMsg(Message msg);
+	void	printAllMsg(void);
+	bool	isLog(User usr);
+	string	getMsgHist(User usr);
 };
 
 #endif
