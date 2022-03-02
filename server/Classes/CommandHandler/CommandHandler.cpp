@@ -16,14 +16,19 @@ int command_check(std::string message, int fd)
     commands.push_back("QUIT");
     commands.push_back("NICK");
     commands.push_back("USER");
-    commands.push_back("WRITE");
     try {
-        int pos;
-        char *msg;
-        std::string cmd = message;
-        pos = cmd.find(' ');
-        cmd.erase(pos, cmd.length() - pos);
+        size_t pos;
+        char *channel;
+        std::string cmd;
+
+        std::string channel_s;
         
+        cmd = message;
+        pos = cmd.find(' ');
+        if (pos == std::string::npos)
+            throw(InvalidCommand());
+        cmd.erase(pos, cmd.length() - pos);
+    
         int index;
         std::vector<std::string>::iterator it = find(commands.begin(), commands.end(), cmd);
  
@@ -36,7 +41,24 @@ int command_check(std::string message, int fd)
         {
             case 0:
                 std::cout << "JOIN" << std::endl;
-                send(fd, "ratio:WTF?", strlen("ratio:WTF?"), MSG_DONTWAIT);
+                channel = new char[message.length() - pos + 1]();
+                message.copy(channel, message.length(), pos + 1);
+                channel_s = std::string(channel);
+                // TODO Implement check_channel(std::string channel) check_channel(channel) < 0
+                
+                std::cout << channel_s << std::endl;
+                if (channel_s.compare("ratio") != 0)
+                {
+                    std::string msg;
+                    msg = "Unable to join the channel: " + channel_s + " is unknown.";
+                    send(fd, msg.c_str(), strlen(msg.c_str()), 0);
+                }
+                else
+                {
+                    std::string msg;
+                    msg = channel_s + " joined.";
+                    send(fd, msg.c_str(), strlen(msg.c_str()), 0);
+                }
                 break;
             case 1:
                 std::cout << "LEAVE" << std::endl;
@@ -49,15 +71,6 @@ int command_check(std::string message, int fd)
                 break;
             case 4:
                 std::cout << "SETUSERNAME" << std::endl;
-                break;
-            case 5:
-                std::cout << "WRITE" << std::endl;
-                msg = new char[message.length() - pos + 1]();
-                message.copy(msg, message.length(), pos + 1);
-                std::cout << fd << std::endl;
-                std::cout << msg << std::endl;
-            
-                send(fd, msg, strlen(msg), MSG_DONTWAIT);
                 break;
             default:
                 throw(InvalidCommand());

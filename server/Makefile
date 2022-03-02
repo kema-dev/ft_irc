@@ -85,6 +85,10 @@ leaks: directories $(OBJECTS)
 check: all
 	@mkdir -p $(CHECKOUTDIR)
 
+nc:
+	@printf "Launch test client\n"
+	@nc 172.0.0.1 6667
+
 kema:
 	@printf "\ec"
 	c++ Sources/user.cpp Sources/uid_pool.cpp -o $(KEMAOUT)
@@ -100,4 +104,4 @@ $(OBJDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 #Non-File Targets
-.PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check
+.PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check nc
