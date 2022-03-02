@@ -133,7 +133,6 @@ void *task1 (void *dummyPt)
         catch (const ReadImpossible e){
             std::cerr << e.info() << std::endl;
         }
-        if (n < 0) error("ERROR reading from socket");
         // cout << "Thread No: " << pthread_self() <<  ":" << i << endl;
 		cout << "Input:" << test << endl;
 		if (i > 2)
