@@ -84,6 +84,23 @@ class EmptyCommand : public std::exception
 		}
 };
 
+class ErrorReusingSocket : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Impossible to reuse socket.");
+		}
+};
+
+class ReadImpossible : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Read impossible.");
+		}
+};
 
 
 #endif

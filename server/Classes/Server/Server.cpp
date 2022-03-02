@@ -49,11 +49,14 @@ int	main(int argc, char** argv)
 
 	//create socket
 	listenFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    // TODO ADD try/catch
-    int enable = 1;
-    if (setsockopt(listenFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
-        cout << "setsockopt(SO_REUSEADDR) failed" << endl;
-
+    try {
+        int enable = 1;
+        if (setsockopt(listenFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+            throw(ErrorReusingSocket());
+    }
+    catch (const ErrorReusingSocket e) {
+        std::cerr << e.info() << std::endl;
+    }
 	try {
 		if(listenFd < 0)
 			throw (ErrorInSocketCreation());
@@ -123,7 +126,13 @@ void *task1 (void *dummyPt)
 	{
 		bzero(test, 256);	 
 		int n = read(connFd, test, 255);
-        // TODO Add try/catch
+        try {
+            if (n < 0)
+                throw(ReadImpossible());
+        }
+        catch (const ReadImpossible e){
+            std::cerr << e.info() << std::endl;
+        }
         if (n < 0) error("ERROR reading from socket");
         // cout << "Thread No: " << pthread_self() <<  ":" << i << endl;
 		cout << "Input:" << test << endl;
