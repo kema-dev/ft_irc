@@ -5,6 +5,9 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <fcntl.h>
 #include "error.hpp"
 
 
@@ -14,6 +17,6 @@ enum Operator_commands {
 };
 
 
-int command_check (std::string message);
+int command_check(std::string message, int fd);
 
 #endif
