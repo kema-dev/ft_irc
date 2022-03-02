@@ -8,6 +8,11 @@
 #include <netdb.h>
 #include <unistd.h>
 
+typedef struct s_params
+{
+    int fd;
+}   t_params;
+
 using namespace std;
 
 void*	task1(void *);

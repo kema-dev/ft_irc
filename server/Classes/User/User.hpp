@@ -1,7 +1,8 @@
 #ifndef _USER_HPP
  #define _USER_HPP
-#include "../Classes/uid_pool.hpp"
-#include "../Classes/channel.hpp"
+#include "../UidPool/UidPool.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Crypto/Crypto.hpp"
 #include <sys/types.h>
 #include <iostream>
 
@@ -56,7 +57,6 @@ class User {
 	bool	setHash(string new_hash);
 	bool	setPass(string new_pass);
 
-	string	md5(string pass);
 	bool	log_in(string pass);
 	void	sendMessage(std::string msg, Channel& chan);
 };
