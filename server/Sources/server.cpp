@@ -41,11 +41,15 @@ int	main(int argc, char** argv)
 	int portNo, listenFd;
 	struct sockaddr_in svrAdd, clntAdd;
 
-	pthread_t threadA[3];
+	vector<pthread_t> threadV;
 	portNo = atoi(argv[1]);
 
 	//create socket
 	listenFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    // TODO ADD try/catch
+    int enable = 1;
+    if (setsockopt(listenFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+        cout << "setsockopt(SO_REUSEADDR) failed" << endl;
 
 	try {
 		if(listenFd < 0)
@@ -72,54 +76,65 @@ int	main(int argc, char** argv)
 		return (ERR_BIND);
 	}
 	
-
 	listen(listenFd, 5);
+    t_params params;
+    std::cout << listenFd << std::endl;
 
-	int noThread = 0;
-
-	while (noThread < 3)
-	{
-		socklen_t len = sizeof(clntAdd);
-		cout << "Listening to port " << argv[1] << endl;
-
-	//this is where client connects. svr will hang in this mode until		   client conn
-		connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
-
-		try {
-			if (connFd < 0)
-				throw (CannotAcceptConnection());
-			else   
-				cout << "Connection established." << endl;
-		}
-		catch (const CannotAcceptConnection e){
-			std::cerr << e.info() << std::endl;
-			return (ERR_CONNECTION);
-		}
-
-		pthread_create(&threadA[noThread], NULL, task1, NULL); 
-		noThread++;
-	}
-
-	for(int i = 0; i < 3; i++)
-	{
-		pthread_join(threadA[i], NULL);
-	}  
+    socklen_t len = sizeof(clntAdd);
+    while(1)
+    {
+        try {
+            cout << "Listening to port " << argv[1] << endl;
+            connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
+            if (connFd < 0)
+                throw (CannotAcceptConnection());
+            else  
+            {    
+                pthread_t  a;
+                threadV.push_back(a);
+                params.fd = connFd;
+                std::cout << "connFd: " << connFd << std::endl;
+                pthread_create(&threadV.back(), NULL, task1, &params); 
+                cout << "Connection established." << endl;
+            }
+        }
+        catch (const CannotAcceptConnection e){
+            std::cerr << e.info() << std::endl;
+            return (ERR_CONNECTION);
+        }
+    }
 }
 
 void *task1 (void *dummyPt)
 {
-	static_cast<void>(dummyPt);
-	cout << "Thread No: " << pthread_self() << endl;
+    t_params* params = static_cast<t_params*>(dummyPt);
+    ssize_t i;
+    cout << "-----------------" << endl;
+	//cout << "Thread No: " << pthread_self() << endl;
 	char test[256];
 	bzero(test, 256);
 	bool loop = false;
+    i = 0;
+    send(params->fd, "PASS", strlen("PASS"), MSG_DONTWAIT);
 	while(!loop)
-	{	   
+	{
 		bzero(test, 256);	 
 		int n = read(connFd, test, 255);
-		if (n < 0) error("ERROR reading from socket");
-		printf("Input: %s\n",test);
-		command_check(test);
+        // TODO Add try/catch
+        if (n < 0) error("ERROR reading from socket");
+        // cout << "Thread No: " << pthread_self() <<  ":" << i << endl;
+		cout << "Input:" << test << endl;
+		if (i > 2)
+        {
+            try{
+                if (command_check(test, params->fd) < 0)
+                    throw(NotACommand());
+            }
+            catch (const NotACommand e) {
+                std::cerr << e.info() << std::endl;
+            }
+        }
+        i++;
 	}
 	cout << "\nClosing thread and conn" << endl;
 	close(connFd);

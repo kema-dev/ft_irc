@@ -69,9 +69,20 @@ class InvalidCommand : public std::exception
 	public:
 		virtual const std::string	info() const throw()
 		{
-			return ("The comamnd you entered is unknown.");
+			return ("The command you entered is unknown.");
 		}
 };
+
+#define EMPTY_COMMAND -8
+class EmptyCommand : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("The command you entered is empty.");
+		}
+};
+
 
 
 #endif
