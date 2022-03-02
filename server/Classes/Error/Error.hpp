@@ -83,6 +83,23 @@ class EmptyCommand : public std::exception
 		}
 };
 
+class ReadingFromSocket : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Error during read from socket.");
+		}
+};
+
+class rrorReusingSocket : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Error in socket reusing.");
+		}
+};
 
 
 #endif
