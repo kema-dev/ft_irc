@@ -4,6 +4,7 @@ CC			:=	c++
 #The Target Binary Program
 TARGET		:=	irc_server
 DEBUGOUT	:=	debug.out
+KEMAOUT		:=	kema.out
 
 #The Directories, Source, Includes, Objects, Binary and Resources
 SRCDIR		:=	Sources
@@ -48,6 +49,7 @@ clean:
 #Full Clean, Objects and Binaries
 fclean:	clean
 	@$(RM) -rf $(TARGETDIR)
+	@$(RM) -rf $(KEMAOUT)
 
 clean_main:
 	@$(RM) -rf $(OBJDIR)
@@ -85,8 +87,8 @@ check: all
 
 kema:
 	@printf "\ec"
-	c++ Sources/user.cpp Sources/uid_pool.cpp -o kema.out
-	./kema.out
+	c++ Sources/user.cpp Sources/uid_pool.cpp -o $(KEMAOUT)
+	./$(KEMAOUT)
 
 #Link
 $(TARGETDIR)/$(TARGET): $(OBJECTS)
