@@ -114,5 +114,5 @@ $(OBJDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 #Non-File Targets
-.PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check kema nc
+.PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check kema dod nc
 
