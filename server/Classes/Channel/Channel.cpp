@@ -21,14 +21,17 @@ Channel::Channel(string name, string pass, string motd) {
 	_next_uid = 0;
 }
 
+string	Channel::getName(void){
+	return _name;
+}
+
 ssize_t	Channel::getUidAfter(timeval time) {
 	vector<Message>::iterator it, end;
 	it = _hist.begin();
 	end = _hist.end();
 	while (it != end) {
 		if (it->compareTime(time) == true) {
-			// cerr << "UID:" << it->getUid() << endl;
-			return (it->getUid() + 1);
+			return (it->getUid());
 		}
 		it++;
 	}
@@ -100,12 +103,12 @@ string	Channel::getMsgHist(User usr) {
 		vector<pair<ssize_t, timeval> >::iterator	it, end;
 		it = _log.begin();
 		end = _log.end();
-		ssize_t	id = usr.getUid(); // ! ANCHOR remove this / how does the last msg get timestamp before any other
+		ssize_t	id = usr.getUid();
 		while (it != end) {
 			if (it->first == id) {
 				ssize_t pad = getUidAfter(it->second);
 				vector<Message>::iterator	itm, endm;
-				itm = _hist.begin() + pad;
+				itm = _hist.begin() + pad + 1;
 				endm = _hist.end();
 				string hist;
 				while (itm != endm) {

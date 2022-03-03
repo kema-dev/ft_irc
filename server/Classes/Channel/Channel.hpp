@@ -33,6 +33,7 @@ class Channel {
 	Channel(string name, string pass, string motd);
 	~Channel() {};
 
+	string	getName(void);
 	ssize_t	getUidAfter(timeval time);
 	ssize_t	getNextUid(void);
 	bool	userJoin(User usr, string pass);

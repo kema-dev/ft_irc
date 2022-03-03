@@ -8,13 +8,12 @@ Message::Message(string content, string sender, ssize_t id) {
 }
 
 bool	Message::compareTime(timeval time) {
-	cerr << endl << time.tv_sec << " " << time.tv_usec << endl << " vs " << endl << _time.tv_sec << " " << _time.tv_usec << endl << endl;
 	if (time.tv_sec < _time.tv_sec) {
-		return false;
+		return true;
 	} else if (time.tv_sec == _time.tv_sec && time.tv_usec < _time.tv_usec) {
-		return false;
+		return true;
 	}
-	return true;
+	return false;
 }
 
 ssize_t	Message::getUid(void) {
