@@ -8,10 +8,9 @@ string	md5(string str) {
 	sprintf(command, "echo '%s' | md5", str.c_str());
 	char c = 0;
 
-	if (0 == (fpipe = (FILE*)popen(command, "r")))
-	{
-		perror("popen() failed.");
-		exit(EXIT_FAILURE);
+	if (0 == (fpipe = (FILE*)popen(command, "r"))) {
+		throw (PopopenFail());
+		return "";
 	}
 	string out;
 	while (fread(&c, sizeof(c), 1, fpipe)) {
