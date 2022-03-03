@@ -25,6 +25,7 @@ Channel::Channel(string name, string pass, string motd) {
 	_name = name;
 	_hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
+	
 }
 
 string	Channel::getName(void){
