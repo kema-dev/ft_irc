@@ -3,7 +3,7 @@
 
 using namespace std;
 
-User::User(string name, string role, string pass, UidPool pool) {
+User::User(string name, string role, string pass, UidPool& pool) {
 	try {
 		if (name == "") {
 			throw (WrongUserName());
@@ -121,8 +121,21 @@ bool	User::setPass(string new_pass) {
 	return true;
 }
 
-bool	User::log_in(string pass) {
+bool	User::logIn(string pass) {
 	if (md5(pass) == getHash())
 		return true;
 	return false;
+}
+
+bool	User::sendMessage(std::string content, Channel& chan) {
+	if (chan.isLog(*this) == true) {
+		Message msg = Message(content, this->getName(), chan.getNextUid());
+		chan.receiveMsg(msg);
+		return true;
+	}
+	return false;
+}
+
+bool	User::joinChannel(Channel& chan, string pass) {
+	return chan.userJoin(*this, pass);
 }

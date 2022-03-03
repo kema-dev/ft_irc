@@ -28,7 +28,9 @@ ARG			:= 	4242 password
 #---------------------------------------------------------------------------------
 HEADERS		:=	$(shell find $(INCDIR) -type f -name *.$(HDEXT))
 SOURCES		:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+KEMASOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Server)
 OBJECTS		:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
+KEMAOBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(KEMASOURCES:.$(SRCEXT)=.$(OBJEXT)))
 
 #Defauilt Make
 all: directories $(TARGETDIR)/$(TARGET)
@@ -85,10 +87,10 @@ leaks: directories $(OBJECTS)
 check: all
 	@mkdir -p $(CHECKOUTDIR)
 
-kema:
+kema: directories $(KEMAOBJECTS)
 	@printf "\ec"
-	c++ Sources/user.cpp Sources/uid_pool.cpp -o $(KEMAOUT)
-	./$(KEMAOUT)
+	$(CC) $(KEMAOBJECTS) Classes/Server/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
+	./$(TARGETDIR)/$(KEMAOUT)
 
 #Link
 $(TARGETDIR)/$(TARGET): $(OBJECTS)
@@ -100,4 +102,4 @@ $(OBJDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 #Non-File Targets
-.PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check
+.PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check kema
