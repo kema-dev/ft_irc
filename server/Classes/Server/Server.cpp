@@ -121,7 +121,7 @@ void *task1 (void *dummyPt)
 	bzero(test, 256);
 	bool loop = false;
     i = 0;
-    send(params->fd, "PASS", strlen("PASS"), MSG_DONTWAIT);
+    send(params->fd, "Connection established\n", strlen("Connection established\n"), MSG_DONTWAIT);
 	while(!loop)
 	{
 		bzero(test, 256);	 

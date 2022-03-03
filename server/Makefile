@@ -87,6 +87,10 @@ leaks: directories $(OBJECTS)
 check: all
 	@mkdir -p $(CHECKOUTDIR)
 
+nc:
+	@printf "Launch test client\n"
+	@nc 172.0.0.1 6667
+
 kema: directories $(KEMAOBJECTS)
 	@printf "\ec"
 	$(CC) $(KEMAOBJECTS) Classes/Server/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
@@ -102,4 +106,5 @@ $(OBJDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 #Non-File Targets
-.PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check kema
+.PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check kema nc
+

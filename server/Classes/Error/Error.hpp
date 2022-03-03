@@ -102,5 +102,4 @@ class ReadImpossible : public std::exception
 		}
 };
 
-
 #endif
