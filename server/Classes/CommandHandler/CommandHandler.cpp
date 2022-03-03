@@ -18,7 +18,6 @@ int command_check(std::string message, int fd)
     commands.push_back("USER");
     try {
         size_t pos;
-        char *channel;
         std::string cmd;
 
         std::string channel_s;
@@ -40,28 +39,37 @@ int command_check(std::string message, int fd)
         switch (index)
         {
             case 0:
-                std::cout << "JOIN" << std::endl;
-                channel = new char[message.length() - pos + 1]();
-                message.copy(channel, message.length(), pos + 1);
-                channel_s = std::string(channel);
+                channel_s = message.substr(pos + 1, message.length() - pos - 3);
                 // TODO Implement check_channel(std::string channel) check_channel(channel) < 0
-                
-                std::cout << channel_s << std::endl;
-                if (channel_s.compare("ratio") != 0)
+                if (channel_s.compare("ratio") != 0 /* ratio cette condition */)
                 {
                     std::string msg;
-                    msg = "Unable to join the channel: " + channel_s + " is unknown.";
+                    msg = "Unable to join the channel: " + channel_s + " is unknown\n";
                     send(fd, msg.c_str(), strlen(msg.c_str()), 0);
                 }
                 else
                 {
                     std::string msg;
-                    msg = channel_s + " joined.";
+                    msg = std::string(channel_s + " joined.\n");
                     send(fd, msg.c_str(), strlen(msg.c_str()), 0);
                 }
                 break;
             case 1:
-                std::cout << "LEAVE" << std::endl;
+                std::cout << "PART" << std::endl;
+                channel_s = message.substr(pos + 1, message.length() - pos - 3);
+                // TODO Implement inChannel(User user, std::string channel) check_channel(channel) < 0
+                if (channel_s.compare("ratio") != 0 /* ratio cette condition */)
+                {
+                    std::string msg;
+                    msg = "Unable to join the channel: " + channel_s + " is unknown\n";
+                    send(fd, msg.c_str(), strlen(msg.c_str()), 0);
+                }
+                else
+                {
+                    std::string msg;
+                    msg = std::string(channel_s + " joined.\n");
+                    send(fd, msg.c_str(), strlen(msg.c_str()), 0);
+                }
                 break;
             case 2:
                 send(fd, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
