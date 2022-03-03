@@ -15,3 +15,13 @@ Channel*	ChannelDB::search(Channel chan) {
 	}
 	return nullptr;
 }
+
+Channel*	ChannelDB::search(string name) {
+	vector<Channel>::iterator it = _db.begin(), end = _db.end();
+    while (it != end) {
+		if (it->getName() == name) {
+			return &*it;
+		}
+	}
+	return nullptr;
+}
