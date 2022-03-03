@@ -17,7 +17,7 @@ class ChannelDB {
 
 	void		add(Channel chan);
 	Channel*	search(Channel chan);
-	Channel*	ChannelDB::search(string name);
+	Channel*	search(string name);
 };
 
 #endif

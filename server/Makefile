@@ -5,6 +5,7 @@ CC			:=	c++
 TARGET		:=	irc_server
 DEBUGOUT	:=	debug.out
 KEMAOUT		:=	kema.out
+DODOUT		:=	dod.out
 
 #The Directories, Source, Includes, Objects, Binary and Resources
 SRCDIR		:=	Classes
@@ -29,8 +30,10 @@ ARG			:= 	4242 password
 HEADERS		:=	$(shell find $(INCDIR) -type f -name *.$(HDEXT))
 SOURCES		:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 KEMASOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Server)
+DODSOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Server)
 OBJECTS		:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 KEMAOBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(KEMASOURCES:.$(SRCEXT)=.$(OBJEXT)))
+DODBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(DODSOURCES:.$(SRCEXT)=.$(OBJEXT)))
 
 #Defauilt Make
 all: directories $(TARGETDIR)/$(TARGET)
@@ -95,6 +98,11 @@ kema: directories $(KEMAOBJECTS)
 	@printf "\ec"
 	$(CC) $(KEMAOBJECTS) Classes/Server/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
 	./$(TARGETDIR)/$(KEMAOUT)
+
+dod: directories $(DODBJECTS)
+	@printf "\ec"
+	$(CC) $(DODBJECTS) Classes/Server/Server.cpp -o $(TARGETDIR)/$(DODOUT)
+	./$(TARGETDIR)/$(DODOUT) $(ARG)
 
 #Link
 $(TARGETDIR)/$(TARGET): $(OBJECTS)
