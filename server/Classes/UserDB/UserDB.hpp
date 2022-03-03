@@ -16,7 +16,8 @@ class UserDB {
 	~UserDB() {};
 
 	void	add(User usr);
-	User&	search(User usr);
+	User*	search(User usr);
+	User*	search(ssize_t id);
 };
 
 #endif
