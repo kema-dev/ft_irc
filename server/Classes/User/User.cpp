@@ -127,15 +127,15 @@ bool	User::logIn(string pass) {
 	return false;
 }
 
-bool	User::sendMessage(std::string content, Channel& chan) {
-	if (chan.isLog(*this) == true) {
-		Message msg = Message(content, this->getName(), chan.getNextUid());
-		chan.receiveMsg(msg);
+bool	User::sendMessage(std::string content, Channel* chan) {
+	if (chan->isLog(*this) == true) {
+		Message msg = Message(content, this->getName(), chan->getNextUid());
+		chan->receiveMsg(msg);
 		return true;
 	}
 	return false;
 }
 
-bool	User::joinChannel(Channel& chan, string pass) {
-	return chan.userJoin(*this, pass);
+bool	User::joinChannel(Channel* chan, string pass) {
+	return chan->userJoin(*this, pass);
 }

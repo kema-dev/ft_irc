@@ -60,8 +60,8 @@ class User {
 	bool	setPass(string new_pass);
 
 	bool	logIn(string pass);
-	bool	sendMessage(string content, Channel& chan);
-	bool	joinChannel(Channel& chan, string pass);
+	bool	sendMessage(string content, Channel* chan);
+	bool	joinChannel(Channel* chan, string pass);
 };
 
 std::ostream &	operator<<(std::ostream &stream, User &rhs);

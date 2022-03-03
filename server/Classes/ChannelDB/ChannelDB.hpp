@@ -9,14 +9,14 @@ using namespace std;
 
 class ChannelDB {
 	private:
-	vector<Channel>	_db;
+	vector<Channel*>	_db;
 
 	public:
 	ChannelDB() {};
 	~ChannelDB() {};
 
-	void		add(Channel chan);
-	Channel*	search(Channel chan);
+	void		add(Channel* chan);
+	Channel*	search(Channel* chan);
 	Channel*	search(string name);
 };
 
