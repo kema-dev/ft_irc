@@ -13,6 +13,6 @@ int main(void) {
 	User	after = User("after", "fullname", "operator", pool);
 	after.joinChannel(chan, "passwordchannel");
 	usr.sendMessage("this is after", chan);
-	clearLog();
+	log("test");
 	cout << "server logs:" << endl << getLog() << endl;
 }
