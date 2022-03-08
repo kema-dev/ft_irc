@@ -37,7 +37,7 @@ DODBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(DODSOURCES:.$(SRCEXT)=.$(OBJEX
 
 LOGPATH		:=	$(shell pwd)/log
 LOGFILE		:=	$(LOGPATH)/server.log
-COMMAND		=	cat Classes/Log/Log.template.hpp | sed 's!@PATHTOLOGFILE!$(LOGFILE)!g' > Classes/Log/Log.hpp
+# COMMAND		=	cat Classes/Log/Log.template.hpp | sed 's!@PATHTOLOGFILE!$(LOGFILE)!g' > Classes/Log/Log.hpp
 
 #Default Make
 all: directories $(TARGETDIR)/$(TARGET)
@@ -46,7 +46,8 @@ all: directories $(TARGETDIR)/$(TARGET)
 re:	fclean all
 
 #Make the Directories
-directories: template
+# directories: template
+directories:
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJDIR)
 
@@ -99,11 +100,11 @@ nc:
 	@printf "Launch test client\n"
 	@nc 172.0.0.1 6667
 
-template:
-	@mkdir -p $(LOGPATH)
-	@touch $(LOGFILE)
-	@chmod 666 $(LOGFILE)
-	@$(COMMAND)
+# template:
+# 	@mkdir -p $(LOGPATH)
+# 	@touch $(LOGFILE)
+# 	@chmod 666 $(LOGFILE)
+# 	@$(COMMAND)
 
 kema: directories $(KEMAOBJECTS)
 	@printf "\ec"
