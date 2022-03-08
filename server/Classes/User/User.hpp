@@ -5,6 +5,7 @@ class User;
 #include "../UidPool/UidPool.hpp"
 #include "../Channel/Channel.hpp"
 #include "../Crypto/Crypto.hpp"
+#include "../Log/Log.hpp"
 #include <sys/types.h>
 #include <iostream>
 

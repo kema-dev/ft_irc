@@ -67,6 +67,240 @@ void	log(string str1, string str2, string str3, string str4, string str5) {
 	log.close();
 }
 
+void	log(string str1, string str2, string str3, string str4, string str5, string str6) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << str10;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << str10;
+	log << str11;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << str10;
+	log << str11;
+	log << str12;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << str10;
+	log << str11;
+	log << str12;
+	log << str13;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << str10;
+	log << str11;
+	log << str12;
+	log << str13;
+	log << str14;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14, string str15) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << str10;
+	log << str11;
+	log << str12;
+	log << str13;
+	log << str14;
+	log << str15;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14, string str15, string str16) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << str10;
+	log << str11;
+	log << str12;
+	log << str13;
+	log << str14;
+	log << str15;
+	log << str16;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14, string str15, string str16, string str17) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << str10;
+	log << str11;
+	log << str12;
+	log << str13;
+	log << str14;
+	log << str15;
+	log << str16;
+	log << str17;
+	log << endl;
+	log.close();
+}
+
 string	getLog(void) {
 	ostringstream sstr;
 	ifstream file;

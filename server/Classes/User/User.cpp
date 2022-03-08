@@ -53,6 +53,7 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 	_nb_msg = 0;
 	_ban_status = false;
 	_active_status = true;
+	log(LIGHT_BLUE, "Created ", LIGHT_MAGENTA, "user", DEFAULT, " username: ", GREEN, _username, DEFAULT, " - fullname: ", GREEN, _fullname, DEFAULT, " - role: ", GREEN, _role, DEFAULT);
 }
 
 User::User(string username, string fullname, string nickname, string role, UidPool& pool) {
@@ -107,13 +108,14 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 		return ;
 	}
 	_username = username;
-  _fullname = fullname;
-  _nickname = nickname;
+	_fullname = fullname;
+	_nickname = nickname;
 	_role = role;
 	_uid = id;
 	_nb_msg = 0;
 	_ban_status = false;
 	_active_status = true;
+	log(LIGHT_BLUE, "Created ", LIGHT_MAGENTA, "user", DEFAULT, " username: ", _username, " - fullname: ", _fullname, " - nickname: ", _nickname, " - role: ", _role);
 }
 
 string	User::getName(void) {
@@ -219,6 +221,7 @@ bool	User::sendMessage(std::string content, Channel* chan) {
 			return false;
 		}
 		chan->receiveMsg(msg);
+		log(GREEN, this->getName(), LIGHT_BLUE, " sent message to ", GREEN, chan->getName(), DEFAULT);
 		return true;
 	}
 	return false;

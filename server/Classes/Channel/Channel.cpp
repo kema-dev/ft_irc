@@ -25,7 +25,7 @@ Channel::Channel(string name, string pass, string motd) {
 	_name = name;
 	_hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
-	
+	log(LIGHT_BLUE, "Created ", LIGHT_MAGENTA, "channel ", GREEN, _name, DEFAULT);
 }
 
 string	Channel::getName(void){
@@ -64,6 +64,7 @@ bool	Channel::userJoin(User usr, string pass) {
 		return false;
 	}
 	_log.push_back(pair<ssize_t, timeval>(usr.getUid(), time));
+	log(GREEN, usr.getName(), LIGHT_BLUE, " joined ", LIGHT_MAGENTA, "channel ", GREEN, _name, DEFAULT);
 	return true;
 }
 
@@ -80,6 +81,7 @@ bool	Channel::userLeave(User usr) {
 		it++;
 	}
 	return false;
+	log(RED, usr.getName(), LIGHT_BLUE, " left ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT);
 }
 
 void	Channel::receiveMsg(Message msg) {

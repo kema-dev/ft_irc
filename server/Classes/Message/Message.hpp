@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <sys/time.h>
+#include "../Log/Log.hpp"
 
 using namespace std;
 
