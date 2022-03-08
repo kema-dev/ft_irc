@@ -8,7 +8,7 @@ int command_check(std::string message, int fd)
     }
     catch (const EmptyCommand e) {
         std::cerr << e.info() << std::endl;
-		return (EMPTY_COMMAND);
+		return (CLIENT_DISCONNECTED);
     }
     std::vector<std::string> commands;
     commands.push_back("JOIN");
@@ -36,22 +36,27 @@ int command_check(std::string message, int fd)
         else {
             throw (InvalidCommand());
         }
+        std::cout << message << std::endl;
         switch (index)
         {
             case 0:
                 channel_s = message.substr(pos + 1, message.length() - pos - 3);
                 // TODO Implement check_channel(std::string channel) check_channel(channel) < 0
-                if (channel_s.compare("ratio") != 0 /* ratio cette condition */)
+                if (channel_s.compare("#ratio") != 0 /* ratio cette condition */)
                 {
                     std::string msg;
-                    msg = "Unable to join the channel: " + channel_s + " is unknown\n";
+                    msg = "Unable to join the channel: " + channel_s + " is unknown.\n";
                     send(fd, msg.c_str(), strlen(msg.c_str()), 0);
+                    std::cout << msg << std::endl;
                 }
                 else
                 {
                     std::string msg;
                     msg = std::string(channel_s + " joined.\n");
-                    send(fd, msg.c_str(), strlen(msg.c_str()), 0);
+                    send(fd, "JOIN #ratio:tagueule\n\r", strlen("JOIN #ratio:tagueule\n\r"), MSG_DONTWAIT);
+                    send(fd, "BONJOUR\n\r", strlen("BONJOUR\n\r"), MSG_DONTWAIT);
+                    // send(fd,msg.c_str(), strlen(msg.c_str()), 0);
+                    std::cout << msg << std::endl;
                 }
                 break;
             case 1:
@@ -61,7 +66,7 @@ int command_check(std::string message, int fd)
                 if (channel_s.compare("ratio") != 0 /* ratio cette condition */)
                 {
                     std::string msg;
-                    msg = "Unable to join the channel: " + channel_s + " is unknown\n";
+                    msg = "Unable to join the channel: " + channel_s + " is unknown.\n";
                     send(fd, msg.c_str(), strlen(msg.c_str()), 0);
                 }
                 else

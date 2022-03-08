@@ -1,5 +1,6 @@
 #include "../Error/Error.hpp"
 #include "../CommandHandler/CommandHandler.hpp"
+#include "../ServerManip/ServerManip.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -9,6 +10,7 @@
 typedef struct s_params
 {
     int fd;
+    UidPool uidPool;
 }   t_params;
 
 using namespace std;
@@ -84,9 +86,9 @@ int	main(int argc, char** argv)
 	
 	listen(listenFd, 5);
     t_params params;
-    std::cout << listenFd << std::endl;
 
     socklen_t len = sizeof(clntAdd);
+    UidPool	pool = UidPool();
     while(1)
     {
         try {
@@ -99,7 +101,7 @@ int	main(int argc, char** argv)
                 pthread_t  a;
                 threadV.push_back(a);
                 params.fd = connFd;
-                std::cout << "connFd: " << connFd << std::endl;
+                params.uidPool = pool;
                 pthread_create(&threadV.back(), NULL, task1, &params); 
                 cout << "Connection established." << endl;
             }
@@ -114,18 +116,31 @@ int	main(int argc, char** argv)
 void *task1 (void *dummyPt)
 {
     t_params* params = static_cast<t_params*>(dummyPt);
-    ssize_t i;
     cout << "-----------------" << endl;
-	//cout << "Thread No: " << pthread_self() << endl;
-	char test[256];
-	bzero(test, 256);
+	char input[256];
+    int security = 0;
+    int nbError = 0;
+	bzero(input, 256);
 	bool loop = false;
-    i = 0;
-    send(params->fd, "Connection established\n", strlen("Connection established\n"), MSG_DONTWAIT);
+    send(params->fd, "Connection established.\n", strlen("Connection established.\n"), MSG_DONTWAIT);
+    bzero(input, 256);	 
+    int n = read(connFd, input, 255);
+    try {
+            if (n < 0)
+                throw(ReadImpossible());
+    }
+    catch (const ReadImpossible e){
+        std::cerr << e.info() << std::endl;
+    }
+    std::string input_s = input;
+    if (input_s.find("CAP") != std::string::npos)
+        input_s.erase(0, strlen("CAP LS\n\r"));
+    createUser(input_s, params->uidPool);
+    // TODO Create user with infos;
 	while(!loop)
 	{
-		bzero(test, 256);	 
-		int n = read(connFd, test, 255);
+		bzero(input, 256);	 
+		int n = read(connFd, input, 255);
         try {
             if (n < 0)
                 throw(ReadImpossible());
@@ -133,21 +148,20 @@ void *task1 (void *dummyPt)
         catch (const ReadImpossible e){
             std::cerr << e.info() << std::endl;
         }
-        // cout << "Thread No: " << pthread_self() <<  ":" << i << endl;
-		cout << "Input:" << test << endl;
-		if (i > 2)
-        {
-            try{
-                if (command_check(test, params->fd) < 0)
-                    throw(NotACommand());
-            }
-            catch (const NotACommand e) {
-                std::cerr << e.info() << std::endl;
-            }
+        try{
+            security = command_check(input, params->fd);
+            if (security == CLIENT_DISCONNECTED)
+                nbError++;
+            if (nbError >= 5)
+                throw (ClientDisconnected());
         }
-        i++;
+        catch (const ClientDisconnected e) {
+            std::cerr << e.info() << std::endl;
+            close(connFd);
+            exit(CLIENT_DISCONNECTED);
+        }
 	}
-	cout << "\nClosing thread and conn" << endl;
+	cout << "\nClosing thread and connection." << endl;
 	close(connFd);
 	return (NULL);
 }
