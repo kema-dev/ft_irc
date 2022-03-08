@@ -28,10 +28,10 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 	}
 	try {
 		if (role == "") {
-			throw (WrongUserName());
+			throw (WrongRoleNameUser());
 		}
 		if (role != "user" && role != "operator") {
-			throw (WrongUserName());
+			throw (WrongRoleNameUser());
 		}
 	}
 	catch (WrongRoleNameUser& e) {
