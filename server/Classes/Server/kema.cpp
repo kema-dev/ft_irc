@@ -1,4 +1,5 @@
 #include "../Channel/Channel.hpp"
+#include "../Log/Log.hpp"
 #include "../ChannelDB/ChannelDB.hpp"
 
 int main(void) {
@@ -15,4 +16,6 @@ int main(void) {
 	cout << chandb->search(chan)->getMsgHist(after);
 	cout << endl;
 	cout << chan->getMsgHist(after);
+	log("test");
+	cout << "server logs:" << endl << getLog() << endl;
 }

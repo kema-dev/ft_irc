@@ -29,19 +29,24 @@ ARG			:= 	4242 password
 #---------------------------------------------------------------------------------
 HEADERS		:=	$(shell find $(INCDIR) -type f -name *.$(HDEXT))
 SOURCES		:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-KEMASOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Server)
-DODSOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Server)
+KEMASOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Server | grep -v template)
+DODSOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Server | grep -v template)
 OBJECTS		:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 KEMAOBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(KEMASOURCES:.$(SRCEXT)=.$(OBJEXT)))
 DODBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(DODSOURCES:.$(SRCEXT)=.$(OBJEXT)))
 
-#Defauilt Make
+LOGPATH		:=	$(shell pwd)/log
+LOGFILE		:=	$(LOGPATH)/server.log
+# COMMAND		=	cat Classes/Log/Log.template.hpp | sed 's!@PATHTOLOGFILE!$(LOGFILE)!g' > Classes/Log/Log.hpp
+
+#Default Make
 all: directories $(TARGETDIR)/$(TARGET)
 
 #Remake
 re:	fclean all
 
 #Make the Directories
+# directories: template
 directories:
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(OBJDIR)
@@ -55,6 +60,7 @@ clean:
 fclean:	clean
 	@$(RM) -rf $(TARGETDIR)
 	@$(RM) -rf $(KEMAOUT)
+	@$(RM) -rf $(LOGPATH)
 
 clean_main:
 	@$(RM) -rf $(OBJDIR)
@@ -94,10 +100,16 @@ nc:
 	@printf "Launch test client\n"
 	@nc 172.0.0.1 6667
 
+# template:
+# 	@mkdir -p $(LOGPATH)
+# 	@touch $(LOGFILE)
+# 	@chmod 666 $(LOGFILE)
+# 	@$(COMMAND)
+
 kema: directories $(KEMAOBJECTS)
 	@printf "\ec"
-	$(CC) $(KEMAOBJECTS) Classes/Server/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
-	./$(TARGETDIR)/$(KEMAOUT)
+	@$(CC) $(KEMAOBJECTS) Classes/Server/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
+	@./$(TARGETDIR)/$(KEMAOUT)
 
 dod: directories $(DODBJECTS)
 	@printf "\ec"
@@ -115,4 +127,3 @@ $(OBJDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
 
 #Non-File Targets
 .PHONY: all re directories clean fclean clean_main remain debug ddebug test ttest leaks check kema dod nc
-

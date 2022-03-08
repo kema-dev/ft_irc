@@ -36,3 +36,4 @@ irc_server
 .vscode
 *.zip
 __MACOSX
+*.log
