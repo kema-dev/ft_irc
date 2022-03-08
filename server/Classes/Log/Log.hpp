@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define LOGFILE_PATH "~/goinfre/ft_irc.log"
+#define LOGFILE_PATH "/Users/jjourdan/dev/github/ft_irc/server/log/server.log"
 
 void	log(string str);
 string	getLog(void);
