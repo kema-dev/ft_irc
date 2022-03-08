@@ -3,14 +3,22 @@
 
 using namespace std;
 
-User::User(string name, string role, string pass, UidPool& pool) {
+User::User(string username, string fullname, string role, UidPool& pool) {
 	try {
-		if (name == "") {
+		if (username == "") {
 			throw (WrongUserName());
 		}
-		for (size_t i = 0; name[i]; i++) {
-			if (!(isalnum(name[i]))) {
-				throw (WrongUserName());
+		for (size_t i = 0; username[i]; i++) {
+			if (!(isalnum(username[i]))) {
+		    		throw (WrongUserName());
+			}
+		}
+        if (fullname == "") {
+			throw (WrongUserName());
+		}
+		for (size_t i = 0; fullname[i]; i++) {
+			if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
+		    	throw (WrongUserName());
 			}
 		}
 	}
@@ -38,14 +46,69 @@ User::User(string name, string role, string pass, UidPool& pool) {
 		std::cerr << e.info() << std::endl;
 		return ;
 	}
+	_username = username;
+    _fullname = fullname;
+	_role = role;
+	_uid = id;
+	_nb_msg = 0;
+	_ban_status = false;
+	_active_status = true;
+}
+
+User::User(string username, string fullname, string nickname, string role, UidPool& pool) {
 	try {
-		_hash = md5(pass);
+		if (username == "") {
+			throw (WrongUserName());
+		}
+		for (size_t i = 0; username[i]; i++) {
+			if (!(isalnum(username[i]))) {
+		    		throw (WrongUserName());
+			}
+		}
+        if (fullname == "") {
+			throw (WrongUserName());
+		}
+		for (size_t i = 0; fullname[i]; i++) {
+			if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
+		    	throw (WrongUserName());
+			}
+		}
+        if (nickname == "") {
+			throw (WrongUserName());
+		}
+		for (size_t i = 0; nickname[i]; i++) {
+			if (!(isalnum(nickname[i]))) {
+		    	throw (WrongUserName());
+			}
+		}
 	}
-	catch (PopopenFail& e) {
-		cerr << e.info() << endl;
+	catch (WrongUserName& e) {
+		cerr << e.info() << std::endl;
 		return ;
 	}
-	_name = name;
+	try {
+		if (role == "") {
+			throw (WrongUserName());
+		}
+		if (role != "user" && role != "operator") {
+			throw (WrongUserName());
+		}
+	}
+	catch (WrongRoleNameUser& e) {
+		cerr << e.info() << std::endl;
+		return ;
+	}
+	size_t id;
+	try {
+		id = pool.generate();
+	}
+	catch (PoolFull& e) {
+		std::cerr << e.info() << std::endl;
+		return ;
+	}
+	_username = username;
+  _fullname = fullname;
+  _nickname = nickname;
 	_role = role;
 	_uid = id;
 	_nb_msg = 0;
@@ -54,7 +117,7 @@ User::User(string name, string role, string pass, UidPool& pool) {
 }
 
 string	User::getName(void) {
-	return _name;
+	return _username;
 }
 
 string	User::getRole(void) {
@@ -87,8 +150,8 @@ std::ostream &operator<<(std::ostream &stream, User &rhs)
     return stream;
 }
 
-bool	User::setName(string new_name) {
-	_name = new_name;
+bool	User::setNickName(string new_name) {
+	_nickname = new_name;
 	return true;
 }
 

@@ -102,4 +102,14 @@ class ReadImpossible : public std::exception
 		}
 };
 
+#define CLIENT_DISCONNECTED -9
+class ClientDisconnected : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Client seems to be disconnected. Server will be closed.");
+		}
+};
+
 #endif

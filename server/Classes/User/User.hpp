@@ -30,7 +30,9 @@ class WrongRoleNameUser : public exception
 
 class User {
 	private:
-	string 		_name;
+	string 		_username;
+    string      _nickname;
+    string      _fullname;
 	string		_role;
 	ssize_t		_nb_msg;
 	bool		_ban_status;
@@ -39,7 +41,8 @@ class User {
 	string		_hash;
 
 	public:
-	User(string name, string role, string pass, UidPool& pool);
+    User(string username, string fullname, string role, UidPool& pool);
+	User(string username, string fullname, string nickname ,string role, UidPool& pool);
 	~User() {};
 	
 	string	getName(void);
@@ -50,7 +53,7 @@ class User {
 	ssize_t	getUid(void);
 	string	getHash(void);
 
-	bool	setName(string new_name);
+	bool	setNickName(string new_name);
 	bool	setRole(string new_role);
 	bool	setNbMsg(ssize_t new_nb_msg);
 	bool	setBanStatus(bool new_ban_status);
