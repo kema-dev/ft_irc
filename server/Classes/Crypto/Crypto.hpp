@@ -2,8 +2,18 @@
  #define _CRYPTO_HPP
 
 #include <string>
+#include <iostream>
 
 using namespace std;
+
+class PopopenFail : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("popopen() failed.");
+		}
+};
 
 string	md5(string pass);
 

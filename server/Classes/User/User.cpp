@@ -107,8 +107,8 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 		return ;
 	}
 	_username = username;
-    _fullname = fullname;
-    _nickname = nickname;
+  _fullname = fullname;
+  _nickname = nickname;
 	_role = role;
 	_uid = id;
 	_nb_msg = 0;
@@ -186,25 +186,44 @@ bool	User::setHash(string new_hash) {
 }
 
 bool	User::setPass(string new_pass) {
-	_hash = md5(new_pass);
+	try {
+		_hash = md5(new_pass);
+	}
+	catch (PopopenFail& e) {
+		cerr << e.info() << endl;
+		return false;
+	}
 	return true;
 }
 
 bool	User::logIn(string pass) {
-	if (md5(pass) == getHash())
-		return true;
+	try {
+		if (md5(pass) == getHash())
+			return true;
+	}
+	catch (PopopenFail& e) {
+		cerr << e.info() << endl;
+		return false;
+	}
 	return false;
 }
 
-bool	User::sendMessage(std::string content, Channel& chan) {
-	if (chan.isLog(*this) == true) {
-		Message msg = Message(content, this->getName(), chan.getNextUid());
-		chan.receiveMsg(msg);
+bool	User::sendMessage(std::string content, Channel* chan) {
+	if (chan->isLog(*this) == true) {
+		Message msg;
+		try {
+			msg = Message(content, this->getName(), chan->getNextUid());
+		}
+		catch (PoolFull& e) {
+			cerr << e.info();
+			return false;
+		}
+		chan->receiveMsg(msg);
 		return true;
 	}
 	return false;
 }
 
-bool	User::joinChannel(Channel& chan, string pass) {
-	return chan.userJoin(*this, pass);
+bool	User::joinChannel(Channel* chan, string pass) {
+	return chan->userJoin(*this, pass);
 }

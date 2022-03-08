@@ -15,10 +15,17 @@ Channel::Channel(string name, string pass, string motd) {
 		cerr << e.info() << std::endl;
 		return ;
 	}
+	try {
+		_hash = md5(pass);
+	}
+	catch (PopopenFail& e) {
+		cerr << e.info() << endl;
+		return ;
+	}
 	_name = name;
-	_hash = md5(pass);
 	_hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
+	
 }
 
 string	Channel::getName(void){
@@ -39,11 +46,23 @@ ssize_t	Channel::getUidAfter(timeval time) {
 }
 
 bool	Channel::userJoin(User usr, string pass) {
-	if (md5(pass) != _hash) {
+	try {
+		if (md5(pass) != _hash) {
+			return false;
+		}
+	}
+	catch (PopopenFail& e) {
+		cerr << e.info() << endl;
 		return false;
 	}
 	timeval time;
-	gettimeofday(&time, nullptr); // TODO ANCHOR secure function
+	try {
+		gettimeofday(&time, nullptr);
+	}
+	catch (exception& e) {
+		cerr << e.what() << endl;
+		return false;
+	}
 	_log.push_back(pair<ssize_t, timeval>(usr.getUid(), time));
 	return true;
 }
@@ -68,6 +87,10 @@ void	Channel::receiveMsg(Message msg) {
 }
 
 ssize_t	Channel::getNextUid(void) {
+	if (_next_uid >= SSIZE_MAX) {
+		throw (PoolFull());
+		return (-1);
+	}
 	ssize_t	id = _next_uid;
 	_next_uid++;
 	return id;
@@ -99,7 +122,6 @@ bool	Channel::isLog(User usr) {
 
 string	Channel::getMsgHist(User usr) {
 	if (isLog(usr) == true) {
-	
 		vector<pair<ssize_t, timeval> >::iterator	it, end;
 		it = _log.begin();
 		end = _log.end();
@@ -120,7 +142,6 @@ string	Channel::getMsgHist(User usr) {
 			}
 			it++;
 		}
-	
 	}
 	return "";
 }

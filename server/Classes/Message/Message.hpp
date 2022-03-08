@@ -15,6 +15,7 @@ class Message {
 	string	_sender;
 
 	public:
+	Message() {};
 	Message(string content, string sender, ssize_t id);
 	~Message() {};
 
