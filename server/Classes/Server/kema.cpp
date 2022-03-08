@@ -5,13 +5,12 @@
 int main(void) {
 	clearLog();
 	UidPool	pool = UidPool();
-	User	usr = User("kema", "fullname", "operator", pool);
-	ChannelDB* chandb = new ChannelDB();
+	User	usr = User("firstname", "firstfullname", "operator", pool);
+	User	usr2 = User("secondname", "secondfullname", "secondnickname", "operator", pool);
+	ChannelDB*	chandb = new ChannelDB();
 	Channel*	chan = new Channel("chan", "passwordchannel", "motd");
 	chandb->add(chan);
 	usr.joinChannel(chan, "passwordchannel");
-	usr.sendMessage("this is before", chan);
-	User	after = User("after", "fullname", "operator", pool);
-	after.joinChannel(chan, "passwordchannel");
-	usr.sendMessage("this is after", chan);
+	usr2.joinChannel(chan, "passwordchannel");
+	usr.ban(usr2, *chan);
 }

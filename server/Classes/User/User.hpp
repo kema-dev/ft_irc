@@ -29,6 +29,24 @@ class WrongRoleNameUser : public exception
 		}
 };
 
+class BadRole : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("User is not an operator");
+		}
+};
+
+class NotLogged : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("User is not logged to the channel");
+		}
+};
+
 class User {
 	private:
 	string 		_username;
@@ -43,9 +61,10 @@ class User {
 
 	public:
     User(string username, string fullname, string role, UidPool& pool);
-	User(string username, string fullname, string nickname ,string role, UidPool& pool);
+	User(string username, string fullname, string nickname, string role, UidPool& pool);
 	~User() {};
 	
+	string	getNick(void);
 	string	getName(void);
 	string	getRole(void);
 	ssize_t	getNbMsg(void);
@@ -66,6 +85,8 @@ class User {
 	bool	logIn(string pass);
 	bool	sendMessage(string content, Channel* chan);
 	bool	joinChannel(Channel* chan, string pass);
+	bool	ban(User& usr, Channel& chan);
+	void	getBanned(Channel& chan, User& banner);
 };
 
 std::ostream &	operator<<(std::ostream &stream, User &rhs);

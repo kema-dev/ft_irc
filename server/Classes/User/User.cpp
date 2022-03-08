@@ -23,7 +23,7 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 		}
 	}
 	catch (WrongUserName& e) {
-		cerr << e.info() << std::endl;
+		cerr << e.info() << endl;
 		return ;
 	}
 	try {
@@ -35,7 +35,7 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 		}
 	}
 	catch (WrongRoleNameUser& e) {
-		cerr << e.info() << std::endl;
+		cerr << e.info() << endl;
 		return ;
 	}
 	size_t id;
@@ -43,11 +43,12 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 		id = pool.generate();
 	}
 	catch (PoolFull& e) {
-		std::cerr << e.info() << std::endl;
+		cerr << e.info() << endl;
 		return ;
 	}
 	_username = username;
     _fullname = fullname;
+	_nickname = "";
 	_role = role;
 	_uid = id;
 	_nb_msg = 0;
@@ -84,7 +85,7 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 		}
 	}
 	catch (WrongUserName& e) {
-		cerr << e.info() << std::endl;
+		cerr << e.info() << endl;
 		return ;
 	}
 	try {
@@ -96,7 +97,7 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 		}
 	}
 	catch (WrongRoleNameUser& e) {
-		cerr << e.info() << std::endl;
+		cerr << e.info() << endl;
 		return ;
 	}
 	size_t id;
@@ -104,7 +105,7 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 		id = pool.generate();
 	}
 	catch (PoolFull& e) {
-		std::cerr << e.info() << std::endl;
+		cerr << e.info() << endl;
 		return ;
 	}
 	_username = username;
@@ -116,6 +117,10 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 	_ban_status = false;
 	_active_status = true;
 	log(LIGHT_BLUE, "Created ", LIGHT_MAGENTA, "user", DEFAULT, " username: ", _username, " - fullname: ", _fullname, " - nickname: ", _nickname, " - role: ", _role);
+}
+
+string	User::getNick(void) {
+	return _nickname;
 }
 
 string	User::getName(void) {
@@ -146,7 +151,7 @@ string	User::getHash(void) {
 	return _hash;	
 }
 
-std::ostream &operator<<(std::ostream &stream, User &rhs)
+ostream &operator<<(ostream &stream, User &rhs)
 {
 	stream << "User infos:" << endl << "name: " << rhs.getName() << endl << "role: " << rhs.getRole() << endl << "nb_msg: " << rhs.getNbMsg() << endl << "ban_status: " << rhs.getBanStatus() << endl << "active_status: " << rhs.getActiveStatus() << endl << "uid: " << rhs.getUid() << endl << "hash: " << rhs.getHash();
     return stream;
@@ -210,7 +215,7 @@ bool	User::logIn(string pass) {
 	return false;
 }
 
-bool	User::sendMessage(std::string content, Channel* chan) {
+bool	User::sendMessage(string content, Channel* chan) {
 	if (chan->isLog(*this) == true) {
 		Message msg;
 		try {
@@ -229,4 +234,31 @@ bool	User::sendMessage(std::string content, Channel* chan) {
 
 bool	User::joinChannel(Channel* chan, string pass) {
 	return chan->userJoin(*this, pass);
+}
+
+bool	User::ban(User& usr, Channel& chan) {
+	try {
+		if (this->getRole() != "operator") {
+			throw BadRole();
+		}
+	}
+	catch (BadRole& e) {
+		cerr << e.info() << endl;
+		return false;
+	}
+	try {
+		if (chan.isLog(usr) != true) {
+			throw NotLogged();
+		}
+	}
+	catch (NotLogged& e) {
+		cerr << e.info() << endl;
+	}
+	usr.getBanned(chan, *this);
+	return true;
+}
+
+void	User::getBanned(Channel& chan, User& banner) {
+	chan.userBan(*this, banner);
+	// TODO Send ban info to *this
 }
