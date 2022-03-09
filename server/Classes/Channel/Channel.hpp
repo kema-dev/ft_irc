@@ -8,6 +8,7 @@ class Channel;
 #include <vector>
 #include <string>
 #include <iostream>
+#include <list>
 #include <sys/time.h>
 
 using namespace std;

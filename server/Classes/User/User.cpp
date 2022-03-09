@@ -1,5 +1,4 @@
 #include "User.hpp"
-#include "../UidPool/UidPool.hpp"
 
 using namespace std;
 
@@ -53,8 +52,11 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 	_uid = id;
 	_nb_msg = 0;
 	_ban_status = false;
-	_active_status = true;
-	log(LIGHT_BLUE, "Created ", LIGHT_MAGENTA, "user", DEFAULT, " username: ", GREEN, _username, DEFAULT, " - fullname: ", GREEN, _fullname, DEFAULT, " - role: ", GREEN, _role, DEFAULT);
+	_active_status = false;
+	char s[15];
+	sprintf(s, "%ld", _uid);
+	string str = string(s);
+	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, DEFAULT, " - role: ", GREEN, _role, DEFAULT, LIGHT_BLUE," has been created",DEFAULT);
 }
 
 User::User(string username, string fullname, string nickname, string role, UidPool& pool) {
@@ -115,16 +117,23 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 	_uid = id;
 	_nb_msg = 0;
 	_ban_status = false;
-	_active_status = true;
-	log(LIGHT_BLUE, "Created ", LIGHT_MAGENTA, "user", DEFAULT, " username: ", _username, " - fullname: ", _fullname, " - nickname: ", _nickname, " - role: ", _role);
+	_active_status = false;
+	char s[15];
+	sprintf(s, "%ld", _uid);
+	string str = string(s);
+	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, DEFAULT, " - role: ", GREEN, _role, DEFAULT, LIGHT_BLUE," has been created",DEFAULT);
 }
 
-string	User::getNick(void) {
+string	User::getNickName(void) {
 	return _nickname;
 }
 
-string	User::getName(void) {
+string	User::getUserName(void) {
 	return _username;
+}
+
+string	User::getFullName(void) {
+	return _fullname;
 }
 
 string	User::getRole(void) {
@@ -153,12 +162,22 @@ string	User::getHash(void) {
 
 ostream &operator<<(ostream &stream, User &rhs)
 {
-	stream << "User infos:" << endl << "name: " << rhs.getName() << endl << "role: " << rhs.getRole() << endl << "nb_msg: " << rhs.getNbMsg() << endl << "ban_status: " << rhs.getBanStatus() << endl << "active_status: " << rhs.getActiveStatus() << endl << "uid: " << rhs.getUid() << endl << "hash: " << rhs.getHash();
+	stream << "User infos:" << endl << "name: " << rhs.getFullName() << endl << "role: " << rhs.getRole() << endl << "nb_msg: " << rhs.getNbMsg() << endl << "ban_status: " << rhs.getBanStatus() << endl << "active_status: " << rhs.getActiveStatus() << endl << "uid: " << rhs.getUid() << endl << "hash: " << rhs.getHash();
     return stream;
 }
 
-bool	User::setNickName(string new_name) {
-	_nickname = new_name;
+bool	User::setUserName(string new_username) {
+	_username = new_username;
+	return true;
+}
+
+bool	User::setNickName(string new_nickname) {
+	_nickname = new_nickname;
+	return true;
+}
+
+bool	User::setFullName(string new_fullname) {
+	_fullname = new_fullname;
 	return true;
 }
 
@@ -203,30 +222,57 @@ bool	User::setPass(string new_pass) {
 	return true;
 }
 
-bool	User::logIn(string pass) {
+bool	User::logIn(UserDB* db) {
 	try {
-		if (md5(pass) == getHash())
-			return true;
+		if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != false)) {
+			throw AlreadyLogged();
+		}
 	}
-	catch (PopopenFail& e) {
+	catch (SameInfo& e) {
 		cerr << e.info() << endl;
 		return false;
 	}
-	return false;
+	try {
+		if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != false)) {
+			throw AlreadyLogged();
+		}
+	}
+	catch (AlreadyLogged& e) {
+		cerr << e.info() << endl;
+		return false;
+	}
+	this->setActiveStatus(true);
+	log(LIGHT_MAGENTA, "User ", GREEN, this->getFullName(), LIGHT_BLUE, " logged in to ", GREEN, "the server", DEFAULT);
+	return true;
+}
+
+bool	User::logOut(UserDB* db) {
+	try {
+		if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != true)) {
+			throw NotLoggedGlobal();
+		}
+	}
+	catch (NotLoggedGlobal& e) {
+		cerr << e.info() << endl;
+		return false;
+	}
+	this->setActiveStatus(false);
+	log(LIGHT_MAGENTA, "User ", RED, this->getFullName(), LIGHT_BLUE, " logged out from ", RED, "the server", DEFAULT);
+	return true;
 }
 
 bool	User::sendMessage(string content, Channel* chan) {
 	if (chan->isLog(*this) == true) {
 		Message msg;
 		try {
-			msg = Message(content, this->getName(), chan->getNextUid());
+			msg = Message(content, this->getFullName(), chan->getNextUid());
 		}
 		catch (PoolFull& e) {
-			cerr << e.info();
+			cerr << e.info() << endl;
 			return false;
 		}
 		chan->receiveMsg(msg);
-		log(GREEN, this->getName(), LIGHT_BLUE, " sent message to ", GREEN, chan->getName(), DEFAULT);
+		log(GREEN, this->getFullName(), LIGHT_BLUE, " sent message to ", GREEN, chan->getName(), DEFAULT);
 		return true;
 	}
 	return false;

@@ -12,6 +12,25 @@ string	getTime(void) {
 	return out;
 }
 
+// void	log(list<std::string>& args) {
+// 	fstream log;
+// 	log.open(LOGFILE_PATH, ios_base::app);
+// 	if (!args.empty())
+// 	{
+// 		log << getTime();
+// 		int step = 1;
+// 		for (list<std::string>::iterator it = args.begin(); ; advance(it, step))
+// 		{
+// 			log << (*it);
+// 			if (distance(it, args.end()) > step)
+// 				break;
+// 		}
+// 	}
+// 	log << endl;
+// 	log.close();
+// }
+
+
 void	log(string str) {
 	fstream log;
 	log.open(LOGFILE_PATH, ios_base::app);
@@ -297,6 +316,32 @@ void	log(string str1, string str2, string str3, string str4, string str5, string
 	log << str15;
 	log << str16;
 	log << str17;
+	log << endl;
+	log.close();
+}
+
+void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14, string str15, string str16, string str17, string str18) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << str1;
+	log << str2;
+	log << str3;
+	log << str4;
+	log << str5;
+	log << str6;
+	log << str7;
+	log << str8;
+	log << str9;
+	log << str10;
+	log << str11;
+	log << str12;
+	log << str13;
+	log << str14;
+	log << str15;
+	log << str16;
+	log << str17;
+	log << str18;
 	log << endl;
 	log.close();
 }

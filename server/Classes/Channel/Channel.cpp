@@ -25,7 +25,7 @@ Channel::Channel(string name, string pass, string motd) {
 	_name = name;
 	_hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
-	log(LIGHT_BLUE, "Created ", LIGHT_MAGENTA, "channel ", GREEN, _name, DEFAULT, " - hash ", GREEN, _hash);
+	log(LIGHT_MAGENTA, "Channel ", GREEN, _name, DEFAULT, " with hash ", GREEN, _hash, LIGHT_BLUE, " has been created", DEFAULT);
 }
 
 Channel::Channel(string name, string motd) {
@@ -46,7 +46,7 @@ Channel::Channel(string name, string motd) {
 	_name = name;
 	_hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
-	log(LIGHT_BLUE, "Created ", LIGHT_MAGENTA, "channel ", GREEN, _name, " - hash ", _hash);
+	log(LIGHT_MAGENTA, "Channel ", GREEN, _name, DEFAULT, " with hash ", GREEN, _hash, LIGHT_BLUE, " has been created", DEFAULT);
 }
 
 string	Channel::getName(void){
@@ -85,7 +85,7 @@ bool	Channel::userJoin(User& usr, string pass) {
 		return false;
 	}
 	_log.push_back(pair<User&, timeval>(usr, time));
-	log(GREEN, usr.getName(), LIGHT_BLUE, " joined ", LIGHT_MAGENTA, "channel ", GREEN, _name, DEFAULT);
+	log(GREEN, usr.getFullName(), LIGHT_BLUE, " joined ", LIGHT_MAGENTA, "channel ", GREEN, _name, DEFAULT);
 	return true;
 }
 
@@ -102,7 +102,7 @@ bool	Channel::userLeave(User& usr) {
 		it++;
 	}
 	return false;
-	log(RED, usr.getName(), LIGHT_BLUE, " left ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT);
+	log(RED, usr.getFullName(), LIGHT_BLUE, " left ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT);
 }
 
 void	Channel::receiveMsg(Message msg) {
@@ -175,7 +175,7 @@ vector<string>	Channel::getNickLst(void) {
 	it = _log.begin();
 	end = _log.end();
 	while (it != end) {
-		vec.push_back(it->first.getNick());
+		vec.push_back(it->first.getNickName());
 		it++;
 	}
 	return vec;
@@ -189,7 +189,7 @@ bool	Channel::userBan(User& usr, User& banner) {
 	while (it != end) {
 		if (it->first.getUid() == id) {
 			_log.erase(it);
-			log(RED, usr.getName(), LIGHT_BLUE, " has been banned from ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT, " by ", RED, banner.getName(), DEFAULT);
+			log(RED, usr.getFullName(), LIGHT_BLUE, " has been banned from ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT, " by ", RED, banner.getFullName(), DEFAULT);
 			return true;
 		}
 		it++;

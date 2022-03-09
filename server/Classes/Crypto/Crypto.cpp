@@ -4,8 +4,8 @@ string	md5(string str) {
 	if (str.length() < 1)
 		return "";
 	FILE *fpipe;
-	char *command = new char[string(str).length() + 44]();
-	sprintf(command, "echo %s | shasum -a 256 | tr \"  -\\n\" \" \" ", str.c_str());
+	char *command = new char[string(str).length() + 36]();
+	sprintf(command, "echo %s | shasum -a 256 | tr -d ' -\n'", str.c_str());
 	char c = 0;
 
 	if (0 == (fpipe = (FILE*)popen(command, "r"))) {
