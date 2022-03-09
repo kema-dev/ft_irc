@@ -1,10 +1,7 @@
 # TODOLIST
 
-Parsing:
-    - Finish user parsing
-
-Communication with client:
-    - replace all cout by send()
+- Replace al read() functions by recv(). This will probably fix the strange read behavior. 
+- Use poll()
 
 Clean code:
     - Add more functions for a more understandable code

@@ -109,7 +109,7 @@ class User {
 	string		_hash;
 
 	public:
-  User(string username, string fullname, string role, UidPool& pool);
+    User(string username, string fullname, string role, UidPool& pool);
 	User(string username, string fullname, string nickname, string hostname, string servername, string role, UidPool& pool);
 
 	~User() {};
