@@ -101,7 +101,6 @@ class User {
     string      _fullname;
     string      _hostname;
     string      _servername;
-	string		_role;
 	ssize_t		_nb_msg;
 	bool		_ban_status;
 	bool		_active_status;
@@ -109,15 +108,14 @@ class User {
 	string		_hash;
 
 	public:
-  User(string username, string fullname, string role, UidPool& pool);
-	User(string username, string fullname, string nickname, string hostname, string servername, string role, UidPool& pool);
+	User(string username, string fullname, string hostname, string servername, UidPool& pool);
+	User(string username, string fullname, string nickname, string hostname, string servername, UidPool& pool);
 
 	~User() {};
 	
 	string	getNickName(void);
 	string	getUserName(void);
 	string	getFullName(void);
-	string	getRole(void);
 	ssize_t	getNbMsg(void);
 	bool	getBanStatus(void);
 	bool	getActiveStatus(void);
@@ -127,7 +125,6 @@ class User {
 	bool	setUserName(string new_username);
 	bool	setNickName(string new_nickname);
 	bool	setFullName(string new_fullname);
-	bool	setRole(string new_role);
 	bool	setNbMsg(ssize_t new_nb_msg);
 	bool	setBanStatus(bool new_ban_status);
 	bool	setActiveStatus(bool new_active_status);
@@ -141,6 +138,8 @@ class User {
 	bool	joinChannel(Channel* chan, string pass);
 	bool	ban(User& usr, Channel& chan);
 	void	getBanned(Channel& chan, User& banner);
+	bool	setPasswd(Channel& chan, string pass);
+	bool	setOperPasswd(Channel& chan, string pass);
 };
 
 std::ostream &	operator<<(std::ostream &stream, User &rhs);

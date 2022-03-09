@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(string name, string pass, string motd) {
+Channel::Channel(string name, string pass, string motd, string oper_pass) {
 	try {
 		if (name == "") {
 			throw (WrongChannelName());
@@ -16,7 +16,7 @@ Channel::Channel(string name, string pass, string motd) {
 		return ;
 	}
 	try {
-		_hash = md5(pass);
+		_hash = sha256(pass);
 	}
 	catch (PopopenFail& e) {
 		cerr << e.info() << endl;
@@ -25,27 +25,8 @@ Channel::Channel(string name, string pass, string motd) {
 	_name = name;
 	_hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
-	log(LIGHT_MAGENTA, "Channel ", GREEN, _name, DEFAULT, " with hash ", GREEN, _hash, LIGHT_BLUE, " has been created", DEFAULT);
-}
-
-Channel::Channel(string name, string motd) {
-	try {
-		if (name == "") {
-			throw (WrongChannelName());
-		}
-		for (size_t i = 0; name[i]; i++) {
-			if (!(isalnum(name[i]))) {
-				throw (WrongChannelName());
-			}
-		}
-	}
-	catch (WrongChannelName& e) {
-		cerr << e.info() << endl;
-		return ;
-	}
-	_name = name;
-	_hist.push_back(Message(motd, "MOTD", -1));
-	_next_uid = 0;
+	_hash = sha256(pass);
+	_oper = sha256(oper_pass);
 	log(LIGHT_MAGENTA, "Channel ", GREEN, _name, DEFAULT, " with hash ", GREEN, _hash, LIGHT_BLUE, " has been created", DEFAULT);
 }
 
@@ -68,7 +49,7 @@ ssize_t	Channel::getUidAfter(timeval time) {
 
 bool	Channel::userJoin(User& usr, string pass) {
 	try {
-		if (md5(pass) != _hash) {
+		if (sha256(pass) != _hash) {
 			return false;
 		}
 	}
@@ -85,21 +66,27 @@ bool	Channel::userJoin(User& usr, string pass) {
 		return false;
 	}
 	_log.push_back(pair<User&, timeval>(usr, time));
+	_roles.push_back(pair<User&, bool>(usr, USER));
 	log(GREEN, usr.getFullName(), LIGHT_BLUE, " joined ", LIGHT_MAGENTA, "channel ", GREEN, _name, DEFAULT);
 	return true;
 }
 
 bool	Channel::userLeave(User& usr) {
 	vector<pair<User&, timeval> >::iterator	it, end;
+	vector<pair<User&, bool> >::iterator	it2, end2;
 	it = _log.begin();
 	end = _log.end();
+	it2 = _roles.begin();
+	end2 = _roles.end();
 	ssize_t	id = usr.getUid();
-	while (it != end) {
+	while (it != end && it2 != end2) {
 		if (it->first.getUid() == id) {
 			_log.erase(it);
+			_roles.erase(it2);
 			return true;
 		}
 		it++;
+		it2++;
 	}
 	return false;
 	log(RED, usr.getFullName(), LIGHT_BLUE, " left ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT);
@@ -195,4 +182,31 @@ bool	Channel::userBan(User& usr, User& banner) {
 		it++;
 	}
 	return false;
+}
+
+bool	Channel::isOper(User usr) {
+	vector<pair<User&, bool> >::iterator	it, end;
+	it = _roles.begin();
+	end = _roles.end();
+	ssize_t	id = usr.getUid();
+	while (it != end) {
+		if (it->first.getUid() == id) {
+			if (it->second == OPERATOR) {
+				return true;
+			}
+			return false;
+		}
+		it++;
+	}
+	return false;
+}
+
+bool	Channel::setPasswd(string pass) {
+	_hash = sha256(pass);
+	return true;
+}
+
+bool	Channel::setOperPasswd(string oper_pass) {
+	_oper = sha256(oper_pass);
+	return true;
 }

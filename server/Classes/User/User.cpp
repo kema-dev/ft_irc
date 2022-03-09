@@ -2,7 +2,7 @@
 
 using namespace std;
 
-User::User(string username, string fullname, string role, UidPool& pool) {
+User::User(string username, string fullname, string hostname, string servername, UidPool& pool) {
 	try {
 		if (username == "") {
 			throw (WrongUserName());
@@ -25,18 +25,18 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 		cerr << e.info() << endl;
 		return ;
 	}
-	try {
-		if (role == "") {
-			throw (WrongRoleNameUser());
-		}
-		if (role != "user" && role != "operator") {
-			throw (WrongRoleNameUser());
-		}
-	}
-	catch (WrongRoleNameUser& e) {
-		cerr << e.info() << endl;
-		return ;
-	}
+	// try {
+	// 	if (role == "") {
+	// 		throw (WrongRoleNameUser());
+	// 	}
+	// 	if (role != "user" && role != "operator") {
+	// 		throw (WrongRoleNameUser());
+	// 	}
+	// }
+	// catch (WrongRoleNameUser& e) {
+	// 	cerr << e.info() << endl;
+	// 	return ;
+	// }
 	size_t id;
 	try {
 		id = pool.generate();
@@ -48,18 +48,19 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 	_username = username;
     _fullname = fullname;
 	_nickname = "";
-	_role = role;
+	_hostname = hostname;
+	_servername = servername;
 	_uid = id;
 	_nb_msg = 0;
 	_ban_status = false;
 	_active_status = false;
-	char s[15];
+	char s[20]; // ? length of max_ssize
 	sprintf(s, "%ld", _uid);
 	string str = string(s);
-	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, DEFAULT, " - role: ", GREEN, _role, DEFAULT, LIGHT_BLUE," has been created",DEFAULT);
+	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, LIGHT_BLUE," has been created",DEFAULT);
 }
 
-User::User(string username, string fullname, string nickname, string hostname, string servername, string role, UidPool& pool) {
+User::User(string username, string fullname, string nickname, string hostname, string servername, UidPool& pool) {
 	try {
 		if (username == "") {
 			throw (WrongUserName());
@@ -98,18 +99,18 @@ User::User(string username, string fullname, string nickname, string hostname, s
 		cerr << e.info() << std::endl;
 		return ;
 	}
-	try {
-		if (role == "") {
-			throw (WrongUserName());
-		}
-		if (role != "user" && role != "operator") {
-			throw (WrongUserName());
-		}
-	}
-	catch (WrongRoleNameUser& e) {
-		cerr << e.info() << endl;
-		return ;
-	}
+	// try {
+	// 	if (role == "") {
+	// 		throw (WrongUserName());
+	// 	}
+	// 	if (role != "user" && role != "operator") {
+	// 		throw (WrongUserName());
+	// 	}
+	// }
+	// catch (WrongRoleNameUser& e) {
+	// 	cerr << e.info() << endl;
+	// 	return ;
+	// }
 	size_t id;
 	try {
 		id = pool.generate();
@@ -119,19 +120,18 @@ User::User(string username, string fullname, string nickname, string hostname, s
 		return ;
 	}
 	_username = username;
-  _fullname = fullname;
-  _nickname = nickname;
-  _hostname = hostname;
-  _servername = servername;
-	_role = role;
+	_fullname = fullname;
+	_nickname = nickname;
+	_hostname = hostname;
+	_servername = servername;
 	_uid = id;
 	_nb_msg = 0;
 	_ban_status = false;
 	_active_status = false;
-	char s[15];
+	char s[20]; // ? length of max_ssize
 	sprintf(s, "%ld", _uid);
 	string str = string(s);
-	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, DEFAULT, " - role: ", GREEN, _role, DEFAULT, LIGHT_BLUE," has been created",DEFAULT);
+	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, LIGHT_BLUE," has been created",DEFAULT);
 }
 
 string	User::getNickName(void) {
@@ -144,10 +144,6 @@ string	User::getUserName(void) {
 
 string	User::getFullName(void) {
 	return _fullname;
-}
-
-string	User::getRole(void) {
-	return _role;
 }
 
 ssize_t	User::getNbMsg(void) {
@@ -172,7 +168,7 @@ string	User::getHash(void) {
 
 ostream &operator<<(ostream &stream, User &rhs)
 {
-	stream << "User infos:" << endl << "name: " << rhs.getFullName() << endl << "role: " << rhs.getRole() << endl << "nb_msg: " << rhs.getNbMsg() << endl << "ban_status: " << rhs.getBanStatus() << endl << "active_status: " << rhs.getActiveStatus() << endl << "uid: " << rhs.getUid() << endl << "hash: " << rhs.getHash();
+	stream << "User infos:" << endl << "name: " << rhs.getFullName() << endl << "nb_msg: " << rhs.getNbMsg() << endl << "ban_status: " << rhs.getBanStatus() << endl << "active_status: " << rhs.getActiveStatus() << endl << "uid: " << rhs.getUid() << endl << "hash: " << rhs.getHash();
     return stream;
 }
 
@@ -188,11 +184,6 @@ bool	User::setNickName(string new_nickname) {
 
 bool	User::setFullName(string new_fullname) {
 	_fullname = new_fullname;
-	return true;
-}
-
-bool	User::setRole(string new_role) {
-	_role = new_role;
 	return true;
 }
 
@@ -223,7 +214,7 @@ bool	User::setHash(string new_hash) {
 
 bool	User::setPass(string new_pass) {
 	try {
-		_hash = md5(new_pass);
+		_hash = sha256(new_pass);
 	}
 	catch (PopopenFail& e) {
 		cerr << e.info() << endl;
@@ -294,15 +285,15 @@ bool	User::joinChannel(Channel* chan, string pass) {
 }
 
 bool	User::ban(User& usr, Channel& chan) {
-	try {
-		if (this->getRole() != "operator") {
-			throw BadRole();
-		}
-	}
-	catch (BadRole& e) {
-		cerr << e.info() << endl;
-		return false;
-	}
+	// try {
+	// 	if (this->getRole() != "operator") {
+	// 		throw BadRole();
+	// 	}
+	// }
+	// catch (BadRole& e) {
+	// 	cerr << e.info() << endl;
+	// 	return false;
+	// }
 	try {
 		if (chan.isLog(usr) != true) {
 			throw NotLogged();
@@ -318,4 +309,32 @@ bool	User::ban(User& usr, Channel& chan) {
 void	User::getBanned(Channel& chan, User& banner) {
 	chan.userBan(*this, banner);
 	// TODO Send ban info to *this
+}
+
+bool	User::setPasswd(Channel& chan, string pass) {
+	try {
+		if (chan.isOper(*this) != true) {
+			throw BadRole();
+		}
+	}
+	catch (BadRole& e) {
+		cerr << e.info() << endl;
+		return false;
+	}
+	chan.setPasswd(pass);
+	return true;
+}
+
+bool	User::setOperPasswd(Channel& chan, string pass) {
+	try {
+		if (chan.isOper(*this) != true) {
+			throw BadRole();
+		}
+	}
+	catch (BadRole& e) {
+		cerr << e.info() << endl;
+		return false;
+	}
+	chan.setOperPasswd(pass);
+	return true;
 }

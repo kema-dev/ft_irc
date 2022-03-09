@@ -22,17 +22,21 @@ class WrongChannelName : public exception
 		}
 };
 
+#define USER		false
+#define OPERATOR	true
+
 class Channel {
 	private:
 	string			_name;
 	string			_hash;
+	string			_oper;
 	ssize_t			_next_uid;
 	vector<Message>	_hist;
 	vector<pair<User&, timeval> >	_log;
+	vector<pair<User&, bool> >	_roles;
 
 	public:
-	Channel(string name, string pass, string motd);
-	Channel(string name, string motd);
+	Channel(string name, string pass, string motd, string oper_pass);
 	~Channel() {};
 
 	string	getName(void);
@@ -46,6 +50,9 @@ class Channel {
 	string	getMsgHist(User usr);
 	vector<string>	getNickLst(void);
 	bool	userBan(User& usr, User& banner);
+	bool	isOper(User usr);
+	bool	setPasswd(string pass);
+	bool	setOperPasswd(string oper_pass);
 };
 
 #endif

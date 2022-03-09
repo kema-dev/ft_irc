@@ -1,6 +1,6 @@
 #include "Crypto.hpp"
 
-string	md5(string str) {
+string	sha256(string str) {
 	if (str.length() < 1)
 		return "";
 	FILE *fpipe;
