@@ -272,6 +272,7 @@ bool	User::sendMessage(string content, Channel* chan) {
 			return false;
 		}
 		chan->receiveMsg(msg);
+		this->setNbMsg(getNbMsg() + 1);
 		log(GREEN, this->getFullName(), LIGHT_BLUE, " sent message to ", GREEN, chan->getName(), DEFAULT);
 		return true;
 	}

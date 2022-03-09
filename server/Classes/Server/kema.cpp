@@ -13,9 +13,9 @@ int main(void) {
 	User*	usr2 = new User("secondname", "secondfullname", "secondnickname", "operator", pool);
 	usrdb.add(usr2);
 	ChannelDB*	chandb = new ChannelDB("chan_database");
-	Channel*	chan = new Channel("chan", "passwordchannel", "motd");
+	Channel*	chan = new Channel("chan", "", "motd");
 	chandb->add(chan);
-	usr->joinChannel(chan, "passwordchannel");
-	usr2->joinChannel(chan, "passwordchannel");
+	usr->joinChannel(chan, "");
+	usr2->joinChannel(chan, "");
 	usr->ban(*usr2, *chan);
 }
