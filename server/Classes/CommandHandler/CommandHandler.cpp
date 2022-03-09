@@ -53,10 +53,11 @@ int command_check(std::string message, int fd)
                 {
                     std::string msg;
                     msg = std::string(channel_s + " joined.\n");
-                    send(fd, "JOIN #ratio:tagueule\n\r", strlen("JOIN #ratio:tagueule\n\r"), MSG_DONTWAIT);
-                    send(fd, "BONJOUR\n\r", strlen("BONJOUR\n\r"), MSG_DONTWAIT);
-                    // send(fd,msg.c_str(), strlen(msg.c_str()), 0);
-                    std::cout << msg << std::endl;
+
+                    send(fd, ":dOD!dginisty@localhost JOIN ratio\r\n", strlen(":dOD!dginisty@localhost JOIN ratio\r\n"), MSG_DONTWAIT);
+                    send(fd, ":dOD!dginisty@localhost 332 : ratio Bonjour et gros ratio a toi:)\r\n", strlen(":dOD!dginisty@localhost 332 : ratio Bonjour et gros ratio a toi:)\r\n"), MSG_DONTWAIT);
+                    send(fd, ":ratio 353 dOD = ratio : dOD\r\n", strlen(":ratio 353 dOD = ratio : dOD\r\n"), MSG_DONTWAIT);
+                    send(fd, ":ratio 366 dOD ratio : End of NAMES list\r\n", strlen(":ratio 366 dOD ratio : End of NAMES list\r\n"), MSG_DONTWAIT);
                 }
                 break;
             case 1:

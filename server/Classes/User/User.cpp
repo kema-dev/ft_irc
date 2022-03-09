@@ -59,7 +59,7 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, DEFAULT, " - role: ", GREEN, _role, DEFAULT, LIGHT_BLUE," has been created",DEFAULT);
 }
 
-User::User(string username, string fullname, string nickname, string role, UidPool& pool) {
+User::User(string username, string fullname, string nickname, string hostname, string servername, string role, UidPool& pool) {
 	try {
 		if (username == "") {
 			throw (WrongUserName());
@@ -70,24 +70,32 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 			}
 		}
         if (fullname == "") {
-			throw (WrongUserName());
+			throw (WrongFullName());
 		}
 		for (size_t i = 0; fullname[i]; i++) {
 			if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
-		    	throw (WrongUserName());
+		    	throw (WrongFullName());
 			}
 		}
         if (nickname == "") {
-			throw (WrongUserName());
+			throw (WrongNickName());
 		}
 		for (size_t i = 0; nickname[i]; i++) {
 			if (!(isalnum(nickname[i]))) {
-		    	throw (WrongUserName());
+		    	throw (WrongNickName());
 			}
 		}
 	}
 	catch (WrongUserName& e) {
 		cerr << e.info() << endl;
+		return ;
+	}
+    catch (WrongNickName& e) {
+		cerr << e.info() << std::endl;
+		return ;
+	}
+    catch (WrongFullName& e) {
+		cerr << e.info() << std::endl;
 		return ;
 	}
 	try {
@@ -111,8 +119,10 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 		return ;
 	}
 	_username = username;
-	_fullname = fullname;
-	_nickname = nickname;
+  _fullname = fullname;
+  _nickname = nickname;
+  _hostname = hostname;
+  _servername = servername;
 	_role = role;
 	_uid = id;
 	_nb_msg = 0;

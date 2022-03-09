@@ -5,7 +5,10 @@
 #include "../UserDB/UserDB.hpp"
 #include <string>
 #include <iostream>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <stdio.h>
 
-void createUser(std::string input, UidPool pool);
+User& createUser(std::string input, UidPool pool, int socket);
 
 #endif
