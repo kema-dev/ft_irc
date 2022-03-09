@@ -10,6 +10,7 @@
 typedef struct s_params
 {
     int fd;
+    string password;
     UidPool uidPool;
 }   t_params;
 
@@ -102,6 +103,7 @@ int	main(int argc, char** argv)
                 threadV.push_back(a);
                 params.fd = connFd;
                 params.uidPool = pool;
+                params.password = argv[2];
                 pthread_create(&threadV.back(), NULL, task1, &params); 
                 cout << "Connection established." << endl;
             }
@@ -122,38 +124,50 @@ void *task1 (void *dummyPt)
     int nbError = 0;
 	bool loop = false;
 
-    send(params->fd, ":ratio 1 dOD: Welcome to the Internet Relay Network dOD\r\n", strlen(":ratio 1 Dod: Welcome to the Internet Relay Network dOD\r\n"), 0);
-    send(params->fd, ":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n", strlen(":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n"), 0);
-    send(params->fd, ":ratio 3 dOD: This server was created?\r\n", strlen(":ratio 3 dOD: This server was created?\r\n"), 0);
-    send(params->fd, ":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
-
     // send(params->fd, "Connection established.\n", strlen("Connection established.\n"), MSG_DONTWAIT); 
 	bzero(input, 256);
     int n = read(params->fd, input, 255);
     try {
-            if (n < 0)
-                throw(ReadImpossible());
+        if (n < 0)
+            throw(ReadImpossible());
     }
     catch (const ReadImpossible e){
         std::cerr << e.info() << std::endl;
     }
     std::string input_s = input;
-    cout << "input_s = " << input_s << endl;
-    // TODO Add password check
+    while (input_s.empty() == true)
+    {
+        cout << "Empty input." << endl;
+        bzero(input, 256);
+        int n = read(params->fd, input, 255);
+        try {
+            if (n < 0)
+                throw(ReadImpossible());
+        }
+        catch (const ReadImpossible e){
+            std::cerr << e.info() << std::endl;
+        }
+        input_s = input;
+    }
+    cout << "Input = '" << input_s << "'" << endl;
     if (input_s.find("PASS") != std::string::npos)
     {
         std::string password = input_s.substr(strlen("PASS") + 1 , input_s.length() - strlen("PASS") - (input_s.length() - (input_s.find("CAP") - 3)));
+        if (password != params->password)
+        {
+            send(params->fd, "Unable to logging in to the server: password incorrect\r\n", strlen("Unable to connect to the server: password incorrect\r\n"), 0);
+            return NULL;
+        }
         input_s.erase(0, strlen("PASS ") + password.length() + 2);
-        cout << "password = " << password << endl;
-        cout << "Inputv2 = " << input_s << endl;
     }
     // ANCHOR xchat check
     if (input_s.find("CAP") != std::string::npos)
         input_s.erase(0, strlen("CAP LS\n\r"));
-    cout << "Inputv3 = " << input_s << endl;
     User current_user = createUser(input_s, params->uidPool, params->fd);
-
-    // TODO Create user with infos;
+    send(params->fd, ":ratio 1 dOD: Welcome to the Internet Relay Network dOD\r\n", strlen(":ratio 1 Dod: Welcome to the Internet Relay Network dOD\r\n"), 0);
+    send(params->fd, ":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n", strlen(":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n"), 0);
+    send(params->fd, ":ratio 3 dOD: This server was created?\r\n", strlen(":ratio 3 dOD: This server was created?\r\n"), 0);
+    send(params->fd, ":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
 	while(!loop)
 	{
 		bzero(input, 256);	 
