@@ -8,6 +8,7 @@ class Channel;
 #include <vector>
 #include <string>
 #include <iostream>
+#include <list>
 #include <sys/time.h>
 
 using namespace std;
@@ -27,21 +28,24 @@ class Channel {
 	string			_hash;
 	ssize_t			_next_uid;
 	vector<Message>	_hist;
-	vector<pair<ssize_t, timeval> >	_log;
+	vector<pair<User&, timeval> >	_log;
 
 	public:
 	Channel(string name, string pass, string motd);
+	Channel(string name, string motd);
 	~Channel() {};
 
 	string	getName(void);
 	ssize_t	getUidAfter(timeval time);
 	ssize_t	getNextUid(void);
-	bool	userJoin(User usr, string pass);
-	bool	userLeave(User usr);
+	bool	userJoin(User& usr, string pass);
+	bool	userLeave(User& usr);
 	void	receiveMsg(Message msg);
 	void	printAllMsg(void);
 	bool	isLog(User usr);
 	string	getMsgHist(User usr);
+	vector<string>	getNickLst(void);
+	bool	userBan(User& usr, User& banner);
 };
 
 #endif

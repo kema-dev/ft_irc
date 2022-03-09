@@ -10,9 +10,10 @@ using namespace std;
 class ChannelDB {
 	private:
 	vector<Channel*>	_db;
+	string	_name;
 
 	public:
-	ChannelDB() {};
+	ChannelDB(string name) {_name = name;};
 	~ChannelDB() {};
 
 	void		add(Channel* chan);

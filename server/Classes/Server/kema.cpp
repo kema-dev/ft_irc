@@ -1,21 +1,21 @@
 #include "../Channel/Channel.hpp"
 #include "../Log/Log.hpp"
 #include "../ChannelDB/ChannelDB.hpp"
+#include "../UserDB/UserDB.hpp"
 
 int main(void) {
+	clearLog();
+	log("-------------------------------------------------------------------------------------");
 	UidPool	pool = UidPool();
-	User	usr = User("kema", "operator", "passworduser", pool);
-	ChannelDB* chandb = new ChannelDB();
-	Channel*	chan = new Channel("chan", "passwordchannel", "motd");
+	UserDB usrdb = UserDB("user_database");
+	User*	usr = new User("firstname", "firstfullname", "operator", pool);
+	usrdb.add(usr);
+	User*	usr2 = new User("secondname", "secondfullname", "secondnickname", "operator", pool);
+	usrdb.add(usr2);
+	ChannelDB*	chandb = new ChannelDB("chan_database");
+	Channel*	chan = new Channel("chan", "", "motd");
 	chandb->add(chan);
-	usr.joinChannel(chan, "passwordchannel");
-	usr.sendMessage("this is before", chan);
-	User	after = User("after", "operator", "passworduser", pool);
-	after.joinChannel(chan, "passwordchannel");
-	usr.sendMessage("this is after", chan);
-	cout << chandb->search(chan)->getMsgHist(after);
-	cout << endl;
-	cout << chan->getMsgHist(after);
-	log("test");
-	cout << "server logs:" << endl << getLog() << endl;
+	usr->joinChannel(chan, "");
+	usr2->joinChannel(chan, "");
+	usr->ban(*usr2, *chan);
 }

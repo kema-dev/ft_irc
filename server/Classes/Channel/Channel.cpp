@@ -12,7 +12,7 @@ Channel::Channel(string name, string pass, string motd) {
 		}
 	}
 	catch (WrongChannelName& e) {
-		cerr << e.info() << std::endl;
+		cerr << e.info() << endl;
 		return ;
 	}
 	try {
@@ -25,7 +25,28 @@ Channel::Channel(string name, string pass, string motd) {
 	_name = name;
 	_hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
-	
+	log(LIGHT_MAGENTA, "Channel ", GREEN, _name, DEFAULT, " with hash ", GREEN, _hash, LIGHT_BLUE, " has been created", DEFAULT);
+}
+
+Channel::Channel(string name, string motd) {
+	try {
+		if (name == "") {
+			throw (WrongChannelName());
+		}
+		for (size_t i = 0; name[i]; i++) {
+			if (!(isalnum(name[i]))) {
+				throw (WrongChannelName());
+			}
+		}
+	}
+	catch (WrongChannelName& e) {
+		cerr << e.info() << endl;
+		return ;
+	}
+	_name = name;
+	_hist.push_back(Message(motd, "MOTD", -1));
+	_next_uid = 0;
+	log(LIGHT_MAGENTA, "Channel ", GREEN, _name, DEFAULT, " with hash ", GREEN, _hash, LIGHT_BLUE, " has been created", DEFAULT);
 }
 
 string	Channel::getName(void){
@@ -45,7 +66,7 @@ ssize_t	Channel::getUidAfter(timeval time) {
 	return -1;
 }
 
-bool	Channel::userJoin(User usr, string pass) {
+bool	Channel::userJoin(User& usr, string pass) {
 	try {
 		if (md5(pass) != _hash) {
 			return false;
@@ -63,23 +84,25 @@ bool	Channel::userJoin(User usr, string pass) {
 		cerr << e.what() << endl;
 		return false;
 	}
-	_log.push_back(pair<ssize_t, timeval>(usr.getUid(), time));
+	_log.push_back(pair<User&, timeval>(usr, time));
+	log(GREEN, usr.getFullName(), LIGHT_BLUE, " joined ", LIGHT_MAGENTA, "channel ", GREEN, _name, DEFAULT);
 	return true;
 }
 
-bool	Channel::userLeave(User usr) {
-	vector<pair<ssize_t, timeval> >::iterator	it, end;
+bool	Channel::userLeave(User& usr) {
+	vector<pair<User&, timeval> >::iterator	it, end;
 	it = _log.begin();
 	end = _log.end();
 	ssize_t	id = usr.getUid();
 	while (it != end) {
-		if (it->first == id) {
+		if (it->first.getUid() == id) {
 			_log.erase(it);
 			return true;
 		}
 		it++;
 	}
 	return false;
+	log(RED, usr.getFullName(), LIGHT_BLUE, " left ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT);
 }
 
 void	Channel::receiveMsg(Message msg) {
@@ -107,12 +130,12 @@ void	Channel::printAllMsg(void) {
 }
 
 bool	Channel::isLog(User usr) {
-	vector<pair<ssize_t, timeval> >::iterator	it, end;
+	vector<pair<User&, timeval> >::iterator	it, end;
 	it = _log.begin();
 	end = _log.end();
 	ssize_t	id = usr.getUid();
 	while (it != end) {
-		if (it->first == id) {
+		if (it->first.getUid() == id) {
 			return true;
 		}
 		it++;
@@ -122,12 +145,12 @@ bool	Channel::isLog(User usr) {
 
 string	Channel::getMsgHist(User usr) {
 	if (isLog(usr) == true) {
-		vector<pair<ssize_t, timeval> >::iterator	it, end;
+		vector<pair<User&, timeval> >::iterator	it, end;
 		it = _log.begin();
 		end = _log.end();
 		ssize_t	id = usr.getUid();
 		while (it != end) {
-			if (it->first == id) {
+			if (it->first.getUid() == id) {
 				ssize_t pad = getUidAfter(it->second);
 				vector<Message>::iterator	itm, endm;
 				itm = _hist.begin() + pad + 1;
@@ -144,4 +167,32 @@ string	Channel::getMsgHist(User usr) {
 		}
 	}
 	return "";
+}
+
+vector<string>	Channel::getNickLst(void) {
+	vector<string>vec;
+	vector<pair<User&, timeval> >::iterator	it, end;
+	it = _log.begin();
+	end = _log.end();
+	while (it != end) {
+		vec.push_back(it->first.getNickName());
+		it++;
+	}
+	return vec;
+}
+
+bool	Channel::userBan(User& usr, User& banner) {
+	vector<pair<User&, timeval> >::iterator	it, end;
+	it = _log.begin();
+	end = _log.end();
+	ssize_t	id = usr.getUid();
+	while (it != end) {
+		if (it->first.getUid() == id) {
+			_log.erase(it);
+			log(RED, usr.getFullName(), LIGHT_BLUE, " has been banned from ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT, " by ", RED, banner.getFullName(), DEFAULT);
+			return true;
+		}
+		it++;
+	}
+	return false;
 }

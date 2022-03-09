@@ -5,6 +5,9 @@ class User;
 #include "../UidPool/UidPool.hpp"
 #include "../Channel/Channel.hpp"
 #include "../Crypto/Crypto.hpp"
+#include "../UserDB/UserDB.hpp"
+#include "../Log/Log.hpp"
+#include "../UidPool/UidPool.hpp"
 #include <sys/types.h>
 #include <iostream>
 
@@ -46,6 +49,51 @@ class WrongRoleNameUser : public exception
 		}
 };
 
+class BadRole : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("User is not an operator");
+		}
+};
+
+class NotLogged : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("User is not logged to the channel");
+		}
+};
+
+class NotLoggedGlobal : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("User is not logged to the server");
+		}
+};
+
+class AlreadyLogged : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("User is not already logged in to the server (probably with another client)");
+		}
+};
+
+class SameInfo : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("Requested user infos are already in UserDB");
+		}
+};
+
 class User {
 	private:
 	string 		_username;
@@ -61,11 +109,14 @@ class User {
 	string		_hash;
 
 	public:
-    User(string username, string fullname, string role, UidPool& pool);
+  User(string username, string fullname, string role, UidPool& pool);
 	User(string username, string fullname, string nickname, string hostname, string servername, string role, UidPool& pool);
+
 	~User() {};
 	
-	string	getName(void);
+	string	getNickName(void);
+	string	getUserName(void);
+	string	getFullName(void);
 	string	getRole(void);
 	ssize_t	getNbMsg(void);
 	bool	getBanStatus(void);
@@ -73,7 +124,9 @@ class User {
 	ssize_t	getUid(void);
 	string	getHash(void);
 
-	bool	setNickName(string new_name);
+	bool	setUserName(string new_username);
+	bool	setNickName(string new_nickname);
+	bool	setFullName(string new_fullname);
 	bool	setRole(string new_role);
 	bool	setNbMsg(ssize_t new_nb_msg);
 	bool	setBanStatus(bool new_ban_status);
@@ -82,9 +135,12 @@ class User {
 	bool	setHash(string new_hash);
 	bool	setPass(string new_pass);
 
-	bool	logIn(string pass);
+	bool	logIn(UserDB* db);
+	bool	logOut(UserDB* db);
 	bool	sendMessage(string content, Channel* chan);
 	bool	joinChannel(Channel* chan, string pass);
+	bool	ban(User& usr, Channel& chan);
+	void	getBanned(Channel& chan, User& banner);
 };
 
 std::ostream &	operator<<(std::ostream &stream, User &rhs);
