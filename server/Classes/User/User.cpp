@@ -28,10 +28,10 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 	}
 	try {
 		if (role == "") {
-			throw (WrongUserName());
+			throw (WrongRoleNameUser());
 		}
 		if (role != "user" && role != "operator") {
-			throw (WrongUserName());
+			throw (WrongRoleNameUser());
 		}
 	}
 	catch (WrongRoleNameUser& e) {
@@ -55,7 +55,7 @@ User::User(string username, string fullname, string role, UidPool& pool) {
 	_active_status = true;
 }
 
-User::User(string username, string fullname, string nickname, string role, UidPool& pool) {
+User::User(string username, string fullname, string nickname, string hostname, string servername, string role, UidPool& pool) {
 	try {
 		if (username == "") {
 			throw (WrongUserName());
@@ -66,23 +66,31 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 			}
 		}
         if (fullname == "") {
-			throw (WrongUserName());
+			throw (WrongFullName());
 		}
 		for (size_t i = 0; fullname[i]; i++) {
 			if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
-		    	throw (WrongUserName());
+		    	throw (WrongFullName());
 			}
 		}
         if (nickname == "") {
-			throw (WrongUserName());
+			throw (WrongNickName());
 		}
 		for (size_t i = 0; nickname[i]; i++) {
 			if (!(isalnum(nickname[i]))) {
-		    	throw (WrongUserName());
+		    	throw (WrongNickName());
 			}
 		}
 	}
 	catch (WrongUserName& e) {
+		cerr << e.info() << std::endl;
+		return ;
+	}
+    catch (WrongNickName& e) {
+		cerr << e.info() << std::endl;
+		return ;
+	}
+    catch (WrongFullName& e) {
 		cerr << e.info() << std::endl;
 		return ;
 	}
@@ -107,8 +115,10 @@ User::User(string username, string fullname, string nickname, string role, UidPo
 		return ;
 	}
 	_username = username;
-  _fullname = fullname;
-  _nickname = nickname;
+    _fullname = fullname;
+    _nickname = nickname;
+    _hostname = hostname;
+    _servername = servername;
 	_role = role;
 	_uid = id;
 	_nb_msg = 0;

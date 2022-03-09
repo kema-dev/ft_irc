@@ -19,6 +19,24 @@ class WrongUserName : public exception
 		}
 };
 
+class WrongNickName : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("Nickname should only contain alphanumeric characters");
+		}
+};
+
+class WrongFullName : public exception
+{
+	public:
+		virtual const string	info() const throw()
+		{
+			return ("Fullname should only contain alphanumeric characters");
+		}
+};
+
 class WrongRoleNameUser : public exception
 {
 	public:
@@ -33,6 +51,8 @@ class User {
 	string 		_username;
     string      _nickname;
     string      _fullname;
+    string      _hostname;
+    string      _servername;
 	string		_role;
 	ssize_t		_nb_msg;
 	bool		_ban_status;
@@ -42,7 +62,7 @@ class User {
 
 	public:
     User(string username, string fullname, string role, UidPool& pool);
-	User(string username, string fullname, string nickname ,string role, UidPool& pool);
+	User(string username, string fullname, string nickname, string hostname, string servername, string role, UidPool& pool);
 	~User() {};
 	
 	string	getName(void);
