@@ -15,6 +15,6 @@ class PopopenFail : public exception
 		}
 };
 
-string	md5(string pass);
+string	sha256(string pass);
 
 #endif
