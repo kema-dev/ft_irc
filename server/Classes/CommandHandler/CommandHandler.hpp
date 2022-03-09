@@ -10,10 +10,6 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 
-enum Operator_commands {
-    kick, ban, move, Last2 //Ajouter des commandes?
-};
-
 int command_check(std::string message, int fd);
 
 #endif
