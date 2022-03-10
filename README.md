@@ -96,10 +96,10 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
 - [X] Create the core of the project (Makefile, folders...)
 - [X] Create GitHub Actions to automate testing
 - [X] Learn how an IRC server works
-- [ ] Create the first basic server
-- [ ] Make server / client connection work
-- [ ] Add user capabilities
-- [ ] Add operator capabilities
+- [X] Create the first basic server
+- [X] Make server / client connection work
+- [ ] Implement commands
+- [ ] Make multi-client work
 
 See the [open issues](https://github.com/kemadev/ft_irc/issues) for a full list of proposed features (and known issues).
 
