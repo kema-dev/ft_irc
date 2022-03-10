@@ -5,18 +5,24 @@ using namespace std;
 void init_kqueue(int socket, int &kq)
 {
     (void)socket;
-    struct kevent ;
-    try
-    {
+    struct kevent event_list[1];
+    try {
         if ((kq = kqueue()) == -1)
             throw(ErrKQueue());
     }
-    catch(const ErrKQueue e)
-    {
+    catch(const ErrKQueue e) {
         std::cerr << e.info() << '\n';
         exit(KQUEUE_ERR);
     }
-        
+    EV_SET(&event_list[0], socket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
+    try {
+        if (kevent(kq, event_list, 1, NULL, 0, NULL) == -1)
+            throw(ErrKEvent());
+    }
+    catch (const ErrKEvent e){
+        std::cerr << e.info() << std::endl;
+        exit(KEVENT_ERR);
+    }
 }
 
 User& createUser(std::string input, UidPool pool, int socket)

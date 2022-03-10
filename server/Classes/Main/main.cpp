@@ -91,12 +91,23 @@ int	main(int argc, char** argv)
 
     socklen_t len = sizeof(clntAdd);
     UidPool	pool = UidPool();
+    int kq, new_event;
+    struct kevent event_list[1];
+    init_kqueue(listenFd, kq);
     while(1)
     {
+        cout << "Listening to port " << argv[1] << endl;
         try {
-            cout << "Listening to port " << argv[1] << endl;
-            connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
-            if (connFd < 0)
+            if ((new_event = kevent(kq, NULL, 0, event_list, 1, NULL)) == -1)
+                throw (ErrKEvent());
+        }
+        catch (const ErrKEvent e) {
+            std::cerr << e.info() << std::endl;
+            exit(KEVENT_ERR);
+        }
+        int event_fd = event_list[0].ident;
+        try {
+            if ((connFd = accept(event_fd, (struct sockaddr *) &clntAdd, (socklen_t *) &len)) == -1)
                 throw (CannotAcceptConnection());
             else
             {
@@ -112,7 +123,7 @@ int	main(int argc, char** argv)
         catch (const CannotAcceptConnection e){
             std::cerr << e.info() << std::endl;
             return (ERR_CONNECTION);
-        }
+        }   
     }
 }
 
@@ -170,12 +181,9 @@ void *task1 (void *dummyPt)
     send(params->fd, ":ratio 3 dOD: This server was created?\r\n", strlen(":ratio 3 dOD: This server was created?\r\n"), 0);
     send(params->fd, ":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
 
-    int kq;
-    struct kevent event_list[1];
 	while(!loop)
 	{
-        //init_kqueue
-		bzero(input, 256);	 
+		bzero(input, 256);
 		int n = read(params->fd, input, 255);
         std::cout << "Input = " << input << std::endl;
         try {

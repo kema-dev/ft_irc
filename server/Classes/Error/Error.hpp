@@ -122,4 +122,14 @@ class ErrKQueue : public std::exception
 		}
 };
 
+#define KEVENT_ERR -11
+class ErrKEvent : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Error in kevent.");
+		}
+};
+
 #endif

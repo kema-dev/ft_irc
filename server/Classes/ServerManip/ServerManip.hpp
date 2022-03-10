@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <sys/event.h>
 
+void init_kqueue(int socket, int &kq);
 User& createUser(std::string input, UidPool pool, int socket);
 
 #endif
