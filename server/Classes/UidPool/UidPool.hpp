@@ -10,7 +10,7 @@ using namespace std;
 class PoolFull : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Too much users already got and uid");
 		}

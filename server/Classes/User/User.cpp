@@ -3,48 +3,24 @@
 using namespace std;
 
 User::User(string username, string fullname, string hostname, string servername, UidPool& pool) {
-	try {
-		if (username == "") {
-			throw (WrongUserName());
-		}
-		for (size_t i = 0; username[i]; i++) {
-			if (!(isalnum(username[i]))) {
-		    		throw (WrongUserName());
-			}
-		}
-        if (fullname == "") {
-			throw (WrongUserName());
-		}
-		for (size_t i = 0; fullname[i]; i++) {
-			if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
-		    	throw (WrongUserName());
-			}
+	if (username == "") {
+		throw (WrongUserName());
+	}
+	for (size_t i = 0; username[i]; i++) {
+		if (!(isalnum(username[i]))) {
+				throw (WrongUserName());
 		}
 	}
-	catch (WrongUserName& e) {
-		cerr << e.info() << endl;
-		return ;
+	if (fullname == "") {
+		throw (WrongUserName());
 	}
-	// try {
-	// 	if (role == "") {
-	// 		throw (WrongRoleNameUser());
-	// 	}
-	// 	if (role != "user" && role != "operator") {
-	// 		throw (WrongRoleNameUser());
-	// 	}
-	// }
-	// catch (WrongRoleNameUser& e) {
-	// 	cerr << e.info() << endl;
-	// 	return ;
-	// }
+	for (size_t i = 0; fullname[i]; i++) {
+		if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
+			throw (WrongUserName());
+		}
+	}
 	size_t id;
-	try {
-		id = pool.generate();
-	}
-	catch (PoolFull& e) {
-		cerr << e.info() << endl;
-		return ;
-	}
+	id = pool.generate();
 	_username = username;
     _fullname = fullname;
 	_nickname = "";
@@ -61,64 +37,32 @@ User::User(string username, string fullname, string hostname, string servername,
 }
 
 User::User(string username, string fullname, string nickname, string hostname, string servername, UidPool& pool) {
-	try {
-		if (username == "") {
-			throw (WrongUserName());
+	if (username == "") {
+		throw (WrongUserName());
+	}
+	for (size_t i = 0; username[i]; i++) {
+		if (!(isalnum(username[i]))) {
+				throw (WrongUserName());
 		}
-		for (size_t i = 0; username[i]; i++) {
-			if (!(isalnum(username[i]))) {
-		    		throw (WrongUserName());
-			}
-		}
-        if (fullname == "") {
+	}
+	if (fullname == "") {
+		throw (WrongFullName());
+	}
+	for (size_t i = 0; fullname[i]; i++) {
+		if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
 			throw (WrongFullName());
 		}
-		for (size_t i = 0; fullname[i]; i++) {
-			if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
-		    	throw (WrongFullName());
-			}
-		}
-        if (nickname == "") {
+	}
+	if (nickname == "") {
+		throw (WrongNickName());
+	}
+	for (size_t i = 0; nickname[i]; i++) {
+		if (!(isalnum(nickname[i]))) {
 			throw (WrongNickName());
 		}
-		for (size_t i = 0; nickname[i]; i++) {
-			if (!(isalnum(nickname[i]))) {
-		    	throw (WrongNickName());
-			}
-		}
 	}
-	catch (WrongUserName& e) {
-		cerr << e.info() << endl;
-		return ;
-	}
-    catch (WrongNickName& e) {
-		cerr << e.info() << std::endl;
-		return ;
-	}
-    catch (WrongFullName& e) {
-		cerr << e.info() << std::endl;
-		return ;
-	}
-	// try {
-	// 	if (role == "") {
-	// 		throw (WrongUserName());
-	// 	}
-	// 	if (role != "user" && role != "operator") {
-	// 		throw (WrongUserName());
-	// 	}
-	// }
-	// catch (WrongRoleNameUser& e) {
-	// 	cerr << e.info() << endl;
-	// 	return ;
-	// }
 	size_t id;
-	try {
-		id = pool.generate();
-	}
-	catch (PoolFull& e) {
-		cerr << e.info() << endl;
-		return ;
-	}
+	id = pool.generate();
 	_username = username;
 	_fullname = fullname;
 	_nickname = nickname;
@@ -213,34 +157,16 @@ bool	User::setHash(string new_hash) {
 }
 
 bool	User::setPass(string new_pass) {
-	try {
-		_hash = sha256(new_pass);
-	}
-	catch (PopopenFail& e) {
-		cerr << e.info() << endl;
-		return false;
-	}
+	_hash = sha256(new_pass);
 	return true;
 }
 
 bool	User::logIn(UserDB* db) {
-	try {
-		if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != false)) {
-			throw AlreadyLogged();
-		}
+	if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != false)) {
+		throw AlreadyLogged();
 	}
-	catch (SameInfo& e) {
-		cerr << e.info() << endl;
-		return false;
-	}
-	try {
-		if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != false)) {
-			throw AlreadyLogged();
-		}
-	}
-	catch (AlreadyLogged& e) {
-		cerr << e.info() << endl;
-		return false;
+	if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != false)) {
+		throw AlreadyLogged();
 	}
 	this->setActiveStatus(true);
 	log(LIGHT_MAGENTA, "User ", GREEN, this->getFullName(), LIGHT_BLUE, " logged in to ", GREEN, "the server", DEFAULT);
@@ -248,14 +174,8 @@ bool	User::logIn(UserDB* db) {
 }
 
 bool	User::logOut(UserDB* db) {
-	try {
-		if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != true)) {
-			throw NotLoggedGlobal();
-		}
-	}
-	catch (NotLoggedGlobal& e) {
-		cerr << e.info() << endl;
-		return false;
+	if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != true)) {
+		throw NotLoggedGlobal();
 	}
 	this->setActiveStatus(false);
 	log(LIGHT_MAGENTA, "User ", RED, this->getFullName(), LIGHT_BLUE, " logged out from ", RED, "the server", DEFAULT);
@@ -265,13 +185,7 @@ bool	User::logOut(UserDB* db) {
 bool	User::sendMessage(string content, Channel* chan) {
 	if (chan->isLog(*this) == true) {
 		Message msg;
-		try {
-			msg = Message(content, this->getFullName(), chan->getNextUid());
-		}
-		catch (PoolFull& e) {
-			cerr << e.info() << endl;
-			return false;
-		}
+		msg = Message(content, this->getFullName(), chan->getNextUid());
 		chan->receiveMsg(msg);
 		this->setNbMsg(getNbMsg() + 1);
 		log(GREEN, this->getFullName(), LIGHT_BLUE, " sent message to ", GREEN, chan->getName(), DEFAULT);
@@ -285,22 +199,8 @@ bool	User::joinChannel(Channel* chan, string pass) {
 }
 
 bool	User::ban(User& usr, Channel& chan) {
-	// try {
-	// 	if (this->getRole() != "operator") {
-	// 		throw BadRole();
-	// 	}
-	// }
-	// catch (BadRole& e) {
-	// 	cerr << e.info() << endl;
-	// 	return false;
-	// }
-	try {
-		if (chan.isLog(usr) != true) {
-			throw NotLogged();
-		}
-	}
-	catch (NotLogged& e) {
-		cerr << e.info() << endl;
+	if (chan.isLog(usr) != true) {
+		throw NotLogged();
 	}
 	usr.getBanned(chan, *this);
 	return true;
@@ -312,28 +212,16 @@ void	User::getBanned(Channel& chan, User& banner) {
 }
 
 bool	User::setPasswd(Channel& chan, string pass) {
-	try {
-		if (chan.isOper(*this) != true) {
-			throw BadRole();
-		}
-	}
-	catch (BadRole& e) {
-		cerr << e.info() << endl;
-		return false;
+	if (chan.isOper(*this) != true) {
+		throw BadRole();
 	}
 	chan.setPasswd(pass);
 	return true;
 }
 
 bool	User::setOperPasswd(Channel& chan, string pass) {
-	try {
-		if (chan.isOper(*this) != true) {
-			throw BadRole();
-		}
-	}
-	catch (BadRole& e) {
-		cerr << e.info() << endl;
-		return false;
+	if (chan.isOper(*this) != true) {
+		throw BadRole();
 	}
 	chan.setOperPasswd(pass);
 	return true;

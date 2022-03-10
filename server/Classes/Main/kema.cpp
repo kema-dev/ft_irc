@@ -1,21 +1,25 @@
 #include "../Channel/Channel.hpp"
 #include "../Log/Log.hpp"
-#include "../ChannelDB/ChannelDB.hpp"
-#include "../UserDB/UserDB.hpp"
+#include "../Server/Server.hpp"
 
 int main(void) {
 	clearLog();
 	log("-------------------------------------------------------------------------------------");
-	UidPool	pool = UidPool();
-	UserDB usrdb = UserDB("user_database");
-	User*	usr = new User("firstname", "firstfullname", "hostname", "servername", pool);
-	usrdb.add(usr);
-	User*	usr2 = new User("secondname", "secondfullname", "secondnickname", "hostname", "servername", pool);
-	usrdb.add(usr2);
-	ChannelDB*	chandb = new ChannelDB("chan_database");
-	Channel*	chan = new Channel("chan", "chan_password", "motd", "oper_password");
-	chandb->add(chan);
-	usr->joinChannel(chan, "chan_password");
-	usr2->joinChannel(chan, "chan_password");
-	usr->ban(*usr2, *chan);
+	Server	server = Server("servername", "serverpassword");
+	User*	usr = nullptr;
+	try {
+		usr = new User("first_name", "firstfullname", "hostname", "servername", *(server.pool));
+	}
+	catch (exception& e) {
+		cerr << e.what() << endl;
+		logError("user creation", e.what());
+	}
+	// server.userDB->add(usr);
+	// User*	usr2 = new User("secondname", "secondfullname", "secondnickname", "hostname", "servername", *(server.pool));
+	// server.userDB->add(usr2);
+	// Channel*	chan = new Channel("chan", "chanpassword", "motd", "operpassword");
+	// server.chanDB->add(chan);
+	// usr->joinChannel(chan, "chanpassword");
+	// usr2->joinChannel(chan, "chanpassword");
+	// usr->ban(*usr2, *chan);
 }

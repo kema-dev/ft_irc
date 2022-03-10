@@ -6,10 +6,19 @@
 
 using namespace std;
 
+class NotAlnum : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Can't hash non alphanumeric characters.");
+		}
+};
+
 class PopopenFail : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("popopen() failed.");
 		}
