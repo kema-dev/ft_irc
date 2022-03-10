@@ -112,4 +112,14 @@ class ClientDisconnected : public std::exception
 		}
 };
 
+#define KQUEUE_ERR -10
+class ErrKQueue : public std::exception
+{
+	public:
+		virtual const std::string	info() const throw()
+		{
+			return ("Error in kqueue initialisation.");
+		}
+};
+
 #endif

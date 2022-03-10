@@ -64,7 +64,7 @@ int command_check(std::string message, int fd)
                 std::cout << "PART" << std::endl;
                 channel_s = message.substr(pos + 1, message.length() - pos - 3);
                 // TODO Implement inChannel(User user, std::string channel) check_channel(channel) < 0
-                if (channel_s.compare("ratio") != 0 /* ratio cette condition */)
+                if (channel_s.compare("#ratio") != 0 /* ratio cette condition */)
                 {
                     std::string msg;
                     msg = "Unable to join the channel: " + channel_s + " is unknown.\n";

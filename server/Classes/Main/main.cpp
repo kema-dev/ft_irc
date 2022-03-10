@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <sys/event.h>
 
 typedef struct s_params
 {
@@ -97,8 +98,8 @@ int	main(int argc, char** argv)
             connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
             if (connFd < 0)
                 throw (CannotAcceptConnection());
-            else  
-            {    
+            else
+            {
                 pthread_t  a;
                 threadV.push_back(a);
                 params.fd = connFd;
@@ -124,7 +125,7 @@ void *task1 (void *dummyPt)
     int nbError = 0;
 	bool loop = false;
 
-    // send(params->fd, "Connection established.\n", strlen("Connection established.\n"), MSG_DONTWAIT); 
+    // send(params->fd, "Connection established.\n", strlen("Connection established.\n"), MSG_DONTWAIT);
 	bzero(input, 256);
     int n = read(params->fd, input, 255);
     try {
@@ -168,8 +169,12 @@ void *task1 (void *dummyPt)
     send(params->fd, ":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n", strlen(":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n"), 0);
     send(params->fd, ":ratio 3 dOD: This server was created?\r\n", strlen(":ratio 3 dOD: This server was created?\r\n"), 0);
     send(params->fd, ":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
+
+    int kq;
+    struct kevent event_list[1];
 	while(!loop)
 	{
+        //init_kqueue
 		bzero(input, 256);	 
 		int n = read(params->fd, input, 255);
         std::cout << "Input = " << input << std::endl;

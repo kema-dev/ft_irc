@@ -29,8 +29,8 @@ ARG			:= 	4242 password
 #---------------------------------------------------------------------------------
 HEADERS		:=	$(shell find $(INCDIR) -type f -name *.$(HDEXT))
 SOURCES		:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-KEMASOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Server | grep -v template)
-DODSOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Server | grep -v template)
+KEMASOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Main | grep -v template)
+DODSOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Main | grep -v template)
 OBJECTS		:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 KEMAOBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(KEMASOURCES:.$(SRCEXT)=.$(OBJEXT)))
 DODBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(DODSOURCES:.$(SRCEXT)=.$(OBJEXT)))
@@ -109,12 +109,12 @@ template:
 
 kema: directories $(KEMAOBJECTS)
 	@printf "\ec"
-	@$(CC) $(KEMAOBJECTS) Classes/Server/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
+	@$(CC) $(KEMAOBJECTS) Classes/Main/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
 	@./$(TARGETDIR)/$(KEMAOUT)
 
 dod: directories $(DODBJECTS)
 	@printf "\ec"
-	$(CC) $(DODBJECTS) Classes/Server/Server.cpp Classes/ServerManip/ServerManip.cpp -o $(TARGETDIR)/$(DODOUT)
+	$(CC) $(DODBJECTS) Classes/Main/main.cpp -o $(TARGETDIR)/$(DODOUT)
 	./$(TARGETDIR)/$(DODOUT) $(ARG)
 
 #Link

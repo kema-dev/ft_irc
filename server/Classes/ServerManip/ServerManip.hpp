@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <sys/event.h>
 
 User& createUser(std::string input, UidPool pool, int socket);
 

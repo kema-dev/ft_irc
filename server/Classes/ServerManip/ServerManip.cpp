@@ -2,11 +2,28 @@
 
 using namespace std;
 
+void init_kqueue(int socket, int &kq)
+{
+    (void)socket;
+    struct kevent ;
+    try
+    {
+        if ((kq = kqueue()) == -1)
+            throw(ErrKQueue());
+    }
+    catch(const ErrKQueue e)
+    {
+        std::cerr << e.info() << '\n';
+        exit(KQUEUE_ERR);
+    }
+        
+}
+
 User& createUser(std::string input, UidPool pool, int socket)
 {
     string nickname;
-    char username[50];
     string fullname;
+    char username[50];
     char hostname[50];
     char servername[50];
     size_t pos;
@@ -37,7 +54,7 @@ User& createUser(std::string input, UidPool pool, int socket)
     // cout << hostname << endl;
     // cout << servername << endl;
     // cout << fullname << endl;
-    User* user = new User(username, fullname, nickname, hostname, servername, "user", pool);
+    User* user = new User(username, fullname, nickname, hostname, servername, pool);
     cout << "User created!" << endl;
     return *user;
 }
