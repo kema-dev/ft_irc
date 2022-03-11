@@ -87,5 +87,6 @@ void	log(string str1, string str2, string str3, string str4, string str5, string
 string	getTime(void);
 string	getLog(void);
 void	clearLog(void);
+void	logError(string str1, const char* str2);
 
 #endif

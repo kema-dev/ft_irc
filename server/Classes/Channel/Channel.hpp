@@ -16,7 +16,7 @@ using namespace std;
 class WrongChannelName : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Channel should only contain alphanumeric characters");
 		}

@@ -1,27 +1,15 @@
 #include "Channel.hpp"
 
 Channel::Channel(string name, string pass, string motd, string oper_pass) {
-	try {
-		if (name == "") {
+	if (name == "") {
+		throw (WrongChannelName());
+	}
+	for (size_t i = 0; name[i]; i++) {
+		if (!(isalnum(name[i]))) {
 			throw (WrongChannelName());
 		}
-		for (size_t i = 0; name[i]; i++) {
-			if (!(isalnum(name[i]))) {
-				throw (WrongChannelName());
-			}
-		}
 	}
-	catch (WrongChannelName& e) {
-		cerr << e.info() << endl;
-		return ;
-	}
-	try {
-		_hash = sha256(pass);
-	}
-	catch (PopopenFail& e) {
-		cerr << e.info() << endl;
-		return ;
-	}
+	_hash = sha256(pass);
 	_name = name;
 	_hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
@@ -48,23 +36,11 @@ ssize_t	Channel::getUidAfter(timeval time) {
 }
 
 bool	Channel::userJoin(User& usr, string pass) {
-	try {
-		if (sha256(pass) != _hash) {
-			return false;
-		}
-	}
-	catch (PopopenFail& e) {
-		cerr << e.info() << endl;
+	if (sha256(pass) != _hash) {
 		return false;
 	}
 	timeval time;
-	try {
-		gettimeofday(&time, nullptr);
-	}
-	catch (exception& e) {
-		cerr << e.what() << endl;
-		return false;
-	}
+	gettimeofday(&time, nullptr);
 	_log.push_back(pair<User&, timeval>(usr, time));
 	_roles.push_back(pair<User&, bool>(usr, USER));
 	log(GREEN, usr.getFullName(), LIGHT_BLUE, " joined ", LIGHT_MAGENTA, "channel ", GREEN, _name, DEFAULT);

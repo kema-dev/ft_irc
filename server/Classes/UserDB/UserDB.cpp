@@ -29,17 +29,11 @@ User*	UserDB::search(ssize_t id) {
 }
 
 bool	UserDB::check(string username, string fullname, string nickname) {
-	try {
-		vector<User*>::iterator it = _db.begin(), end = _db.end();
-		while (it != end) {
-			if (((*it)->getUserName() == username) && ((*it)->getFullName() == fullname) && ((*it)->getNickName() == nickname)) {
-				throw SameInfo();
-			}
+	vector<User*>::iterator it = _db.begin(), end = _db.end();
+	while (it != end) {
+		if (((*it)->getUserName() == username) && ((*it)->getFullName() == fullname) && ((*it)->getNickName() == nickname)) {
+			return false;
 		}
-	}
-	catch (SameInfo &e) {
-		cerr << e.info() << endl;
-		return false;
 	}
 	return true;
 }

@@ -1,6 +1,12 @@
 #include "Crypto.hpp"
 
 string	sha256(string str) {
+	for (size_t i = 0; str[i]; i++) {
+		if (!(isalnum(str[i]))) {
+			cerr << str[i] << endl;
+			throw (NotAlnum());
+		}
+	}
 	if (str.length() < 1)
 		return "";
 	FILE *fpipe;
@@ -10,7 +16,6 @@ string	sha256(string str) {
 
 	if (0 == (fpipe = (FILE*)popen(command, "r"))) {
 		throw (PopopenFail());
-		return "";
 	}
 	string out;
 	while (fread(&c, sizeof(c), 1, fpipe)) {

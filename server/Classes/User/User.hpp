@@ -16,7 +16,7 @@ using namespace std;
 class WrongUserName : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Username should only contain alphanumeric characters");
 		}
@@ -25,7 +25,7 @@ class WrongUserName : public exception
 class WrongNickName : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Nickname should only contain alphanumeric characters");
 		}
@@ -34,7 +34,7 @@ class WrongNickName : public exception
 class WrongFullName : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Fullname should only contain alphanumeric characters");
 		}
@@ -43,7 +43,7 @@ class WrongFullName : public exception
 class WrongRoleNameUser : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Role should either be 'user' or 'operator'");
 		}
@@ -52,7 +52,7 @@ class WrongRoleNameUser : public exception
 class BadRole : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("User is not an operator");
 		}
@@ -61,7 +61,7 @@ class BadRole : public exception
 class NotLogged : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("User is not logged to the channel");
 		}
@@ -70,7 +70,7 @@ class NotLogged : public exception
 class NotLoggedGlobal : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("User is not logged to the server");
 		}
@@ -79,7 +79,7 @@ class NotLoggedGlobal : public exception
 class AlreadyLogged : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("User is not already logged in to the server (probably with another client)");
 		}
@@ -88,7 +88,7 @@ class AlreadyLogged : public exception
 class SameInfo : public exception
 {
 	public:
-		virtual const string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Requested user infos are already in UserDB");
 		}

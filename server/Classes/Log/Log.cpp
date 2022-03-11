@@ -12,25 +12,6 @@ string	getTime(void) {
 	return out;
 }
 
-// void	log(list<std::string>& args) {
-// 	fstream log;
-// 	log.open(LOGFILE_PATH, ios_base::app);
-// 	if (!args.empty())
-// 	{
-// 		log << getTime();
-// 		int step = 1;
-// 		for (list<std::string>::iterator it = args.begin(); ; advance(it, step))
-// 		{
-// 			log << (*it);
-// 			if (distance(it, args.end()) > step)
-// 				break;
-// 		}
-// 	}
-// 	log << endl;
-// 	log.close();
-// }
-
-
 void	log(string str) {
 	fstream log;
 	log.open(LOGFILE_PATH, ios_base::app);
@@ -359,5 +340,17 @@ void	clearLog(void) {
 	fstream log;
 	log.open(LOGFILE_PATH, ios::out | ios::trunc);
 	log << "";
+	log.close();
+}
+
+void	logError(string str1, const char* str2) {
+	fstream log;
+	log.open(LOGFILE_PATH, ios_base::app);
+	log << getTime();
+	log << "Exception caught during ";
+	log << str1;
+	log << ": ";
+	log << str2;
+	log << endl;
 	log.close();
 }
