@@ -62,22 +62,18 @@ User& createUser(std::string input, UidPool pool, int socket, string nickname)
     char servername[50];
     size_t pos;
     string cmd;
-    
-    bool nonick = false;
 
     cmd = input;
     if (nickname.empty() == true)
     {
         pos = cmd.find("NICK");
         if (pos == std::string::npos)
-            nonick = true;
-        if (nonick == true)
         {
             send(socket, "Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n", strlen("Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n"), 0);
             std::cout << "Ratio le exit(-1)" << std::endl;
             exit(-1);
         }
-        if (nonick == false)
+        else
         {
             nickname = cmd.substr(strlen("NICK") + 1 , cmd.length() - strlen("NICK") - (cmd.length() - (cmd.find("\n") - 2)));
             cmd.erase(0, strlen("NICK ") + nickname.length() + 2);

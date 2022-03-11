@@ -153,15 +153,11 @@ void *task1 (void *dummyPt)
     int nbError = 0;
 	bool loop = false;
 
-    // send(params->fd, "Connection established.\n", strlen("Connection established.\n"), MSG_DONTWAIT);
-    // 
     // // ANCHOR xchat check
     // if (input_s.find("CAP") != std::string::npos)
     //     input_s.erase(0, strlen("CAP LS\n\r"));
-    
 
     cout << "-----------------" << endl;
-
 	while(!loop)
 	{
         while ((input = read_socket(params->fd)).empty() == true)
@@ -173,7 +169,8 @@ void *task1 (void *dummyPt)
         if (nbPass == 0)
         {
             if (check_password(input, params->password, params->fd) == 0)
-                nbPass++;   
+                nbPass++;
+            continue;
         }
         if ((nbPass == 1) || (nbPass == 2))
         {
@@ -190,22 +187,29 @@ void *task1 (void *dummyPt)
         }
         if (nbPass == 3)
         {
+            send(params->fd, ":Default_Nickname!Default_Username@0 NICK dOD\r\n", strlen(":Default_Nickname!Default_Username@0 NICK dOD\r\n"), MSG_DONTWAIT);
             send(params->fd, ":ratio 1 dOD: Welcome to the Internet Relay Network dOD\r\n", strlen(":ratio 1 Dod: Welcome to the Internet Relay Network dOD\r\n"), 0);
             send(params->fd, ":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n", strlen(":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n"), 0);
             send(params->fd, ":ratio 3 dOD: This server was created?\r\n", strlen(":ratio 3 dOD: This server was created?\r\n"), 0);
             send(params->fd, ":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
+            send(params->fd, ":dOD!dginisty@irc.irc90s.com 4245 : thallard\r\n", strlen(":dOD!dginisty@irc.irc90s.com 4245 : thallard\r\n"), 0);
+            nbPass++;
+            continue;
         }
-        try{
-            security = command_check(input, params->fd);
-            if (security == CLIENT_DISCONNECTED)
-                nbError++;
-            if (nbError >= 5)
-                throw (ClientDisconnected());
-        }
-        catch (const ClientDisconnected e) {
-            std::cerr << e.info() << std::endl;
-            close(params->fd);
-            exit(CLIENT_DISCONNECTED);
+        if (nbPass > 3)
+        {
+            try{
+                security = command_check(input, params->fd);
+                if (security == CLIENT_DISCONNECTED)
+                    nbError++;
+                if (nbError >= 5)
+                    throw (ClientDisconnected());
+            }
+            catch (const ClientDisconnected e) {
+                std::cerr << e.info() << std::endl;
+                close(params->fd);
+                exit(CLIENT_DISCONNECTED);
+            }
         }
 	}
 	cout << "\nClosing thread and connection." << endl;

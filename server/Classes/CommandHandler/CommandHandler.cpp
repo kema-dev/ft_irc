@@ -51,13 +51,10 @@ int command_check(std::string message, int fd)
                 }
                 else
                 {
-                    std::string msg;
-                    msg = std::string(channel_s + " joined.\n");
-
-                    send(fd, ":dOD!dginisty@localhost JOIN ratio\r\n", strlen(":dOD!dginisty@localhost JOIN ratio\r\n"), MSG_DONTWAIT);
-                    send(fd, ":dOD!dginisty@localhost 332 : ratio Bonjour et gros ratio a toi:)\r\n", strlen(":dOD!dginisty@localhost 332 : ratio Bonjour et gros ratio a toi:)\r\n"), MSG_DONTWAIT);
-                    send(fd, ":ratio 353 dOD = ratio : dOD\r\n", strlen(":ratio 353 dOD = ratio : dOD\r\n"), MSG_DONTWAIT);
-                    send(fd, ":ratio 366 dOD ratio : End of NAMES list\r\n", strlen(":ratio 366 dOD ratio : End of NAMES list\r\n"), MSG_DONTWAIT);
+                    send(fd, ":dOD!dginisty@0 JOIN #ratio\r\n", strlen(":dOD!dginisty@0 JOIN #ratio\r\n"), 0);
+                    // send(fd, ":dOD!dginisty@localhost 332 :ratio :Bonjour et gros ratio a toi:)\r\n", strlen(":dOD!dginisty@localhost 332 :ratio :Bonjour et gros ratio a toi:)\r\n"), 0);
+                    send(fd, ":127.0.0.1 353 dOD = #ratio :@dOD\r\n", strlen(":127.0.0.1 353 dOD = #ratio :@dOD\r\n"), 0);
+                    send(fd, ":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n", strlen(":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n"), 0);
                 }
                 break;
             case 1:
