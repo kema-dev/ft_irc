@@ -11,6 +11,8 @@
 #include <sys/event.h>
 
 void init_kqueue(int socket, int &kq);
-User& createUser(std::string input, UidPool pool, int socket);
+User& createUser(std::string input, UidPool pool, int socket, string nickname);
+string parseNickname(string input);
+int check_password(string input, string server_password, int socket);
 
 #endif

@@ -127,18 +127,12 @@ int	main(int argc, char** argv)
     }
 }
 
-void *task1 (void *dummyPt)
+string read_socket(int socket)
 {
-    t_params* params = static_cast<t_params*>(dummyPt);
-    cout << "-----------------" << endl;
-	char input[256];
-    int security = 0;
-    int nbError = 0;
-	bool loop = false;
+    char input[256];
 
-    // send(params->fd, "Connection established.\n", strlen("Connection established.\n"), MSG_DONTWAIT);
-	bzero(input, 256);
-    int n = read(params->fd, input, 255);
+    bzero(input, 256);
+    int n = read(socket, input, 255);
     try {
         if (n < 0)
             throw(ReadImpossible());
@@ -146,52 +140,60 @@ void *task1 (void *dummyPt)
     catch (const ReadImpossible e){
         std::cerr << e.info() << std::endl;
     }
-    std::string input_s = input;
-    while (input_s.empty() == true)
-    {
-        cout << "Empty input." << endl;
-        bzero(input, 256);
-        int n = read(params->fd, input, 255);
-        try {
-            if (n < 0)
-                throw(ReadImpossible());
-        }
-        catch (const ReadImpossible e){
-            std::cerr << e.info() << std::endl;
-        }
-        input_s = input;
-    }
-    cout << "Input = '" << input_s << "'" << endl;
-    if (input_s.find("PASS") != std::string::npos)
-    {
-        std::string password = input_s.substr(strlen("PASS") + 1 , input_s.length() - strlen("PASS") - (input_s.length() - (input_s.find("CAP") - 3)));
-        if (password != params->password)
-        {
-            send(params->fd, "Unable to logging in to the server: password incorrect\r\n", strlen("Unable to connect to the server: password incorrect\r\n"), 0);
-            return NULL;
-        }
-        input_s.erase(0, strlen("PASS ") + password.length() + 2);
-    }
-    // ANCHOR xchat check
-    if (input_s.find("CAP") != std::string::npos)
-        input_s.erase(0, strlen("CAP LS\n\r"));
-    User current_user = createUser(input_s, params->uidPool, params->fd);
-    send(params->fd, ":ratio 1 dOD: Welcome to the Internet Relay Network dOD\r\n", strlen(":ratio 1 Dod: Welcome to the Internet Relay Network dOD\r\n"), 0);
-    send(params->fd, ":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n", strlen(":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n"), 0);
-    send(params->fd, ":ratio 3 dOD: This server was created?\r\n", strlen(":ratio 3 dOD: This server was created?\r\n"), 0);
-    send(params->fd, ":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
+    return (input);
+}
+
+void *task1 (void *dummyPt)
+{
+    t_params* params = static_cast<t_params*>(dummyPt);
+    string nickname;
+	string input;
+    size_t nbPass = 0;
+    int security = 0;
+    int nbError = 0;
+	bool loop = false;
+
+    // send(params->fd, "Connection established.\n", strlen("Connection established.\n"), MSG_DONTWAIT);
+    // 
+    // // ANCHOR xchat check
+    // if (input_s.find("CAP") != std::string::npos)
+    //     input_s.erase(0, strlen("CAP LS\n\r"));
+    
+
+    cout << "-----------------" << endl;
 
 	while(!loop)
 	{
-		bzero(input, 256);
-		int n = read(params->fd, input, 255);
-        std::cout << "Input = " << input << std::endl;
-        try {
-            if (n < 0)
-                throw(ReadImpossible());
+        while ((input = read_socket(params->fd)).empty() == true)
+        {
+            ;
         }
-        catch (const ReadImpossible e){
-            std::cerr << e.info() << std::endl;
+        cout << "Input = '" << input << "'" << endl;
+        // ADD PASSWORDCHECK
+        if (nbPass == 0)
+        {
+            if (check_password(input, params->password, params->fd) == 0)
+                nbPass++;   
+        }
+        if ((nbPass == 1) || (nbPass == 2))
+        {
+            if (nickname.empty() == true)
+            {
+                nickname = parseNickname(input);
+                nbPass++;
+            }
+            else
+            {
+                User current_user = createUser(input, params->uidPool, params->fd, nickname);
+                nbPass++;
+            }
+        }
+        if (nbPass == 3)
+        {
+            send(params->fd, ":ratio 1 dOD: Welcome to the Internet Relay Network dOD\r\n", strlen(":ratio 1 Dod: Welcome to the Internet Relay Network dOD\r\n"), 0);
+            send(params->fd, ":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n", strlen(":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n"), 0);
+            send(params->fd, ":ratio 3 dOD: This server was created?\r\n", strlen(":ratio 3 dOD: This server was created?\r\n"), 0);
+            send(params->fd, ":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
         }
         try{
             security = command_check(input, params->fd);

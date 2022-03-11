@@ -114,7 +114,7 @@ kema: directories $(KEMAOBJECTS)
 
 dod: directories $(DODBJECTS)
 	@printf "\ec"
-	$(CC) $(DODBJECTS) Classes/Main/main.cpp -o $(TARGETDIR)/$(DODOUT)
+	$(CC) $(DEBUGFLAG) $(DODBJECTS) Classes/Main/main.cpp -o $(TARGETDIR)/$(DODOUT)
 	./$(TARGETDIR)/$(DODOUT) $(ARG)
 
 #Link
