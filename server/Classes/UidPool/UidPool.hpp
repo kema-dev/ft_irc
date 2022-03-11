@@ -19,9 +19,10 @@ class PoolFull : public exception
 class UidPool {
 	private:
 	ssize_t	_count;
+	string	_name;
 
 	public:
-	UidPool();
+	UidPool(string name);
 	~UidPool() {};
 	ssize_t	generate();
 };

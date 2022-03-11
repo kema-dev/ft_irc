@@ -13,23 +13,51 @@ int main(void) {
 		server = new Server(servername, serverpassword);
 	}
 	catch (exception& e) {
-		log(e.what());
+		logError(string("Server creation"), servername, e.what());
 	}
 	User*	usr = nullptr;
-	string username1 = "username1";
-	string fullname1 = "fullname1";
+	string username = "username";
+	string fullname = "fullname";
 	try {
-		usr = new User(username1, fullname1, hostname, servername, server);
+		usr = new User(username, fullname, hostname, servername, server);
 	}
 	catch (exception& e) {
-		logError(string("User creation"), username1, e.what());
+		logError(string("User creation"), username, e.what());
 	}
-	// server.userDB->add(usr);
-	// User*	usr2 = new User("secondname", "secondfullname", "secondnickname", "hostname", "servername", *(server.pool));
-	// server.userDB->add(usr2);
-	// Channel*	chan = new Channel("chan", "chanpassword", "motd", "operpassword");
-	// server.chanDB->add(chan);
-	// usr->joinChannel(chan, "chanpassword");
-	// usr2->joinChannel(chan, "chanpassword");
-	// usr->ban(*usr2, *chan);
+	try {
+		server->userDB->add(usr);
+	}
+	catch (exception& e) {
+		logError(string("Adding user to DB"), username, e.what());
+	}
+	Channel*	chan = nullptr;
+	string channame = "channame";
+	string chanpasswd = "chanpasswd";
+	string motd = "motd";
+	string operpassword = "operpassword";
+	try {
+		chan = new Channel(channame, chanpasswd, motd, operpassword);
+		server->userDB->add(usr);
+	}
+	catch (exception& e) {
+		logError(string("Creating channel"), username, e.what());
+	}
+	try {
+		server->chanDB->add(*chan);
+	}
+	catch (exception& e) {
+		logError(string("Adding channel to DB"), username, e.what());
+	}
+	try {
+		usr->joinChannel(chan, chanpasswd);
+	}
+	catch (exception& e) {
+		logError(string("Joining channel " + channame), username, e.what());
+	}
+	try {
+		usr->becomeOper(chan, chanpasswd);
+	}
+	catch (exception& e) {
+		logError(string("Joining channel " + channame), username, e.what());
+	}
 }

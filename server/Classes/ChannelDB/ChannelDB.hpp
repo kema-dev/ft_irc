@@ -1,24 +1,33 @@
 #ifndef _CHANNELDB_HPP
  #define _CHANNELDB_HPP
-class ChannelDB;
+
 #include "../Channel/Channel.hpp"
-#include "../Crypto/Crypto.hpp"
+
 #include <sys/types.h>
 #include <iostream>
 
 using namespace std;
 
+// class ChanIsNull : public exception
+// {
+// 	public:
+// 		virtual const char*	what() const throw()
+// 		{
+// 			return ("Channel is null");
+// 		}
+// };
+
 class ChannelDB {
 	private:
-	vector<Channel*>	_db;
+	vector<Channel>	_db;
 	string	_name;
 
 	public:
 	ChannelDB(string name) {_name = name;};
 	~ChannelDB() {};
 
-	void		add(Channel* chan);
-	Channel*	search(Channel* chan);
+	void		add(Channel& chan);
+	Channel*	search(Channel& chan);
 	Channel*	search(string name);
 };
 

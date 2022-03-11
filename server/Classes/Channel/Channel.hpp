@@ -1,10 +1,10 @@
 #ifndef _CHANNEL_HPP
  #define _CHANNEL_HPP
 
-class Channel;
-#include "../Message/Message.hpp"
 #include "../Crypto/Crypto.hpp"
+#include "../Message/Message.hpp"
 #include "../User/User.hpp"
+
 #include <vector>
 #include <string>
 #include <iostream>
@@ -44,15 +44,17 @@ class Channel {
 	ssize_t	getNextUid(void);
 	bool	userJoin(User& usr, string pass);
 	bool	userLeave(User& usr);
-	void	receiveMsg(Message msg);
+	void	receiveMsg(Message& msg);
 	void	printAllMsg(void);
-	bool	isLog(User usr);
-	string	getMsgHist(User usr);
+	bool	isLog(User& usr);
+	string	getMsgHist(User& usr);
 	vector<string>	getNickLst(void);
 	bool	userBan(User& usr, User& banner);
-	bool	isOper(User usr);
+	bool	isOper(User& usr);
 	bool	setPasswd(string pass);
+	bool	checkOperPasswd(string pass);
 	bool	setOperPasswd(string oper_pass);
+	bool	addOper(User& usr);
 };
 
 #endif

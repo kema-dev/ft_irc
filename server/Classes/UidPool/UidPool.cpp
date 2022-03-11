@@ -2,7 +2,8 @@
 
 using namespace std;
 
-UidPool::UidPool() {
+UidPool::UidPool(string name) {
+	_name = name;
 	_count = 0;
 }
 

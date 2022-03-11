@@ -25,8 +25,5 @@ timeval	Message::getTime(void) {
 }
 
 string	Message::getContent(void) {
-	string content = _sender;
-	content += ": ";
-	content += _msg;
-	return content;
+	return _sender + ": " + _msg;
 }

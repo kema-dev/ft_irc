@@ -20,7 +20,7 @@ class PopopenFail : public exception
 	public:
 		virtual const char*	what() const throw()
 		{
-			return ("popopen() failed.");
+			return ("Function 'popopen' failed.");
 		}
 };
 
