@@ -5,14 +5,24 @@
 int main(void) {
 	clearLog();
 	log("-------------------------------------------------------------------------------------");
-	Server	server = Server("servername", "serverpassword");
-	User*	usr = nullptr;
+	Server*	server = nullptr;
+	string hostname = "hostname";
+	string servername = "servername";
+	string serverpassword = "serverpassword";
 	try {
-		usr = new User("first_name", "firstfullname", "hostname", "servername", *(server.pool));
+		server = new Server(servername, serverpassword);
 	}
 	catch (exception& e) {
-		cerr << e.what() << endl;
-		logError("user creation", e.what());
+		log(e.what());
+	}
+	User*	usr = nullptr;
+	string username1 = "username1";
+	string fullname1 = "fullname1";
+	try {
+		usr = new User(username1, fullname1, hostname, servername, server);
+	}
+	catch (exception& e) {
+		logError(string("User creation"), username1, e.what());
 	}
 	// server.userDB->add(usr);
 	// User*	usr2 = new User("secondname", "secondfullname", "secondnickname", "hostname", "servername", *(server.pool));

@@ -15,7 +15,7 @@ Channel::Channel(string name, string pass, string motd, string oper_pass) {
 	_next_uid = 0;
 	_hash = sha256(pass);
 	_oper = sha256(oper_pass);
-	log(LIGHT_MAGENTA, "Channel ", GREEN, _name, DEFAULT, " with hash ", GREEN, _hash, LIGHT_BLUE, " has been created", DEFAULT);
+	log(string(LIGHT_MAGENTA) + string("Channel ") + string(GREEN) + string(_name) + string(DEFAULT) + string(" with hash ") + string(GREEN) + string(_hash) + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 }
 
 string	Channel::getName(void){
@@ -43,7 +43,7 @@ bool	Channel::userJoin(User& usr, string pass) {
 	gettimeofday(&time, nullptr);
 	_log.push_back(pair<User&, timeval>(usr, time));
 	_roles.push_back(pair<User&, bool>(usr, USER));
-	log(GREEN, usr.getFullName(), LIGHT_BLUE, " joined ", LIGHT_MAGENTA, "channel ", GREEN, _name, DEFAULT);
+	log(string(GREEN) + string(usr.getFullName()) + string(LIGHT_BLUE) + string(" joined ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(_name) + string(DEFAULT));
 	return true;
 }
 
@@ -65,7 +65,7 @@ bool	Channel::userLeave(User& usr) {
 		it2++;
 	}
 	return false;
-	log(RED, usr.getFullName(), LIGHT_BLUE, " left ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT);
+	log(string(RED) + string(usr.getFullName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
 }
 
 void	Channel::receiveMsg(Message msg) {
@@ -152,7 +152,7 @@ bool	Channel::userBan(User& usr, User& banner) {
 	while (it != end) {
 		if (it->first.getUid() == id) {
 			_log.erase(it);
-			log(RED, usr.getFullName(), LIGHT_BLUE, " has been banned from ", LIGHT_MAGENTA, "channel ", RED, _name, DEFAULT, " by ", RED, banner.getFullName(), DEFAULT);
+			log(string(RED) + string(usr.getFullName()) + string(LIGHT_BLUE) + string(" has been banned from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT) + string(" by ") + string(RED) + string(banner.getFullName()) + string(DEFAULT));
 			return true;
 		}
 		it++;

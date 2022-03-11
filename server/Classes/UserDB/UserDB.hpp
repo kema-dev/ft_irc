@@ -1,5 +1,6 @@
 #ifndef _USERDB_HPP
  #define _USERDB_HPP
+
 class UserDB;
 #include "../User/User.hpp"
 #include "../Crypto/Crypto.hpp"

@@ -1,5 +1,6 @@
 #ifndef _CHANNELDB_HPP
  #define _CHANNELDB_HPP
+class ChannelDB;
 #include "../Channel/Channel.hpp"
 #include "../Crypto/Crypto.hpp"
 #include <sys/types.h>

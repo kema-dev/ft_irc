@@ -2,7 +2,7 @@
 
 using namespace std;
 
-User::User(string username, string fullname, string hostname, string servername, UidPool& pool) {
+User::User(string username, string fullname, string hostname, string servername, Server* server) {
 	if (username == "") {
 		throw (WrongUserName());
 	}
@@ -20,7 +20,8 @@ User::User(string username, string fullname, string hostname, string servername,
 		}
 	}
 	size_t id;
-	id = pool.generate();
+	_server = server;
+	id = server->pool->generate();
 	_username = username;
     _fullname = fullname;
 	_nickname = "";
@@ -33,10 +34,10 @@ User::User(string username, string fullname, string hostname, string servername,
 	char s[20]; // ? length of max_ssize
 	sprintf(s, "%ld", _uid);
 	string str = string(s);
-	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, LIGHT_BLUE," has been created",DEFAULT);
+	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" username: ") + string(GREEN) + string(_username) + string(DEFAULT) + string(" - uid: ") + string(GREEN) + string(s) + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 }
 
-User::User(string username, string fullname, string nickname, string hostname, string servername, UidPool& pool) {
+User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
 	if (username == "") {
 		throw (WrongUserName());
 	}
@@ -62,7 +63,8 @@ User::User(string username, string fullname, string nickname, string hostname, s
 		}
 	}
 	size_t id;
-	id = pool.generate();
+	_server = server;
+	id = server->pool->generate();
 	_username = username;
 	_fullname = fullname;
 	_nickname = nickname;
@@ -75,7 +77,7 @@ User::User(string username, string fullname, string nickname, string hostname, s
 	char s[20]; // ? length of max_ssize
 	sprintf(s, "%ld", _uid);
 	string str = string(s);
-	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, LIGHT_BLUE," has been created",DEFAULT);
+	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" username: ") + string(GREEN) + string(_username) + string(DEFAULT) + string(" - uid: ") + string(GREEN) + string(s) + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 }
 
 string	User::getNickName(void) {
@@ -169,7 +171,7 @@ bool	User::logIn(UserDB* db) {
 		throw AlreadyLogged();
 	}
 	this->setActiveStatus(true);
-	log(LIGHT_MAGENTA, "User ", GREEN, this->getFullName(), LIGHT_BLUE, " logged in to ", GREEN, "the server", DEFAULT);
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getFullName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(GREEN) + string("the server") + string(DEFAULT));
 	return true;
 }
 
@@ -178,7 +180,7 @@ bool	User::logOut(UserDB* db) {
 		throw NotLoggedGlobal();
 	}
 	this->setActiveStatus(false);
-	log(LIGHT_MAGENTA, "User ", RED, this->getFullName(), LIGHT_BLUE, " logged out from ", RED, "the server", DEFAULT);
+	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getFullName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) +  string("the server") +  string(DEFAULT));
 	return true;
 }
 
@@ -188,7 +190,7 @@ bool	User::sendMessage(string content, Channel* chan) {
 		msg = Message(content, this->getFullName(), chan->getNextUid());
 		chan->receiveMsg(msg);
 		this->setNbMsg(getNbMsg() + 1);
-		log(GREEN, this->getFullName(), LIGHT_BLUE, " sent message to ", GREEN, chan->getName(), DEFAULT);
+		log(string(GREEN) + string(this->getFullName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(GREEN) + string(chan->getName()) + string(DEFAULT));
 		return true;
 	}
 	return false;

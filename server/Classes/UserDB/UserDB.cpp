@@ -4,7 +4,7 @@ using namespace std;
 
 void	UserDB::add(User* usr) {
 	_db.push_back(usr);
-	log(LIGHT_MAGENTA, "User ", GREEN, usr->getFullName(), LIGHT_BLUE, " has been added to user database " GREEN, this->_name, DEFAULT);
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr->getFullName()) + string(LIGHT_BLUE) + string(" has been added to user database " GREEN) + string(this->_name) + string(DEFAULT));
 }
 
 User*	UserDB::search(User* usr) {

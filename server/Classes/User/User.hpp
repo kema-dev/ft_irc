@@ -2,6 +2,7 @@
  #define _USER_HPP
 
 class User;
+#include "../Server/Server.hpp"
 #include "../UidPool/UidPool.hpp"
 #include "../Channel/Channel.hpp"
 #include "../Crypto/Crypto.hpp"
@@ -96,6 +97,7 @@ class SameInfo : public exception
 
 class User {
 	private:
+	Server*		_server;
 	string 		_username;
     string      _nickname;
     string      _fullname;
@@ -108,8 +110,8 @@ class User {
 	string		_hash;
 
 	public:
-	User(string username, string fullname, string hostname, string servername, UidPool& pool);
-	User(string username, string fullname, string nickname, string hostname, string servername, UidPool& pool);
+	User(string username, string fullname, string hostname, string servername, Server* server);
+	User(string username, string fullname, string nickname, string hostname, string servername, Server* server);
 
 	~User() {};
 	
