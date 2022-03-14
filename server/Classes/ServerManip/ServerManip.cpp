@@ -33,6 +33,7 @@ int check_password(string input, string server_password, int socket)
         if (password != server_password)
         {
             send(socket, "Unable to logging in to the server: password incorrect\r\n", strlen("Unable to connect to the server: password incorrect\r\n"), 0);
+            std::cout << "PasswordIncorrect" << std::endl;
             return (-1);
         }
         input.erase(0, strlen("PASS ") + password.length() + 2); // OPTIONAL
@@ -77,8 +78,8 @@ User& createUser(std::string input, UidPool pool, int socket, string nickname)
         {
             nickname = cmd.substr(strlen("NICK") + 1 , cmd.length() - strlen("NICK") - (cmd.length() - (cmd.find("\n") - 2)));
             cmd.erase(0, strlen("NICK ") + nickname.length() + 2);
+            
         }
-
     }
     else
     {

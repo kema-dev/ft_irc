@@ -158,6 +158,7 @@ void *task1 (void *dummyPt)
     //     input_s.erase(0, strlen("CAP LS\n\r"));
 
     cout << "-----------------" << endl;
+    // send(params->fd, ":Default_Nickname!Default_Username@0 NICK dOD\r\n", strlen(":Default_Nickname!Default_Username@0 NICK dOD\r\n"), 0);
 	while(!loop)
 	{
         while ((input = read_socket(params->fd)).empty() == true)
@@ -187,12 +188,11 @@ void *task1 (void *dummyPt)
         }
         if (nbPass == 3)
         {
-            send(params->fd, ":Default_Nickname!Default_Username@0 NICK dOD\r\n", strlen(":Default_Nickname!Default_Username@0 NICK dOD\r\n"), MSG_DONTWAIT);
-            send(params->fd, ":ratio 1 dOD: Welcome to the Internet Relay Network dOD\r\n", strlen(":ratio 1 Dod: Welcome to the Internet Relay Network dOD\r\n"), 0);
-            send(params->fd, ":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n", strlen(":ratio 2 dOD: Your host is ratio, running on version [42.42]\r\n"), 0);
-            send(params->fd, ":ratio 3 dOD: This server was created?\r\n", strlen(":ratio 3 dOD: This server was created?\r\n"), 0);
-            send(params->fd, ":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":ratio 4 dOD: ratio version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
-            send(params->fd, ":dOD!dginisty@irc.irc90s.com 4245 : thallard\r\n", strlen(":dOD!dginisty@irc.irc90s.com 4245 : thallard\r\n"), 0);
+            send(params->fd, ":localhost 001 dOD : Welcome to the Internet Relay Network dOD\r\n", strlen(":localhost 001 dOD : Welcome to the Internet Relay Network dOD\r\n"), 0);
+            send(params->fd, ":localhost 002 dOD : Your host is localhost, running on version [42.42]\r\n", strlen(":localhost 002 dOD : Your host is localhost, running on version [42.42]\r\n"), 0);
+            send(params->fd, ":localhost 003 dOD : This server was created Mon Mar 14 13:08:31 2022\r\n", strlen(":localhost 003 dOD : This server was created Mon Mar 14 13:08:31 2022\r\n"), 0);
+            send(params->fd, ":localhost 004 dOD : localhost version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":localhost 004 dOD : localhost version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
+            // send(params->fd, ":dOD!dginisty@ratio 4245 :jjourdan le gros fdp\r\n", strlen(":dOD!dginisty@ratio 4245 :jjourdan le gros fdp\r\n"), 0);
             nbPass++;
             continue;
         }

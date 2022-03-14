@@ -46,13 +46,13 @@ int command_check(std::string message, int fd)
                 {
                     std::string msg;
                     msg = "Unable to join the channel: " + channel_s + " is unknown.\n";
-                    send(fd, msg.c_str(), strlen(msg.c_str()), 0);
+                    // send(fd, msg.c_str(), strlen(msg.c_str()), 0);
                     std::cout << msg << std::endl;
                 }
                 else
                 {
                     send(fd, ":dOD!dginisty@0 JOIN #ratio\r\n", strlen(":dOD!dginisty@0 JOIN #ratio\r\n"), 0);
-                    // send(fd, ":dOD!dginisty@localhost 332 :ratio :Bonjour et gros ratio a toi:)\r\n", strlen(":dOD!dginisty@localhost 332 :ratio :Bonjour et gros ratio a toi:)\r\n"), 0);
+                    send(fd, ":127.0.0.1 332 dOD #ratio :Bonjour et gros ratio a toi:)\r\n", strlen(":127.0.0.1 332 dOD #ratio :Bonjour et gros ratio a toi:)\r\n"), 0);
                     send(fd, ":127.0.0.1 353 dOD = #ratio :@dOD\r\n", strlen(":127.0.0.1 353 dOD = #ratio :@dOD\r\n"), 0);
                     send(fd, ":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n", strlen(":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n"), 0);
                 }
@@ -65,18 +65,18 @@ int command_check(std::string message, int fd)
                 {
                     std::string msg;
                     msg = "Unable to join the channel: " + channel_s + " is unknown.\n";
-                    send(fd, msg.c_str(), strlen(msg.c_str()), 0);
+                    // send(fd, msg.c_str(), strlen(msg.c_str()), 0);
                 }
                 else
                 {
                     std::string msg;
                     msg = std::string(channel_s + " joined.\n");
-                    send(fd, msg.c_str(), strlen(msg.c_str()), 0);
+                    // send(fd, msg.c_str(), strlen(msg.c_str()), 0);
                 }
                 break;
             case 2:
                 send(fd, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
-                break;
+                exit(EXIT_SUCCESS);
             case 3:
                 std::cout << "SETNICKNAME" << std::endl;
                 break;
@@ -91,6 +91,5 @@ int command_check(std::string message, int fd)
         std::cerr << e.info() << std::endl;
 		return (UNKNOWN_COMMAND);
     }
-
     return (0);
 }
