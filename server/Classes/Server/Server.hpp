@@ -12,21 +12,30 @@ class ChannelDB;
 
 using namespace std;
 
-class NoMem : public exception
+class ServerFail : public exception
 {
 	public:
 		virtual const char*	what() const throw()
 		{
-			return ("Function 'new' failed");
+			return ("Server creation failed");
 		}
 };
 
-class DeleteFail : public exception
+class ChanAddFail : public exception
 {
 	public:
 		virtual const char*	what() const throw()
 		{
-			return ("Function 'delete' failed");
+			return ("Channel adding failed");
+		}
+};
+
+class UserAddFail : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("User adding failed");
 		}
 };
 
@@ -43,6 +52,9 @@ class Server {
 	public:
 	Server(string dname, string pass);
 	~Server();
+
+	void	addChan(string name, string pass, string motd, string oper_pass);
+	ssize_t	addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server);
 };
 
 #endif

@@ -10,19 +10,19 @@ class User;
 
 using namespace std;
 
-// class ChanIsNull : public exception
-// {
-// 	public:
-// 		virtual const char*	what() const throw()
-// 		{
-// 			return ("Channel is null");
-// 		}
-// };
+class NoSuchChan : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Channel doesn't exist");
+		}
+};
 
 class ChannelDB {
 	private:
 	vector<Channel>	_db;
-	string	_name;
+	string			_name;
 
 	public:
 	ChannelDB(string name) {_name = name;};

@@ -10,6 +10,15 @@ class UserDB;
 
 using namespace std;
 
+class NoSuchUser : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("User doesn't exist");
+		}
+};
+
 class UserDB {
 	private:
 	vector<User>	_db;
@@ -19,7 +28,7 @@ class UserDB {
 	UserDB(string name) {_name = name;};
 	~UserDB() {};
 
-	void	add(User& usr);
+	ssize_t	add(User& usr);
 	User*	search(User& usr);
 	User*	search(ssize_t id);
 	bool	check(string username, string fullname, string nickname);

@@ -64,7 +64,7 @@ User& createUser(std::string input, UidPool pool, int socket)
     // cout << "User created!" << endl;
     // return *user;
 	Server*	server = nullptr;
-	User* usr = new User("first_name", "firstfullname", "hostname", "servername", server);
+	User* usr = new User("firstname", "firstfullname", "firstnickname", "hostname", "servername", server);
 	(void)pool;
 	return *usr;
 }

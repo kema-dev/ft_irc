@@ -2,40 +2,40 @@
 
 using namespace std;
 
-User::User(string username, string fullname, string hostname, string servername, Server* server) {
-	if (username == "") {
-		throw (WrongUserName());
-	}
-	for (size_t i = 0; username[i]; i++) {
-		if (!(isalnum(username[i]))) {
-				throw (WrongUserName());
-		}
-	}
-	if (fullname == "") {
-		throw (WrongFullName());
-	}
-	for (size_t i = 0; fullname[i]; i++) {
-		if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
-			throw (WrongFullName());
-		}
-	}
-	size_t id;
-	_server = server;
-	id = server->pool->generate();
-	_username = username;
-    _fullname = fullname;
-	_nickname = "";
-	_hostname = hostname;
-	_servername = servername;
-	_uid = id;
-	_nb_msg = 0;
-	_ban_status = false;
-	_active_status = false;
-	char s[20]; // ? length of max_ssize
-	sprintf(s, "%ld", _uid);
-	string str = string(s);
-	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
-}
+// User::User(string username, string fullname, string hostname, string servername, Server* server) {
+// 	if (username == "") {
+// 		throw (WrongUserName());
+// 	}
+// 	for (size_t i = 0; username[i]; i++) {
+// 		if (!(isalnum(username[i]))) {
+// 				throw (WrongUserName());
+// 		}
+// 	}
+// 	if (fullname == "") {
+// 		throw (WrongFullName());
+// 	}
+// 	for (size_t i = 0; fullname[i]; i++) {
+// 		if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
+// 			throw (WrongFullName());
+// 		}
+// 	}
+// 	size_t id;
+// 	_server = server;
+// 	id = server->pool->generate();
+// 	_username = username;
+//     _fullname = fullname;
+// 	_nickname = "";
+// 	_hostname = hostname;
+// 	_servername = servername;
+// 	_uid = id;
+// 	_nb_msg = 0;
+// 	_ban_status = false;
+// 	_active_status = false;
+// 	char s[20]; // ? length of max_ssize
+// 	sprintf(s, "%ld", _uid);
+// 	string str = string(s);
+// 	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
+// }
 
 User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
 	if (username == "") {
@@ -174,7 +174,7 @@ bool	User::logIn(Server& server) {
 
 bool	User::logOut(Server& server) {
 	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
-		throw AlreadyLogged();
+		throw NotLogged();
 	}
 	this->setActiveStatus(false);
 	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getFullName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));

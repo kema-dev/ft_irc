@@ -115,7 +115,7 @@ class User {
 	string		_hash;
 
 	public:
-	User(string username, string fullname, string hostname, string servername, Server* server);
+	// User(string username, string fullname, string hostname, string servername, Server* server);
 	User(string username, string fullname, string nickname, string hostname, string servername, Server* server);
 
 	~User() {};

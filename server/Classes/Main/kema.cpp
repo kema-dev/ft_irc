@@ -15,49 +15,42 @@ int main(void) {
 	catch (exception& e) {
 		logError(string("Server creation"), servername, e.what());
 	}
-	User*	usr = nullptr;
 	string username = "username";
 	string fullname = "fullname";
+	string nickname = "nickname";
+	ssize_t id;
 	try {
-		usr = new User(username, fullname, hostname, servername, server);
+		id = server->addUser(username, fullname, nickname, hostname, servername, server);
 	}
 	catch (exception& e) {
-		logError(string("User creation"), username, e.what());
+		logError(string("Adding user on server"), servername, e.what());
 	}
-	try {
-		server->userDB->add(*usr);
-	}
-	catch (exception& e) {
-		logError(string("Adding user to DB"), username, e.what());
-	}
-	Channel*	chan = nullptr;
 	string channame = "channame";
 	string chanpasswd = "chanpasswd";
 	string motd = "motd";
 	string operpassword = "operpassword";
 	try {
-		chan = new Channel(channame, chanpasswd, motd, operpassword);
-		server->userDB->add(*usr);
+		server->addChan(channame, chanpasswd, motd, operpassword);
 	}
 	catch (exception& e) {
-		logError(string("Creating channel"), username, e.what());
+		logError(string("Adding channel on server"), servername, e.what());
 	}
 	try {
-		server->chanDB->add(*chan);
+		server->userDB->search(id)->joinChannel(*(server->chanDB->search(channame)), chanpasswd);
 	}
 	catch (exception& e) {
-		logError(string("Adding channel to DB"), username, e.what());
+		logError(string("Joining channel on server"), servername, e.what());
 	}
-	try {
-		usr->joinChannel(*chan, chanpasswd);
-	}
-	catch (exception& e) {
-		logError(string("Joining channel " + channame), username, e.what());
-	}
-	try {
-		usr->becomeOper(*chan, chanpasswd);
-	}
-	catch (exception& e) {
-		logError(string("Joining channel " + channame), username, e.what());
-	}
+	// try {
+	// 	usr->joinChannel(*chan, chanpasswd);
+	// }
+	// catch (exception& e) {
+	// 	logError(string("Joining channel " + channame), username, e.what());
+	// }
+	// try {
+	// 	usr->becomeOper(*chan, chanpasswd);
+	// }
+	// catch (exception& e) {
+	// 	logError(string("Joining channel " + channame), username, e.what());
+	// }
 }
