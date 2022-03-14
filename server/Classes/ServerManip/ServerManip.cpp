@@ -25,46 +25,74 @@ void init_kqueue(int socket, int &kq)
     }
 }
 
-User& createUser(std::string input, UidPool pool, int socket)
+int check_password(string input, string server_password, int socket)
+{
+    if (input.find("PASS") != std::string::npos)
+    {
+        std::string password = input.substr(strlen("PASS") + 1 , input.length() - strlen("PASS") - (input.length() - (input.find("\n") - 2)));
+        if (password != server_password)
+        {
+            send(socket, "Unable to logging in to the server: password incorrect\r\n", strlen("Unable to connect to the server: password incorrect\r\n"), 0);
+            std::cout << "PasswordIncorrect" << std::endl;
+            return (-1);
+        }
+        input.erase(0, strlen("PASS ") + password.length() + 2); // OPTIONAL
+    }
+    return (0);
+}
+
+string parseNickname(string input)
 {
     string nickname;
+
+    if (input.find("NICK") == std::string::npos)
+        return (NULL);
+    else
+    {
+        nickname = input.substr(strlen("NICK") + 1 , input.length() - strlen("NICK") - (input.length() - (input.find("\n") - 2)));
+        input.erase(0, strlen("NICK ") + nickname.length() + 2); // OPTIONAL
+    }
+    return (nickname);
+}
+
+User& createUser(std::string input, UidPool pool, int socket, string nickname)
+{
     string fullname;
     char username[50];
     char hostname[50];
     char servername[50];
     size_t pos;
     string cmd;
-    
-    bool nonick = false;
 
     cmd = input;
-    pos = cmd.find("NICK");
-    if (pos == std::string::npos)
-        nonick = true;
-    if (nonick == true)
+    if (nickname.empty() == true)
     {
-        send(socket, "Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n", strlen("Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n"), 0);
-        std::cout << "Ratio le exit(-1)" << std::endl;
-        exit(-1);
+        pos = cmd.find("NICK");
+        if (pos == std::string::npos)
+        {
+            send(socket, "Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n", strlen("Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n"), 0);
+            std::cout << "Ratio le exit(-1)" << std::endl;
+            exit(-1);
+        }
+        else
+        {
+            nickname = cmd.substr(strlen("NICK") + 1 , cmd.length() - strlen("NICK") - (cmd.length() - (cmd.find("\n") - 2)));
+            cmd.erase(0, strlen("NICK ") + nickname.length() + 2);
+            
+        }
     }
-    if (nonick == false)
+    else
     {
-        nickname = cmd.substr(strlen("NICK") + 1 , cmd.length() - strlen("NICK") - (cmd.length() - (cmd.find("USER") - 3)));
-        cmd.erase(0, strlen("NICK ") + nickname.length() + 2);
+        cmd.erase(0, strlen("USER "));
+        sscanf(cmd.c_str(), "%s %s %s", username, hostname, servername);
+        cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
+        fullname = cmd.substr(0, cmd.length() - 2);
+        // cout << username << endl;
+        // cout << hostname << endl;
+        // cout << servername << endl;
+        // cout << fullname << endl;
     }
-    cmd.erase(0, strlen("USER "));
-    sscanf(cmd.c_str(), "%s %s %s", username, hostname, servername);
-    cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
-    fullname = cmd.substr(0, cmd.length() - 2);
-    // cout << username << endl;
-    // cout << hostname << endl;
-    // cout << servername << endl;
-    // cout << fullname << endl;
-    // User* user = new User(username, fullname, nickname, hostname, servername, pool);
-    // cout << "User created!" << endl;
-    // return *user;
-	Server*	server = nullptr;
-	User* usr = new User("firstname", "firstfullname", "firstnickname", "hostname", "servername", server);
-	(void)pool;
-	return *usr;
+    User* user = new User(username, fullname, nickname, hostname, servername, pool);
+    cout << "User created!" << endl;
+    return (*user);
 }
