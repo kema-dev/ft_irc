@@ -4,7 +4,7 @@ using namespace std;
 
 ssize_t	UserDB::add(User& usr) {
 	_db.push_back(usr);
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getFullName()) + string(LIGHT_BLUE) + string(" has been added to ") + string(LIGHT_MAGENTA) + string("userDB ") + string(GREEN) + string(this->_name) + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" has been added to ") + string(LIGHT_MAGENTA) + string("userDB ") + string(GREEN) + string(this->_name) + string(DEFAULT));
 	return usr.getUid();
 }
 
@@ -21,7 +21,7 @@ User*	UserDB::search(User& usr) {
 		throw NoSuchUser();
 	}
 	catch (exception& e) {
-		logError(string("Searching user"), usr.getFullName(), e.what());
+		logError(string("Searching user"), usr.getUserName(), e.what());
 		throw UserAddFail();
 	}
 	return nullptr;

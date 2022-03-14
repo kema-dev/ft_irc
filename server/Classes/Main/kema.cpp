@@ -23,7 +23,13 @@ int main(void) {
 		id = server->addUser(username, fullname, nickname, hostname, servername, server);
 	}
 	catch (exception& e) {
-		logError(string("Adding user on server"), servername, e.what());
+		logError(string("Adding user on server " + servername), username, e.what());
+	}
+	try {
+		server->userDB->search(id)->logIn(*server);
+	}
+	catch (exception& e) {
+		logError(string("Logging in server " + servername), username, e.what());
 	}
 	string channame = "channame";
 	string chanpasswd = "chanpasswd";
@@ -33,24 +39,22 @@ int main(void) {
 		server->addChan(channame, chanpasswd, motd, operpassword);
 	}
 	catch (exception& e) {
-		logError(string("Adding channel on server"), servername, e.what());
+		logError(string("Adding channel on server " + servername), channame, e.what());
 	}
 	try {
 		server->userDB->search(id)->joinChannel(*(server->chanDB->search(channame)), chanpasswd);
 	}
 	catch (exception& e) {
-		logError(string("Joining channel on server"), servername, e.what());
+		logError(string("Joining channel " + channame + " on server " + servername), username, e.what());
 	}
-	// try {
-	// 	usr->joinChannel(*chan, chanpasswd);
-	// }
-	// catch (exception& e) {
-	// 	logError(string("Joining channel " + channame), username, e.what());
-	// }
-	// try {
-	// 	usr->becomeOper(*chan, chanpasswd);
-	// }
-	// catch (exception& e) {
-	// 	logError(string("Joining channel " + channame), username, e.what());
-	// }
+	try {
+		server->userDB->search(id)->becomeOper(*(server->chanDB->search(channame)), operpassword);
+	}
+	catch (exception& e) {
+		logError(string("Becoming operator of channel " + channame), username, e.what());
+	}
+	// TODO send mesage
+	// TODO print chan messages
+	// TODO maybe check active status before launching commands
+	// TODO avoid duplicate user / channels (all variables must be different)
 }

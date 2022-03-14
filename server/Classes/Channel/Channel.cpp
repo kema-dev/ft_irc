@@ -152,7 +152,7 @@ bool	Channel::userBan(User& usr, User& banner) {
 	while (it != end) {
 		if (it->first.getUid() == id) {
 			_log.erase(it);
-			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" has been banned from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT) + string(" by ") + string(RED) + string(banner.getFullName()) + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" has been banned from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT) + string(" by ") + string(RED) + string(banner.getUserName()) + string(DEFAULT));
 			return true;
 		}
 		it++;
@@ -183,7 +183,7 @@ bool	Channel::setPasswd(string pass) {
 }
 
 bool	Channel::checkOperPasswd(string pass) {
-	if (sha256(pass) == _hash) {
+	if (sha256(pass) == _oper) {
 		return true;
 	}
 	return false;

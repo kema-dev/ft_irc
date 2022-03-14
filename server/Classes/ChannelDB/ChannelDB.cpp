@@ -20,7 +20,7 @@ Channel*	ChannelDB::search(Channel& chan) {
 	}
 	catch (exception& e) {
 		logError(string("Searching channel"), chan.getName(), e.what());
-		throw ChanAddFail();
+		throw ChanSearchFail();
 	}
 	return nullptr;
 }
@@ -38,7 +38,7 @@ Channel*	ChannelDB::search(string name) {
 	}
 	catch (exception& e) {
 		logError(string("Searching channel"), name, e.what());
-		throw ChanAddFail();
+		throw ChanSearchFail();
 	}
 	return nullptr;
 }

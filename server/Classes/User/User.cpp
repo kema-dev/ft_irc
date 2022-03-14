@@ -168,7 +168,7 @@ bool	User::logIn(Server& server) {
 		throw AlreadyLogged();
 	}
 	this->setActiveStatus(true);
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getFullName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(GREEN) + string(LIGHT_MAGENTA) + string("server ") + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
 	return true;
 }
 
@@ -177,29 +177,33 @@ bool	User::logOut(Server& server) {
 		throw NotLogged();
 	}
 	this->setActiveStatus(false);
-	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getFullName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
+	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getUserName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
 	return true;
 }
 
-bool	User::sendMessage(string content, Channel& chan) {
-	if (chan.isLog(*this) == true) {
-		Message msg;
-		msg = Message(content, this->getFullName(), chan.getNextUid());
-		chan.receiveMsg(msg);
-		this->setNbMsg(getNbMsg() + 1);
-		log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getFullName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
-		return true;
+void	User::sendMessage(string content, Channel& chan) {
+	if (chan.isLog(*this) != true) {
+		throw NotLogged();
+		return;
 	}
-	return false;
+	Message msg;
+	msg = Message(content, this->getUserName(), chan.getNextUid());
+	chan.receiveMsg(msg);
+	this->setNbMsg(getNbMsg() + 1);
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
 }
 
-bool	User::joinChannel(Channel& chan, string pass) {
+void	User::joinChannel(Channel& chan, string pass) {
+	if (chan.isLog(*this) != true) {
+		throw NotLogged();
+		return;
+	}
 	bool auth = chan.userJoin(*this, pass);
 	if (auth == true) {
-		return true;
+		return;
 	}
 	throw BadPasswd();
-	return false;
+	return;
 }
 
 bool	User::ban(User& usr, Channel& chan) {
@@ -235,7 +239,7 @@ bool	User::becomeOper(Channel& chan, string pass) {
 	if (chan.isLog(*this)) {
 		if (chan.checkOperPasswd(pass) == true) {
 			chan.addOper(*this);
-			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getFullName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
 			return true;
 		}
 		else {

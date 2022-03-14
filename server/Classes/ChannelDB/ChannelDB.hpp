@@ -19,6 +19,15 @@ class NoSuchChan : public exception
 		}
 };
 
+class ChanSearchFail : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Channel search failed");
+		}
+};
+
 class ChannelDB {
 	private:
 	vector<Channel>	_db;

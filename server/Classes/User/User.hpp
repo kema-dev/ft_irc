@@ -78,7 +78,7 @@ class AlreadyLogged : public exception
 	public:
 		virtual const char*	what() const throw()
 		{
-			return ("User is not already logged in to the server (probably with another client)");
+			return ("User is already logged in to the server");
 		}
 };
 
@@ -141,8 +141,8 @@ class User {
 
 	bool	logIn(Server& server);
 	bool	logOut(Server& server);
-	bool	sendMessage(string content, Channel& chan);
-	bool	joinChannel(Channel& chan, string pass);
+	void	sendMessage(string content, Channel& chan);
+	void	joinChannel(Channel& chan, string pass);
 	bool	ban(User& usr, Channel& chan);
 	void	getBanned(Channel& chan, User& banner);
 	bool	setPasswd(Channel& chan, string pass);
