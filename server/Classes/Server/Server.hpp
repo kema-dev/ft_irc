@@ -1,8 +1,9 @@
 #ifndef _SERVER_HPP
  #define _SERVER_HPP
 
+class ChannelDB;
+
 #include "../UidPool/UidPool.hpp"
-class Channel;
 #include "../ChannelDB/ChannelDB.hpp"
 #include "../UserDB/UserDB.hpp"
 
@@ -35,9 +36,9 @@ class Server {
 
 	public:
 	string		name;
-	UidPool		pool;
-	ChannelDB	chanDB;
-	UserDB		userDB;
+	UidPool*	pool;
+	ChannelDB*	chanDB;
+	UserDB*		userDB;
 
 	public:
 	Server(string dname, string pass);

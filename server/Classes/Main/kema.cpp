@@ -25,7 +25,7 @@ int main(void) {
 		logError(string("User creation"), username, e.what());
 	}
 	try {
-		server->userDB->add(usr);
+		server->userDB->add(*usr);
 	}
 	catch (exception& e) {
 		logError(string("Adding user to DB"), username, e.what());
@@ -37,7 +37,7 @@ int main(void) {
 	string operpassword = "operpassword";
 	try {
 		chan = new Channel(channame, chanpasswd, motd, operpassword);
-		server->userDB->add(usr);
+		server->userDB->add(*usr);
 	}
 	catch (exception& e) {
 		logError(string("Creating channel"), username, e.what());
@@ -49,13 +49,13 @@ int main(void) {
 		logError(string("Adding channel to DB"), username, e.what());
 	}
 	try {
-		usr->joinChannel(chan, chanpasswd);
+		usr->joinChannel(*chan, chanpasswd);
 	}
 	catch (exception& e) {
 		logError(string("Joining channel " + channame), username, e.what());
 	}
 	try {
-		usr->becomeOper(chan, chanpasswd);
+		usr->becomeOper(*chan, chanpasswd);
 	}
 	catch (exception& e) {
 		logError(string("Joining channel " + channame), username, e.what());

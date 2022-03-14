@@ -23,9 +23,9 @@ Server::Server(string dname, string pass) {
 	// 	delete userDB;
 	// 	throw NoMem();
 	// }
-	chanDB = ChannelDB(name + "_chanDB");
-	userDB = UserDB(name + "_userDB");
-	pool = UidPool(name + "_uidPool");
+	chanDB = new ChannelDB(name + "_chanDB");
+	userDB = new UserDB(name + "_userDB");
+	pool = new UidPool(name + "_uidPool");
 	_hash = sha256(pass);
 }
 

@@ -1,7 +1,9 @@
 #ifndef _USERDB_HPP
  #define _USERDB_HPP
 
-class User;
+class UserDB;
+
+#include "../User/User.hpp"
 
 #include <sys/types.h>
 #include <iostream>

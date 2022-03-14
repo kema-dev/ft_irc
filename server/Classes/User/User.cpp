@@ -2,7 +2,7 @@
 
 using namespace std;
 
-User::User(string username, string fullname, string hostname, string servername, Server& server) {
+User::User(string username, string fullname, string hostname, string servername, Server* server) {
 	if (username == "") {
 		throw (WrongUserName());
 	}
@@ -21,7 +21,7 @@ User::User(string username, string fullname, string hostname, string servername,
 	}
 	size_t id;
 	_server = server;
-	id = server.pool.generate();
+	id = server->pool->generate();
 	_username = username;
     _fullname = fullname;
 	_nickname = "";
@@ -37,7 +37,7 @@ User::User(string username, string fullname, string hostname, string servername,
 	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 }
 
-User::User(string username, string fullname, string nickname, string hostname, string servername, Server& server) {
+User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
 	if (username == "") {
 		throw (WrongUserName());
 	}
@@ -64,7 +64,7 @@ User::User(string username, string fullname, string nickname, string hostname, s
 	}
 	size_t id;
 	_server = server;
-	id = server.pool.generate();
+	id = server->pool->generate();
 	_username = username;
 	_fullname = fullname;
 	_nickname = nickname;
@@ -164,7 +164,7 @@ bool	User::setPass(string new_pass) {
 }
 
 bool	User::logIn(Server& server) {
-	if ((server.userDB.search(*this) == nullptr) || (server.userDB.search(*this)->getActiveStatus() != false)) {
+	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
 		throw AlreadyLogged();
 	}
 	this->setActiveStatus(true);
@@ -173,7 +173,7 @@ bool	User::logIn(Server& server) {
 }
 
 bool	User::logOut(Server& server) {
-	if ((server.userDB.search(*this) == nullptr) || (server.userDB.search(*this)->getActiveStatus() != false)) {
+	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
 		throw AlreadyLogged();
 	}
 	this->setActiveStatus(false);
@@ -187,7 +187,7 @@ bool	User::sendMessage(string content, Channel& chan) {
 		msg = Message(content, this->getFullName(), chan.getNextUid());
 		chan.receiveMsg(msg);
 		this->setNbMsg(getNbMsg() + 1);
-		log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getFullName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan->getName()) + string(DEFAULT));
+		log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getFullName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
 		return true;
 	}
 	return false;
@@ -235,7 +235,7 @@ bool	User::becomeOper(Channel& chan, string pass) {
 	if (chan.isLog(*this)) {
 		if (chan.checkOperPasswd(pass) == true) {
 			chan.addOper(*this);
-			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getFullName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan->getName()) + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getFullName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
 			return true;
 		}
 		else {
