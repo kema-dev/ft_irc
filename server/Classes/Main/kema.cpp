@@ -5,21 +5,55 @@
 int main(void) {
 	clearLog();
 	log("-------------------------------------------------------------------------------------");
-	Server	server = Server("servername", "serverpassword");
-	User*	usr = nullptr;
+	Server*	server = nullptr;
+	string hostname = "hostname";
+	string servername = "servername";
+	string serverpassword = "serverpassword";
 	try {
-		usr = new User("first_name", "firstfullname", "hostname", "servername", *(server.pool));
+		server = new Server(servername, serverpassword);
 	}
 	catch (exception& e) {
-		cerr << e.what() << endl;
-		logError("user creation", e.what());
+		logError(string("Server creation"), servername, e.what());
 	}
-	// server.userDB->add(usr);
-	// User*	usr2 = new User("secondname", "secondfullname", "secondnickname", "hostname", "servername", *(server.pool));
-	// server.userDB->add(usr2);
-	// Channel*	chan = new Channel("chan", "chanpassword", "motd", "operpassword");
-	// server.chanDB->add(chan);
-	// usr->joinChannel(chan, "chanpassword");
-	// usr2->joinChannel(chan, "chanpassword");
-	// usr->ban(*usr2, *chan);
+	string username = "username";
+	string fullname = "fullname";
+	string nickname = "nickname";
+	ssize_t id;
+	try {
+		id = server->addUser(username, fullname, nickname, hostname, servername, server);
+	}
+	catch (exception& e) {
+		logError(string("Adding user on server " + servername), username, e.what());
+	}
+	try {
+		server->userDB->search(id)->logIn(*server);
+	}
+	catch (exception& e) {
+		logError(string("Logging in server " + servername), username, e.what());
+	}
+	string channame = "channame";
+	string chanpasswd = "chanpasswd";
+	string motd = "motd";
+	string operpassword = "operpassword";
+	try {
+		server->addChan(channame, chanpasswd, motd, operpassword);
+	}
+	catch (exception& e) {
+		logError(string("Adding channel on server " + servername), channame, e.what());
+	}
+	try {
+		server->userDB->search(id)->joinChannel(*(server->chanDB->search(channame)), chanpasswd);
+	}
+	catch (exception& e) {
+		logError(string("Joining channel " + channame + " on server " + servername), username, e.what());
+	}
+	try {
+		server->userDB->search(id)->becomeOper(*(server->chanDB->search(channame)), operpassword);
+	}
+	catch (exception& e) {
+		logError(string("Becoming operator of channel " + channame), username, e.what());
+	}
+	// TODO send mesage
+	// TODO print chan messages
+	// TODO avoid duplicate user / channels (all variables must be different)
 }

@@ -1,13 +1,10 @@
 #ifndef _USER_HPP
  #define _USER_HPP
 
-class User;
-#include "../UidPool/UidPool.hpp"
-#include "../Channel/Channel.hpp"
-#include "../Crypto/Crypto.hpp"
-#include "../UserDB/UserDB.hpp"
-#include "../Log/Log.hpp"
-#include "../UidPool/UidPool.hpp"
+class Server;
+
+#include "../Server/Server.hpp"
+
 #include <sys/types.h>
 #include <iostream>
 
@@ -81,7 +78,7 @@ class AlreadyLogged : public exception
 	public:
 		virtual const char*	what() const throw()
 		{
-			return ("User is not already logged in to the server (probably with another client)");
+			return ("User is already logged in to the server");
 		}
 };
 
@@ -94,8 +91,18 @@ class SameInfo : public exception
 		}
 };
 
+class BadPasswd : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Given password is incorrect");
+		}
+};
+
 class User {
 	private:
+	Server*		_server;
 	string 		_username;
     string      _nickname;
     string      _fullname;
@@ -108,8 +115,8 @@ class User {
 	string		_hash;
 
 	public:
-	User(string username, string fullname, string hostname, string servername, UidPool& pool);
-	User(string username, string fullname, string nickname, string hostname, string servername, UidPool& pool);
+	// User(string username, string fullname, string hostname, string servername, Server* server);
+	User(string username, string fullname, string nickname, string hostname, string servername, Server* server);
 
 	~User() {};
 	
@@ -132,16 +139,17 @@ class User {
 	bool	setHash(string new_hash);
 	bool	setPass(string new_pass);
 
-	bool	logIn(UserDB* db);
-	bool	logOut(UserDB* db);
-	bool	sendMessage(string content, Channel* chan);
-	bool	joinChannel(Channel* chan, string pass);
-	bool	ban(User& usr, Channel& chan);
+	bool	logIn(Server& server);
+	bool	logOut(Server& server);
+	void	sendMessage(string content, Channel& chan);
+	void	joinChannel(Channel& chan, string pass);
+	void	ban(User& usr, Channel& chan);
 	void	getBanned(Channel& chan, User& banner);
-	bool	setPasswd(Channel& chan, string pass);
-	bool	setOperPasswd(Channel& chan, string pass);
+	void	setPasswd(Channel& chan, string pass);
+	void	setOperPasswd(Channel& chan, string pass);
+	void	becomeOper(Channel& chan, string pass);
 };
 
-std::ostream &	operator<<(std::ostream &stream, User &rhs);
+// std::ostream &	operator<<(std::ostream &stream, User &rhs);
 
 #endif

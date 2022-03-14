@@ -1,12 +1,43 @@
 #ifndef _SERVER_HPP
  #define _SERVER_HPP
-#include "../ChannelDB/ChannelDB.hpp"
-#include "../Crypto/Crypto.hpp"
+
+class ChannelDB;
+
 #include "../UidPool/UidPool.hpp"
+#include "../ChannelDB/ChannelDB.hpp"
+#include "../UserDB/UserDB.hpp"
+
 #include <sys/types.h>
 #include <iostream>
 
 using namespace std;
+
+class ServerFail : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Server creation failed");
+		}
+};
+
+class ChanAddFail : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Channel adding failed");
+		}
+};
+
+class UserAddFail : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("User adding failed");
+		}
+};
 
 class Server {
 	private:
@@ -21,6 +52,9 @@ class Server {
 	public:
 	Server(string dname, string pass);
 	~Server();
+
+	void	addChan(string name, string pass, string motd, string oper_pass);
+	ssize_t	addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server);
 };
 
 #endif

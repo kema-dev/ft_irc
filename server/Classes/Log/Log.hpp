@@ -67,26 +67,9 @@ using namespace std;
 #define LOGFILE_PATH "/Users/jjourdan/dev/github/ft_irc/server/log/server.log"
 
 void	log(string str);
-void	log(string str1, string str2);
-void	log(string str1, string str2, string str3);
-void	log(string str1, string str2, string str3, string str4);
-void	log(string str1, string str2, string str3, string str4, string str5);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14, string str15);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14, string str15, string str16);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14, string str15, string str16, string str17);
-void	log(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12, string str13, string str14, string str15, string str16, string str17, string str18);
+void	logError(string action, string spec, string str);
 string	getTime(void);
 string	getLog(void);
 void	clearLog(void);
-void	logError(string str1, const char* str2);
 
 #endif

@@ -2,41 +2,42 @@
 
 using namespace std;
 
-User::User(string username, string fullname, string hostname, string servername, UidPool& pool) {
-	if (username == "") {
-		throw (WrongUserName());
-	}
-	for (size_t i = 0; username[i]; i++) {
-		if (!(isalnum(username[i]))) {
-				throw (WrongUserName());
-		}
-	}
-	if (fullname == "") {
-		throw (WrongUserName());
-	}
-	for (size_t i = 0; fullname[i]; i++) {
-		if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
-			throw (WrongUserName());
-		}
-	}
-	size_t id;
-	id = pool.generate();
-	_username = username;
-    _fullname = fullname;
-	_nickname = "";
-	_hostname = hostname;
-	_servername = servername;
-	_uid = id;
-	_nb_msg = 0;
-	_ban_status = false;
-	_active_status = false;
-	char s[20]; // ? length of max_ssize
-	sprintf(s, "%ld", _uid);
-	string str = string(s);
-	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, LIGHT_BLUE," has been created",DEFAULT);
-}
+// User::User(string username, string fullname, string hostname, string servername, Server* server) {
+// 	if (username == "") {
+// 		throw (WrongUserName());
+// 	}
+// 	for (size_t i = 0; username[i]; i++) {
+// 		if (!(isalnum(username[i]))) {
+// 				throw (WrongUserName());
+// 		}
+// 	}
+// 	if (fullname == "") {
+// 		throw (WrongFullName());
+// 	}
+// 	for (size_t i = 0; fullname[i]; i++) {
+// 		if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
+// 			throw (WrongFullName());
+// 		}
+// 	}
+// 	size_t id;
+// 	_server = server;
+// 	id = server->pool->generate();
+// 	_username = username;
+//     _fullname = fullname;
+// 	_nickname = "";
+// 	_hostname = hostname;
+// 	_servername = servername;
+// 	_uid = id;
+// 	_nb_msg = 0;
+// 	_ban_status = false;
+// 	_active_status = false;
+// 	char s[20]; // ? length of max_ssize
+// 	sprintf(s, "%ld", _uid);
+// 	string str = string(s);
+// 	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
+// }
 
-User::User(string username, string fullname, string nickname, string hostname, string servername, UidPool& pool) {
+User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
 	if (username == "") {
 		throw (WrongUserName());
 	}
@@ -62,7 +63,8 @@ User::User(string username, string fullname, string nickname, string hostname, s
 		}
 	}
 	size_t id;
-	id = pool.generate();
+	_server = server;
+	id = server->pool->generate();
 	_username = username;
 	_fullname = fullname;
 	_nickname = nickname;
@@ -72,10 +74,10 @@ User::User(string username, string fullname, string nickname, string hostname, s
 	_nb_msg = 0;
 	_ban_status = false;
 	_active_status = false;
-	char s[20]; // ? length of max_ssize
+	char s[20]; // ? length of ssize_max
 	sprintf(s, "%ld", _uid);
 	string str = string(s);
-	log(LIGHT_MAGENTA, "User" DEFAULT, " username: ", GREEN, _username, DEFAULT, " - uid: ", GREEN, s, LIGHT_BLUE," has been created",DEFAULT);
+	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 }
 
 string	User::getNickName(void) {
@@ -110,11 +112,11 @@ string	User::getHash(void) {
 	return _hash;	
 }
 
-ostream &operator<<(ostream &stream, User &rhs)
-{
-	stream << "User infos:" << endl << "name: " << rhs.getFullName() << endl << "nb_msg: " << rhs.getNbMsg() << endl << "ban_status: " << rhs.getBanStatus() << endl << "active_status: " << rhs.getActiveStatus() << endl << "uid: " << rhs.getUid() << endl << "hash: " << rhs.getHash();
-    return stream;
-}
+// ostream &operator<<(ostream &stream, User &rhs)
+// {
+// 	stream << "User infos:" << endl << "name: " << rhs.getFullName() << endl << "nb_msg: " << rhs.getNbMsg() << endl << "ban_status: " << rhs.getBanStatus() << endl << "active_status: " << rhs.getActiveStatus() << endl << "uid: " << rhs.getUid() << endl << "hash: " << rhs.getHash();
+//     return stream;
+// }
 
 bool	User::setUserName(string new_username) {
 	_username = new_username;
@@ -161,68 +163,97 @@ bool	User::setPass(string new_pass) {
 	return true;
 }
 
-bool	User::logIn(UserDB* db) {
-	if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != false)) {
-		throw AlreadyLogged();
-	}
-	if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != false)) {
+bool	User::logIn(Server& server) {
+	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
 		throw AlreadyLogged();
 	}
 	this->setActiveStatus(true);
-	log(LIGHT_MAGENTA, "User ", GREEN, this->getFullName(), LIGHT_BLUE, " logged in to ", GREEN, "the server", DEFAULT);
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
 	return true;
 }
 
-bool	User::logOut(UserDB* db) {
-	if ((db->search(this) == nullptr) || (db->search(this)->getActiveStatus() != true)) {
-		throw NotLoggedGlobal();
+bool	User::logOut(Server& server) {
+	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
+		throw NotLogged();
 	}
 	this->setActiveStatus(false);
-	log(LIGHT_MAGENTA, "User ", RED, this->getFullName(), LIGHT_BLUE, " logged out from ", RED, "the server", DEFAULT);
+	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getUserName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
 	return true;
 }
 
-bool	User::sendMessage(string content, Channel* chan) {
-	if (chan->isLog(*this) == true) {
-		Message msg;
-		msg = Message(content, this->getFullName(), chan->getNextUid());
-		chan->receiveMsg(msg);
-		this->setNbMsg(getNbMsg() + 1);
-		log(GREEN, this->getFullName(), LIGHT_BLUE, " sent message to ", GREEN, chan->getName(), DEFAULT);
-		return true;
+void	User::sendMessage(string content, Channel& chan) {
+	if (chan.isLog(*this) != true) {
+		throw NotLogged();
+		return;
 	}
-	return false;
+	Message msg = Message(content, this->getUserName(), chan.getNextUid());
+	chan.receiveMsg(msg);
+	this->setNbMsg(getNbMsg() + 1);
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
 }
 
-bool	User::joinChannel(Channel* chan, string pass) {
-	return chan->userJoin(*this, pass);
+void	User::joinChannel(Channel& chan, string pass) {
+	bool auth = chan.userJoin(*this, pass);
+	if (auth == true) {
+		return;
+	}
+	throw BadPasswd();
+	return;
 }
 
-bool	User::ban(User& usr, Channel& chan) {
+void	User::ban(User& usr, Channel& chan) {
 	if (chan.isLog(usr) != true) {
 		throw NotLogged();
 	}
 	usr.getBanned(chan, *this);
-	return true;
+	return;
 }
 
 void	User::getBanned(Channel& chan, User& banner) {
+	if (chan.isLog(banner) != true) {
+		throw NotLogged();
+		return;
+	}
 	chan.userBan(*this, banner);
 	// TODO Send ban info to *this
 }
 
-bool	User::setPasswd(Channel& chan, string pass) {
+void	User::setPasswd(Channel& chan, string pass) {
+	if (chan.isLog(*this) != true) {
+		throw NotLogged();
+		return;
+	}
 	if (chan.isOper(*this) != true) {
 		throw BadRole();
 	}
 	chan.setPasswd(pass);
-	return true;
+	return;
 }
 
-bool	User::setOperPasswd(Channel& chan, string pass) {
+void	User::setOperPasswd(Channel& chan, string pass) {
+	if (chan.isLog(*this) != true) {
+		throw NotLogged();
+		return;
+	}
 	if (chan.isOper(*this) != true) {
 		throw BadRole();
 	}
 	chan.setOperPasswd(pass);
-	return true;
+}
+
+void	User::becomeOper(Channel& chan, string pass) {
+	if (chan.isLog(*this)) {
+		if (chan.checkOperPasswd(pass) == true) {
+			chan.addOper(*this);
+			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
+			return;
+		}
+		else {
+			throw BadPasswd();
+			return;
+		}
+	}
+	else {
+		throw NotLogged();
+	}
 }
