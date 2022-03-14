@@ -143,11 +143,11 @@ class User {
 	bool	logOut(Server& server);
 	void	sendMessage(string content, Channel& chan);
 	void	joinChannel(Channel& chan, string pass);
-	bool	ban(User& usr, Channel& chan);
+	void	ban(User& usr, Channel& chan);
 	void	getBanned(Channel& chan, User& banner);
-	bool	setPasswd(Channel& chan, string pass);
-	bool	setOperPasswd(Channel& chan, string pass);
-	bool	becomeOper(Channel& chan, string pass);
+	void	setPasswd(Channel& chan, string pass);
+	void	setOperPasswd(Channel& chan, string pass);
+	void	becomeOper(Channel& chan, string pass);
 };
 
 // std::ostream &	operator<<(std::ostream &stream, User &rhs);

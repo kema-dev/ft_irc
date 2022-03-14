@@ -55,6 +55,5 @@ int main(void) {
 	}
 	// TODO send mesage
 	// TODO print chan messages
-	// TODO maybe check active status before launching commands
 	// TODO avoid duplicate user / channels (all variables must be different)
 }

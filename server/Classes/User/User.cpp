@@ -186,18 +186,13 @@ void	User::sendMessage(string content, Channel& chan) {
 		throw NotLogged();
 		return;
 	}
-	Message msg;
-	msg = Message(content, this->getUserName(), chan.getNextUid());
+	Message msg = Message(content, this->getUserName(), chan.getNextUid());
 	chan.receiveMsg(msg);
 	this->setNbMsg(getNbMsg() + 1);
 	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
 }
 
 void	User::joinChannel(Channel& chan, string pass) {
-	if (chan.isLog(*this) != true) {
-		throw NotLogged();
-		return;
-	}
 	bool auth = chan.userJoin(*this, pass);
 	if (auth == true) {
 		return;
@@ -206,50 +201,59 @@ void	User::joinChannel(Channel& chan, string pass) {
 	return;
 }
 
-bool	User::ban(User& usr, Channel& chan) {
+void	User::ban(User& usr, Channel& chan) {
 	if (chan.isLog(usr) != true) {
 		throw NotLogged();
 	}
 	usr.getBanned(chan, *this);
-	return true;
+	return;
 }
 
 void	User::getBanned(Channel& chan, User& banner) {
+	if (chan.isLog(banner) != true) {
+		throw NotLogged();
+		return;
+	}
 	chan.userBan(*this, banner);
 	// TODO Send ban info to *this
 }
 
-bool	User::setPasswd(Channel& chan, string pass) {
+void	User::setPasswd(Channel& chan, string pass) {
+	if (chan.isLog(*this) != true) {
+		throw NotLogged();
+		return;
+	}
 	if (chan.isOper(*this) != true) {
 		throw BadRole();
 	}
 	chan.setPasswd(pass);
-	return true;
+	return;
 }
 
-bool	User::setOperPasswd(Channel& chan, string pass) {
+void	User::setOperPasswd(Channel& chan, string pass) {
+	if (chan.isLog(*this) != true) {
+		throw NotLogged();
+		return;
+	}
 	if (chan.isOper(*this) != true) {
 		throw BadRole();
 	}
 	chan.setOperPasswd(pass);
-	return true;
 }
 
-bool	User::becomeOper(Channel& chan, string pass) {
+void	User::becomeOper(Channel& chan, string pass) {
 	if (chan.isLog(*this)) {
 		if (chan.checkOperPasswd(pass) == true) {
 			chan.addOper(*this);
 			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
-			return true;
+			return;
 		}
 		else {
 			throw BadPasswd();
-			return false;
+			return;
 		}
 	}
 	else {
 		throw NotLogged();
-		return false;
 	}
-	return false;
 }
