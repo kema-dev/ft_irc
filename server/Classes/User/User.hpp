@@ -129,18 +129,18 @@ class User {
 	ssize_t	getUid(void);
 	string	getHash(void);
 
-	bool	setUserName(string new_username);
-	bool	setNickName(string new_nickname);
-	bool	setFullName(string new_fullname);
-	bool	setNbMsg(ssize_t new_nb_msg);
-	bool	setBanStatus(bool new_ban_status);
-	bool	setActiveStatus(bool new_active_status);
-	bool	setUid(ssize_t new_uid);
-	bool	setHash(string new_hash);
-	bool	setPass(string new_pass);
+	void	setUserName(string new_username);
+	void	setNickName(string new_nickname);
+	void	setFullName(string new_fullname);
+	void	setNbMsg(ssize_t new_nb_msg);
+	void	setBanStatus(bool new_ban_status);
+	void	setActiveStatus(bool new_active_status);
+	void	setUid(ssize_t new_uid);
+	void	setHash(string new_hash);
+	void	setPass(string new_pass);
 
-	bool	logIn(Server& server);
-	bool	logOut(Server& server);
+	void	logIn(Server& server);
+	void	logOut(Server& server);
 	void	sendMessage(string content, Channel& chan);
 	void	joinChannel(Channel& chan, string pass);
 	void	ban(User& usr, Channel& chan);

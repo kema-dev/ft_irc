@@ -118,67 +118,56 @@ string	User::getHash(void) {
 //     return stream;
 // }
 
-bool	User::setUserName(string new_username) {
+void	User::setUserName(string new_username) {
 	_username = new_username;
-	return true;
 }
 
-bool	User::setNickName(string new_nickname) {
+void	User::setNickName(string new_nickname) {
 	_nickname = new_nickname;
-	return true;
 }
 
-bool	User::setFullName(string new_fullname) {
+void	User::setFullName(string new_fullname) {
 	_fullname = new_fullname;
-	return true;
 }
 
-bool	User::setNbMsg(ssize_t new_nb_msg) {
+void	User::setNbMsg(ssize_t new_nb_msg) {
 	_nb_msg = new_nb_msg;
-	return true;
 }
 
-bool	User::setBanStatus(bool new_ban_status) {
+void	User::setBanStatus(bool new_ban_status) {
 	_ban_status = new_ban_status;
-	return true;
 }
 
-bool	User::setActiveStatus(bool new_active_status) {
+void	User::setActiveStatus(bool new_active_status) {
 	_active_status = new_active_status;
-	return true;
 }
 
-bool	User::setUid(ssize_t new_uid) {
+void	User::setUid(ssize_t new_uid) {
 	_uid = new_uid;
-	return true;
 }
 
-bool	User::setHash(string new_hash) {
+void	User::setHash(string new_hash) {
 	_hash = new_hash;
-	return true;
 }
 
-bool	User::setPass(string new_pass) {
+void	User::setPass(string new_pass) {
 	_hash = sha256(new_pass);
-	return true;
 }
 
-bool	User::logIn(Server& server) {
+void	User::logIn(Server& server) {
 	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
 		throw AlreadyLogged();
 	}
 	this->setActiveStatus(true);
 	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
-	return true;
 }
 
-bool	User::logOut(Server& server) {
+void	User::logOut(Server& server) {
 	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
 		throw NotLogged();
 	}
 	this->setActiveStatus(false);
 	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getUserName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
-	return true;
 }
 
 void	User::sendMessage(string content, Channel& chan) {
