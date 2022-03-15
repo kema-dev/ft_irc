@@ -123,6 +123,7 @@ class User {
 	string	getNickName(void);
 	string	getUserName(void);
 	string	getFullName(void);
+    string  getHostName(void);
 	ssize_t	getNbMsg(void);
 	bool	getBanStatus(void);
 	bool	getActiveStatus(void);
@@ -132,6 +133,7 @@ class User {
 	void	setUserName(string new_username);
 	void	setNickName(string new_nickname);
 	void	setFullName(string new_fullname);
+    void    setHostName(string new_hostname);
 	void	setNbMsg(ssize_t new_nb_msg);
 	void	setBanStatus(bool new_ban_status);
 	void	setActiveStatus(bool new_active_status);

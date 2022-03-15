@@ -92,6 +92,10 @@ string	User::getFullName(void) {
 	return _fullname;
 }
 
+string	User::getHostName(void) {
+	return _hostname;
+}
+
 ssize_t	User::getNbMsg(void) {
 	return _nb_msg;
 }
@@ -128,6 +132,10 @@ void	User::setNickName(string new_nickname) {
 
 void	User::setFullName(string new_fullname) {
 	_fullname = new_fullname;
+}
+
+void	User::setHostName(string new_hostname) {
+	_hostname = new_hostname;
 }
 
 void	User::setNbMsg(ssize_t new_nb_msg) {

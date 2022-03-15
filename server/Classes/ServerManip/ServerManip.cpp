@@ -25,14 +25,23 @@ void init_kqueue(int socket, int &kq)
     }
 }
 
-int check_password(string input, string server_password, int socket)
+int check_password(string input, Server *irc_serv, int socket)
 {
+    string hash;
     if (input.find("PASS") != std::string::npos)
     {
         std::string password = input.substr(strlen("PASS") + 1 , input.length() - strlen("PASS") - (input.length() - (input.find("\n") - 2)));
-        if (password != server_password)
+        try {
+            hash = sha256(password);
+        }
+        catch (exception& e) {
+		    logError(string("Password does not match."), NULL, e.what());
+		    throw ServerFail();
+		    return (-1);
+	    }
+        if (hash != irc_serv->getHash())
         {
-            send(socket, "Unable to logging in to the server: password incorrect\r\n", strlen("Unable to connect to the server: password incorrect\r\n"), 0);
+            send(socket, "Unable to log into the server: password incorrect\r\n", strlen("Unable to connect to the server: password incorrect\r\n"), 0);
             std::cout << "PasswordIncorrect" << std::endl;
             return (-1);
         }
@@ -55,8 +64,9 @@ string parseNickname(string input)
     return (nickname);
 }
 
-User& createUser(std::string input, UidPool pool, int socket, string nickname)
+ssize_t createUser(std::string input, Server *server, int socket, string nickname)
 {
+    ssize_t id;
     string fullname;
     char username[50];
     char hostname[50];
@@ -92,7 +102,12 @@ User& createUser(std::string input, UidPool pool, int socket, string nickname)
         // cout << servername << endl;
         // cout << fullname << endl;
     }
-    User* user = new User(username, fullname, nickname, hostname, servername, pool);
-    cout << "User created!" << endl;
-    return (*user);
+    try {
+		id = server->addUser(username, fullname, nickname, hostname, servername, server);
+        cout << "User created!" << endl;
+	}
+	catch (exception& e) {
+		logError(string("Adding user on server " + string(servername)), username, e.what());
+	}
+    return (id);
 }

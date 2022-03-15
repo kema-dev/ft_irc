@@ -1,6 +1,8 @@
 #include "CommandHandler.hpp"
 
-int command_check(std::string message, int fd)
+using namespace std;
+
+int command_check(std::string message, t_params *params)
 {
     try{
         if (message.empty() == true)
@@ -16,6 +18,7 @@ int command_check(std::string message, int fd)
     commands.push_back("QUIT");
     commands.push_back("NICK");
     commands.push_back("USER");
+    commands.push_back("PONG");
     try {
         size_t pos;
         std::string cmd;
@@ -40,8 +43,9 @@ int command_check(std::string message, int fd)
         switch (index)
         {
             case 0:
-                channel_s = message.substr(pos + 1, message.length() - pos - 3);
+                channel_s = message.substr(pos + 1, message.length() - pos - 1);
                 // TODO Implement check_channel(std::string channel) check_channel(channel) < 0
+                cout << channel_s << endl;
                 if (channel_s.compare("#ratio") != 0 /* ratio cette condition */)
                 {
                     std::string msg;
@@ -51,10 +55,13 @@ int command_check(std::string message, int fd)
                 }
                 else
                 {
-                    send(fd, ":dOD!dginisty@0 JOIN #ratio\r\n", strlen(":dOD!dginisty@0 JOIN #ratio\r\n"), 0);
-                    send(fd, ":127.0.0.1 332 dOD #ratio :Bonjour et gros ratio a toi:)\r\n", strlen(":127.0.0.1 332 dOD #ratio :Bonjour et gros ratio a toi:)\r\n"), 0);
-                    send(fd, ":127.0.0.1 353 dOD = #ratio :@dOD\r\n", strlen(":127.0.0.1 353 dOD = #ratio :@dOD\r\n"), 0);
-                    send(fd, ":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n", strlen(":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n"), 0);
+                    string reply;
+                    reply = header_2(params->irc_serv, params->user_id, "") + "JOIN " + channel_s + "\r\n";
+                    send(params->client_socket, reply.c_str(), strlen(reply.c_str()), 0);
+                    
+                    send(params->client_socket, ":127.0.0.1 332 dOD #ratio :Bonjour et gros ratio a toi:)\r\n", strlen(":127.0.0.1 332 dOD #ratio :Bonjour et gros ratio a toi:)\r\n"), 0);
+                    send(params->client_socket, ":127.0.0.1 353 dOD = #ratio :@dOD\r\n", strlen(":127.0.0.1 353 dOD = #ratio :@dOD\r\n"), 0);
+                    send(params->client_socket, ":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n", strlen(":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n"), 0);
                 }
                 break;
             case 1:
@@ -75,13 +82,15 @@ int command_check(std::string message, int fd)
                 }
                 break;
             case 2:
-                send(fd, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
+                send(params->client_socket, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
                 exit(EXIT_SUCCESS);
             case 3:
                 std::cout << "SETNICKNAME" << std::endl;
                 break;
             case 4:
                 std::cout << "SETUSERNAME" << std::endl;
+                break;
+            case 5:
                 break;
             default:
                 throw(InvalidCommand());

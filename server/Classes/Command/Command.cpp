@@ -1,19 +1,19 @@
 #include "Command.hpp"
 
-string header_1(User user)
+string header_1(Server *server, ssize_t id, string rplyNb)
 {
     string reply;
 
-    reply = :localhost 001 dOD;
-
+    reply = ":" + server->userDB->search(id)->getHostName() + " " + rplyNb + " " + server->userDB->search(id)->getNickName() + " :";
     return(reply);
 }
 
-string header_2(User user)
+string header_2(Server *server, ssize_t id, string rplyNb)
 {
     string reply;
-    
-    reply = :dOD!dginisty@0 ;
-
+    if (rplyNb.empty())
+        reply = ":" + server->userDB->search(id)->getNickName() + "!" + server->userDB->search(id)->getUserName() + "@" + server->userDB->search(id)->getHostName() + " ";
+    else
+        reply = ":" + server->userDB->search(id)->getNickName() + "!" + server->userDB->search(id)->getUserName() + "@" + server->userDB->search(id)->getHostName() + " " + rplyNb + " : ";
     return(reply);
 }
