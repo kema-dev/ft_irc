@@ -50,6 +50,14 @@ Server::~Server() {
 }
 
 void	Server::addChan(string name, string pass, string motd, string oper_pass) {
+	try {
+		chanDB->chkDuplicate(name);
+	}
+	catch (exception& e) {
+		logError(string("Creating channel"), name, e.what());
+		throw ChanAddFail();
+		return ;
+	}
 	Channel* chan = nullptr;
 	try {
 		chan = new Channel(name, pass, motd, oper_pass);
@@ -63,6 +71,14 @@ void	Server::addChan(string name, string pass, string motd, string oper_pass) {
 }
 
 ssize_t	Server::addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
+	try {
+		userDB->chkDuplicate(username, fullname, nickname);
+	}
+	catch (exception& e) {
+		logError(string("Creating user"), username, e.what());
+		throw UserAddFail();
+		return -1;
+	}
 	User* usr = nullptr;
 	try {
 		usr = new User(username, fullname, nickname, hostname, servername, server);

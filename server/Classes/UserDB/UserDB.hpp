@@ -19,6 +19,33 @@ class NoSuchUser : public exception
 		}
 };
 
+class DuplicateUsername : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("An existing user already uses this username");
+		}
+};
+
+class DuplicateFullname : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("An existing user already uses this fullname");
+		}
+};
+
+class DuplicateNickname : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("An existing user already uses this nickname");
+		}
+};
+
 class UserDB {
 	private:
 	vector<User>	_db;
@@ -31,7 +58,7 @@ class UserDB {
 	ssize_t	add(User& usr);
 	User*	search(User& usr);
 	User*	search(ssize_t id);
-	bool	check(string username, string fullname, string nickname);
+	void	chkDuplicate(string username, string fullname, string nickname);
 };
 
 #endif

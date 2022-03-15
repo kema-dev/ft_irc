@@ -7,6 +7,25 @@ void	ChannelDB::add(Channel& chan) {
 	log(string(LIGHT_MAGENTA) + string("Channel ") + string(GREEN) + string(chan.getName()) + string(LIGHT_BLUE) + string(" has been added to ") + string(LIGHT_MAGENTA) + string("channelDB ") + string(GREEN) + string(this->_name) + string(DEFAULT));
 }
 
+void	ChannelDB::remove(string name) {
+	try {
+		vector<Channel>::iterator it = _db.begin(), end = _db.end();
+		while (it != end) {
+			if (it->getName() == name) {
+				_db.erase(it);
+				log(string(LIGHT_MAGENTA) + string("Channel ") + string(RED) + name + string(LIGHT_BLUE) + string(" has been removed from ") + string(LIGHT_MAGENTA) + string("channelDB ") + string(RED) + string(this->_name) + string(DEFAULT));
+				return ;
+			}
+			it++;
+		}
+		throw NoSuchChan();
+	}
+	catch (exception& e) {
+		logError(string("Removing channel"), name, e.what());
+		throw ChanRemoveFail();
+	}
+}
+
 Channel*	ChannelDB::search(Channel& chan) {
 	try {
 		vector<Channel>::iterator it = _db.begin(), end = _db.end();
@@ -41,4 +60,20 @@ Channel*	ChannelDB::search(string name) {
 		throw ChanSearchFail();
 	}
 	return nullptr;
+}
+
+void	ChannelDB::chkDuplicate(string name) {
+	try {
+		vector<Channel>::iterator it = _db.begin(), end = _db.end();
+		while (it != end) {
+			if (it->getName() == name) {
+				throw DuplicateName();
+			}
+			it++;
+		}
+	}
+	catch (exception& e) {
+		logError(string("Checking chan duplicate"), name, e.what());
+		throw ChanDuplicate();
+	}
 }
