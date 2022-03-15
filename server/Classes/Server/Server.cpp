@@ -70,6 +70,11 @@ void	Server::addChan(string name, string pass, string motd, string oper_pass) {
 	this->chanDB->add(*chan);
 }
 
+string  Server::getHash()
+{
+    return _hash;
+}
+
 ssize_t	Server::addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
 	try {
 		userDB->chkDuplicate(username, fullname, nickname);

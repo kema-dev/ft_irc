@@ -22,6 +22,13 @@ string	Channel::getName(void){
 	return _name;
 }
 
+string Channel::getTopic(void)
+{
+    if (_topic.empty())
+        return "No topic is set.";
+    return _topic;
+}
+
 ssize_t	Channel::getUidAfter(timeval time) {
 	vector<Message>::iterator it, end;
 	it = _hist.begin();
@@ -33,6 +40,11 @@ ssize_t	Channel::getUidAfter(timeval time) {
 		it++;
 	}
 	return -1;
+}
+
+void    Channel::setTopic(string topic)
+{
+    _topic = topic;
 }
 
 bool	Channel::userJoin(User& usr, string pass) {

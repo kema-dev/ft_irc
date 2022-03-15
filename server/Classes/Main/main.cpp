@@ -1,21 +1,13 @@
 #include "../Error/Error.hpp"
 #include "../CommandHandler/CommandHandler.hpp"
 #include "../ServerManip/ServerManip.hpp"
+#include "../Server/Server.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <sys/event.h>
-
-typedef struct s_params
-{
-    int fd;
-    string password;
-    UidPool uidPool;
-}   t_params;
-
-using namespace std;
 
 void*	task1(void *);
 
@@ -90,13 +82,14 @@ int	main(int argc, char** argv)
     t_params params;
 
     socklen_t len = sizeof(clntAdd);
-    UidPool	pool = UidPool();
+    //TODO Add try/catch
+    Server* irc_serv = new Server("IRC_SERVER", argv[2]);
     int kq, new_event;
     struct kevent event_list[1];
     init_kqueue(listenFd, kq);
+    cout << "Listening to port " << argv[1] << endl;
     while(1)
     {
-        cout << "Listening to port " << argv[1] << endl;
         try {
             if ((new_event = kevent(kq, NULL, 0, event_list, 1, NULL)) == -1)
                 throw (ErrKEvent());
@@ -113,11 +106,10 @@ int	main(int argc, char** argv)
             {
                 pthread_t  a;
                 threadV.push_back(a);
-                params.fd = connFd;
-                params.uidPool = pool;
-                params.password = argv[2];
+                params.client_socket = connFd;
+                params.irc_serv = irc_serv;
                 pthread_create(&threadV.back(), NULL, task1, &params); 
-                cout << "Connection established." << endl;
+                std::cout << "Connection established." << std::endl;
             }
         }
         catch (const CannotAcceptConnection e){
@@ -130,24 +122,34 @@ int	main(int argc, char** argv)
 string read_socket(int socket)
 {
     char input[256];
+    static string buf;
+    string ret;
+    string input_s;
 
     bzero(input, 256);
-    int n = read(socket, input, 255);
+    int n = recv(socket, input, 255, MSG_DONTWAIT);
     try {
         if (n < 0)
             throw(ReadImpossible());
     }
     catch (const ReadImpossible e){
-        std::cerr << e.info() << std::endl;
+        // std::cerr << e.info() << std::endl;
     }
-    return (input);
+    // std::cout << "Result from read:'" << input << "'" << std::endl;
+    input_s = input;
+    if (buf.empty() == 0)
+        input_s = buf.append(input_s);
+    ret = input_s.substr(0, input_s.find("\r"));
+    buf = input_s.substr(input_s.find("\n") + 1, input_s.length() - (ret.length() + 1));
+    return (ret);
 }
 
 void *task1 (void *dummyPt)
 {
-    t_params* params = static_cast<t_params*>(dummyPt);
+    t_params* params = reinterpret_cast<t_params*>(dummyPt);
     string nickname;
 	string input;
+    ssize_t id;
     size_t nbPass = 0;
     int security = 0;
     int nbError = 0;
@@ -160,15 +162,15 @@ void *task1 (void *dummyPt)
     cout << "-----------------" << endl;
 	while(!loop)
 	{
-        while ((input = read_socket(params->fd)).empty() == true)
+        while ((input = read_socket(params->client_socket)).empty() == true)
         {
             ;
         }
         cout << "Input = '" << input << "'" << endl;
-        // ADD PASSWORDCHECK
+        // TODO add try/catch
         if (nbPass == 0)
         {
-            if (check_password(input, params->password, params->fd) == 0)
+            if (check_password(input, params->irc_serv, params->client_socket) == 0)
                 nbPass++;
             continue;
         }
@@ -181,23 +183,24 @@ void *task1 (void *dummyPt)
             }
             else
             {
-                User current_user = createUser(input, params->uidPool, params->fd, nickname);
+                id = createUser(input, params->irc_serv, params->client_socket, nickname);
+                params->user_id = id;
                 nbPass++;
             }
         }
         if (nbPass == 3)
         {
-            send(params->fd, ":localhost 001 dOD : Welcome to the Internet Relay Network dOD\r\n", strlen(":localhost 001 dOD : Welcome to the Internet Relay Network dOD\r\n"), 0);
-            send(params->fd, ":localhost 002 dOD : Your host is localhost, running on version [42.42]\r\n", strlen(":localhost 002 dOD : Your host is localhost, running on version [42.42]\r\n"), 0);
-            send(params->fd, ":localhost 003 dOD : This server was created Mon Mar 14 13:08:31 2022\r\n", strlen(":localhost 003 dOD : This server was created Mon Mar 14 13:08:31 2022\r\n"), 0);
-            send(params->fd, ":localhost 004 dOD : localhost version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":localhost 004 dOD : localhost version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
+            send(params->client_socket, ":localhost 001 dOD : Welcome to the Internet Relay Network dOD\r\n", strlen(":localhost 001 dOD : Welcome to the Internet Relay Network dOD\r\n"), 0);
+            send(params->client_socket, ":localhost 002 dOD : Your host is localhost, running on version [42.42]\r\n", strlen(":localhost 002 dOD : Your host is localhost, running on version [42.42]\r\n"), 0);
+            send(params->client_socket, ":localhost 003 dOD : This server was created Mon Mar 14 13:08:31 2022\r\n", strlen(":localhost 003 dOD : This server was created Mon Mar 14 13:08:31 2022\r\n"), 0);
+            send(params->client_socket, ":localhost 004 dOD : localhost version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n", strlen(":localhost 004 dOD : localhost version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n"), 0);
             nbPass++;
             continue;
         }
         if (nbPass > 3)
         {
             try{
-                security = command_check(input, params->fd);
+                security = command_check(input, params);
                 if (security == CLIENT_DISCONNECTED)
                     nbError++;
                 if (nbError >= 5)
@@ -205,12 +208,12 @@ void *task1 (void *dummyPt)
             }
             catch (const ClientDisconnected e) {
                 std::cerr << e.info() << std::endl;
-                close(params->fd);
+                close(params->client_socket);
                 exit(CLIENT_DISCONNECTED);
             }
         }
 	}
 	cout << "\nClosing thread and connection." << endl;
-	close(params->fd);
+	close(params->client_socket);
 	return (NULL);
 }

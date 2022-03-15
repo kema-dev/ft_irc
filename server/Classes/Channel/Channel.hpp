@@ -30,6 +30,7 @@ class Channel {
 	string			_name;
 	string			_hash;
 	string			_oper;
+    string          _topic;
 	ssize_t			_next_uid;
 	vector<Message>	_hist;
 	vector<pair<User&, timeval> >	_log;
@@ -40,8 +41,10 @@ class Channel {
 	~Channel() {};
 
 	string	getName(void);
+    string  getTopic(void);
 	ssize_t	getUidAfter(timeval time);
 	ssize_t	getNextUid(void);
+    void    setTopic(string topic);
 	bool	userJoin(User& usr, string pass);
 	bool	userLeave(User& usr);
 	void	receiveMsg(Message& msg);

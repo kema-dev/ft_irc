@@ -12,6 +12,13 @@ class ChannelDB;
 
 using namespace std;
 
+typedef struct s_params
+{
+    int client_socket;
+    Server *irc_serv;
+    ssize_t user_id;
+}   t_params;
+
 class ServerFail : public exception
 {
 	public:
@@ -71,6 +78,7 @@ class Server {
 	Server(string dname, string pass);
 	~Server();
 
+    string  getHash();
 	void	addChan(string name, string pass, string motd, string oper_pass);
 	ssize_t	addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server);
 };
