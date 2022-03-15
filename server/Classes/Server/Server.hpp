@@ -39,6 +39,24 @@ class UserAddFail : public exception
 		}
 };
 
+class ChanDuplicate : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Can't create channel (duplicate)");
+		}
+};
+
+class UserDuplicate : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Can't create user (duplicate)");
+		}
+};
+
 class Server {
 	private:
 	string		_hash;

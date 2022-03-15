@@ -36,6 +36,10 @@ ssize_t	Channel::getUidAfter(timeval time) {
 }
 
 bool	Channel::userJoin(User& usr, string pass) {
+	if (usr.getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return false;
+	}
 	if (sha256(pass) != _hash) {
 		return false;
 	}
@@ -48,6 +52,10 @@ bool	Channel::userJoin(User& usr, string pass) {
 }
 
 bool	Channel::userLeave(User& usr) {
+	if (usr.getActiveStatus() != true) {
+	throw NotLoggedGlobal();
+	return false;
+	}
 	vector<pair<User&, timeval> >::iterator	it, end;
 	vector<pair<User&, bool> >::iterator	it2, end2;
 	it = _log.begin();
@@ -59,13 +67,13 @@ bool	Channel::userLeave(User& usr) {
 		if (it->first.getUid() == id) {
 			_log.erase(it);
 			_roles.erase(it2);
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
 			return true;
 		}
 		it++;
 		it2++;
 	}
 	return false;
-	log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
 }
 
 void	Channel::receiveMsg(Message& msg) {
@@ -145,6 +153,10 @@ vector<string>	Channel::getNickLst(void) {
 }
 
 bool	Channel::userBan(User& usr, User& banner) {
+	if (usr.getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return false;
+	}
 	vector<pair<User&, timeval> >::iterator	it, end;
 	it = _log.begin();
 	end = _log.end();
@@ -195,6 +207,10 @@ bool	Channel::setOperPasswd(string oper_pass) {
 }
 
 bool	Channel::addOper(User& usr) {
+	if (usr.getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return false;
+	}
 	vector<pair<User&, bool> >::iterator	it, end;
 	it = _roles.begin();
 	end = _roles.end();

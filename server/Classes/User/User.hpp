@@ -78,7 +78,16 @@ class AlreadyLogged : public exception
 	public:
 		virtual const char*	what() const throw()
 		{
-			return ("User is already logged in to the server");
+			return ("User is already logged in to the channel");
+		}
+};
+
+class AlreadyLoggedGlobal : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("User already logged to the server");
 		}
 };
 

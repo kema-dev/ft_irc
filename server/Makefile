@@ -30,9 +30,11 @@ ARG			:= 	4242 password
 HEADERS		:=	$(shell find $(INCDIR) -type f -name *.$(HDEXT))
 SOURCES		:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 KEMASOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Main | grep -v template)
+KEMASOURCES2:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Main | grep -v template | grep -v Manip | grep -v Handler | grep -v Command)
 DODSOURCES	:=	$(shell find $(SRCDIR) -type f -name *.$(SRCEXT) | grep -v Main | grep -v template)
 OBJECTS		:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 KEMAOBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(KEMASOURCES:.$(SRCEXT)=.$(OBJEXT)))
+KEMAOBJECTS2:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(KEMASOURCES2:.$(SRCEXT)=.$(OBJEXT)))
 DODBJECTS	:=	$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(DODSOURCES:.$(SRCEXT)=.$(OBJEXT)))
 
 LOGPATH		:=	$(shell pwd)/log
@@ -110,6 +112,11 @@ template:
 kema: directories $(KEMAOBJECTS)
 	@printf "\ec"
 	@$(CC) $(KEMAOBJECTS) Classes/Main/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
+	@./$(TARGETDIR)/$(KEMAOUT)
+
+kema2: directories $(KEMAOBJECTS2)
+	@printf "\ec"
+	@$(CC) $(KEMAOBJECTS2) Classes/Main/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
 	@./$(TARGETDIR)/$(KEMAOUT)
 
 dod: directories $(DODBJECTS)

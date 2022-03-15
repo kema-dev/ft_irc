@@ -28,6 +28,24 @@ class ChanSearchFail : public exception
 		}
 };
 
+class ChanRemoveFail : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Channel remove failed");
+		}
+};
+
+class DuplicateName : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("An existing channel already uses this name");
+		}
+};
+
 class ChannelDB {
 	private:
 	vector<Channel>	_db;
@@ -37,9 +55,12 @@ class ChannelDB {
 	ChannelDB(string name) {_name = name;};
 	~ChannelDB() {};
 
+	void		remove(string name);
 	void		add(Channel& chan);
 	Channel*	search(Channel& chan);
 	Channel*	search(string name);
+	void		chkDuplicate(string name);
+	void		logOut(User& usr);
 };
 
 #endif

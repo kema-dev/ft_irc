@@ -156,21 +156,25 @@ void	User::setPass(string new_pass) {
 
 void	User::logIn(Server& server) {
 	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
-		throw AlreadyLogged();
+		throw AlreadyLoggedGlobal();
 	}
 	this->setActiveStatus(true);
 	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
 }
 
 void	User::logOut(Server& server) {
-	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
-		throw NotLogged();
+	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != true)) {
+		throw NotLoggedGlobal();
 	}
 	this->setActiveStatus(false);
 	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getUserName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
 }
 
 void	User::sendMessage(string content, Channel& chan) {
+	if (this->getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return ;
+	}
 	if (chan.isLog(*this) != true) {
 		throw NotLogged();
 		return;
@@ -182,6 +186,10 @@ void	User::sendMessage(string content, Channel& chan) {
 }
 
 void	User::joinChannel(Channel& chan, string pass) {
+	if (this->getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return ;
+	}
 	bool auth = chan.userJoin(*this, pass);
 	if (auth == true) {
 		return;
@@ -191,6 +199,10 @@ void	User::joinChannel(Channel& chan, string pass) {
 }
 
 void	User::ban(User& usr, Channel& chan) {
+	if (this->getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return ;
+	}
 	if (chan.isLog(usr) != true) {
 		throw NotLogged();
 	}
@@ -208,6 +220,10 @@ void	User::getBanned(Channel& chan, User& banner) {
 }
 
 void	User::setPasswd(Channel& chan, string pass) {
+	if (this->getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return ;
+	}
 	if (chan.isLog(*this) != true) {
 		throw NotLogged();
 		return;
@@ -220,6 +236,10 @@ void	User::setPasswd(Channel& chan, string pass) {
 }
 
 void	User::setOperPasswd(Channel& chan, string pass) {
+	if (this->getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return ;
+	}
 	if (chan.isLog(*this) != true) {
 		throw NotLogged();
 		return;
@@ -231,6 +251,10 @@ void	User::setOperPasswd(Channel& chan, string pass) {
 }
 
 void	User::becomeOper(Channel& chan, string pass) {
+	if (this->getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return ;
+	}
 	if (chan.isLog(*this)) {
 		if (chan.checkOperPasswd(pass) == true) {
 			chan.addOper(*this);

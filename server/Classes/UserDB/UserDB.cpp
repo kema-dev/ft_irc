@@ -45,12 +45,24 @@ User*	UserDB::search(ssize_t id) {
 	return nullptr;
 }
 
-bool	UserDB::check(string username, string fullname, string nickname) {
-	vector<User>::iterator it = _db.begin(), end = _db.end();
-	while (it != end) {
-		if ((it->getUserName() == username) && (it->getFullName() == fullname) && (it->getNickName() == nickname)) {
-			return false;
+void	UserDB::chkDuplicate(string username, string fullname, string nickname) {
+	try {
+		vector<User>::iterator it = _db.begin(), end = _db.end();
+		while (it != end) {
+			if (it->getUserName() == username) {
+				throw DuplicateUsername();
+			}
+			if (it->getFullName() == fullname) {
+				throw DuplicateFullname();
+			}
+			if (it->getNickName() == nickname) {
+				throw DuplicateNickname();
+			}
+			it++;
 		}
 	}
-	return true;
+	catch (exception& e) {
+		logError(string("Checking user duplicate"), username, e.what());
+		throw UserDuplicate();
+	}
 }

@@ -9,6 +9,7 @@ int main(void) {
 	string hostname = "hostname";
 	string servername = "servername";
 	string serverpassword = "serverpassword";
+	// NOTE Create only one server
 	try {
 		server = new Server(servername, serverpassword);
 	}
@@ -53,7 +54,9 @@ int main(void) {
 	catch (exception& e) {
 		logError(string("Becoming operator of channel " + channame), username, e.what());
 	}
-	// TODO send mesage
+	// TODO remove user
+	// TODO create fct remove channel
+	// TODO send message
+	// TODO send private message
 	// TODO print chan messages
-	// TODO avoid duplicate user / channels (all variables must be different)
 }

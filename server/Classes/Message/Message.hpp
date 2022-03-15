@@ -23,7 +23,8 @@ class Message {
 	bool	compareTime(timeval time);
 	ssize_t	getUid(void);
 	timeval	getTime(void);
-	string	getContent(void); // ! ANCHOR add specific func to separate sender and contnt getters
+	string	getContent(void);
+	// TODO add specific func to separate sender and contnt getters
 };
 
 #endif
