@@ -20,6 +20,7 @@ void	error(const char* msg)
 
 int	main(int argc, char** argv)
 {
+    log("------------------------------------");
 	try {
 		if (argc != 3)
 			throw(BadNumberArgs());

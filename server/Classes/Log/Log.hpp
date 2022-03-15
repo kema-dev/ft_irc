@@ -64,7 +64,7 @@ using namespace std;
 # define BACK_LIGHT_CYAN	"\e[106m"
 # define BACK_WHITE			"\e[107m"
 
-#define LOGFILE_PATH "/Users/jjourdan/dev/github/ft_irc/server/log/server.log"
+#define LOGFILE_PATH "/Users/dginisty/Documents/42cursus/ft_irc/server/log/server.log"
 
 void	log(string str);
 void	logError(string action, string spec, string str);
