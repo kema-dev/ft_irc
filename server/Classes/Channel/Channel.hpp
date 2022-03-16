@@ -37,7 +37,7 @@ class Channel {
 	vector<pair<User&, bool> >	_roles;
 
 	public:
-	Channel(string name, string pass, string motd, string oper_pass);
+	Channel(string name, string pass, string topic, string oper_pass);
 	~Channel() {};
 
 	string	getName(void);
@@ -58,6 +58,7 @@ class Channel {
 	bool	checkOperPasswd(string pass);
 	bool	setOperPasswd(string oper_pass);
 	bool	addOper(User& usr);
+	bool	removeOper(User& usr);
 };
 
 #endif

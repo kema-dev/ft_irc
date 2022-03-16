@@ -59,6 +59,7 @@ class UserDB {
 	User*	search(User& usr);
 	User*	search(ssize_t id);
 	void	chkDuplicate(string username, string fullname, string nickname);
+	// void	remove(string name);
 };
 
 #endif
