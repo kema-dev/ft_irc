@@ -154,6 +154,7 @@ class User {
 	void	logOut(Server& server);
 	void	sendMessage(string content, Channel& chan);
 	void	joinChannel(Channel& chan, string pass);
+	void	tryJoinChannel(string name, string pass, string topic, string oper_pass, Server* server);
 	void	ban(User& usr, Channel& chan);
 	void	getBanned(Channel& chan, User& banner);
 	void	setPasswd(Channel& chan, string pass);

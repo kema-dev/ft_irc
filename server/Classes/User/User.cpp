@@ -234,6 +234,31 @@ void	User::joinChannel(Channel& chan, string pass) {
 	return;
 }
 
+// ? Try to join <chan> with password <pass> and create it if non-existent
+void	User::tryJoinChannel(string name, string pass, string topic, string oper_pass, Server* server) {
+	// TODO remove "motd" in channels and replace by topic in appropriate position
+	if (this->getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return ;
+	}
+	try {
+		server->chanDB->search(name);
+	}
+	catch (exception& e) {
+		server->addChan(name, pass, topic, oper_pass);
+	}
+	if (server->chanDB->search(name)->isLog(*this) == true) {
+		throw AlreadyLogged();
+		return ;
+	}
+	bool auth = server->chanDB->search(name)->userJoin(*this, pass);
+	if (auth == true) {
+		return ;
+	}
+	throw BadPasswd();
+	return ;
+}
+
 // ? Ban <usr> form <chan>
 void	User::ban(User& usr, Channel& chan) {
 	if (this->getActiveStatus() != true) {

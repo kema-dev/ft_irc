@@ -44,17 +44,19 @@ int command_check(std::string message, t_params *params)
         {
             case 0:
                 channel_s = message.substr(pos + 1, message.length() - pos - 1);
-                try {
-                    params->irc_serv->userDB->search(params->user_id)->joinChannel(*(params->irc_serv->chanDB->search(channel_s)), "");
-                }
-                catch (exception& e) {
-                    try {
-                        params->irc_serv->addChan(channel_s, "", "", "");
-                    }
-                    catch (exception& e) {
-                        logError(string("Adding channel on server"), channel_s, e.what());
-                    }
-                }
+
+                // try {
+                //     params->irc_serv->userDB->search(params->user_id)->joinChannel(*(params->irc_serv->chanDB->search(channel_s)), "");
+                // }
+                // catch (exception& e) {
+                //     try {
+                //         params->irc_serv->addChan(channel_s, "", "", "");
+                //     }
+                //     catch (exception& e) {
+                //         logError(string("Adding channel on server"), channel_s, e.what());
+                //     }
+                // }
+
                 reply(params, JOIN, channel_s);
                 if (params->irc_serv->chanDB->search(channel_s)->getTopic().empty())
                     reply(params, RPL_NOTOPIC, channel_s);
