@@ -1,3 +1,3 @@
 # TODOLIST
 
-RATIO
+Pretty format Dorian's main
