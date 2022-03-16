@@ -12,6 +12,12 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 
+// ! SEND ONLY "<< overloaded" type !
+template<typename T>
+string	itos(T nb) {
+    return static_cast<ostringstream*>(&(ostringstream() << nb))->str();
+}
+
 int command_check(std::string message, t_params *params);
 
 #endif

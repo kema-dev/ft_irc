@@ -24,10 +24,10 @@ void	error(const char* msg)
 }
 
 // ! SEND ONLY "<< overloaded" type !
-template<typename T>
-string	itos(T nb) {
-	return static_cast<ostringstream*>(&(ostringstream() << nb))->str();
-}
+// template<typename T>
+// string	itos(T nb) {
+// 	return static_cast<ostringstream*>(&(ostringstream() << nb))->str();
+// }
 
 int	check_params(int argc, char** argv) {
 	log("------------------------------------");
