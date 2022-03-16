@@ -5,7 +5,10 @@ Channel::Channel(string name, string pass, string topic, string oper_pass) {
 	if (name == "") {
 		throw (WrongChannelName());
 	}
-	for (size_t i = 0; name[i]; i++) {
+    if (name[0] != '#') {
+		throw (WrongChannelName());
+    }
+	for (size_t i = 1; name[i]; i++) {
 		if (!(isalnum(name[i]))) {
 			throw (WrongChannelName());
 		}

@@ -3,6 +3,7 @@
 
 #include "../Error/Error.hpp"
 #include "../Command/Command.hpp"
+#include "../Channel/Channel.hpp"
 #include <iostream>
 #include <algorithm>
 #include <string>
