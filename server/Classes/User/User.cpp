@@ -222,6 +222,10 @@ void	User::joinChannel(Channel& chan, string pass) {
 		throw NotLoggedGlobal();
 		return ;
 	}
+	if (chan.isLog(*this) == true) {
+		throw AlreadyLogged();
+		return ;
+	}
 	bool auth = chan.userJoin(*this, pass);
 	if (auth == true) {
 		return;

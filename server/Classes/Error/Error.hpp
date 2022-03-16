@@ -8,7 +8,7 @@
 class BadNumberArgs : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Usage: ./irc_server <port> <password>");
 		}
@@ -18,7 +18,7 @@ class BadNumberArgs : public std::exception
 class InvalidPort : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Please enter a port between 1 and 65535.");
 		}
@@ -28,7 +28,7 @@ class InvalidPort : public std::exception
 class ErrorInSocketCreation : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Cannot open socket.");
 		}
@@ -38,7 +38,7 @@ class ErrorInSocketCreation : public std::exception
 class ErrorInBinding : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Cannot bind the socket.");
 		}
@@ -48,7 +48,7 @@ class ErrorInBinding : public std::exception
 class CannotAcceptConnection : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Connection cannot be established.");
 		}
@@ -58,7 +58,7 @@ class CannotAcceptConnection : public std::exception
 class NotACommand : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("What you just typed is not a command.");
 		}
@@ -68,7 +68,7 @@ class NotACommand : public std::exception
 class InvalidCommand : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("The command you entered is unknown.");
 		}
@@ -78,7 +78,7 @@ class InvalidCommand : public std::exception
 class EmptyCommand : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("The command you entered is empty.");
 		}
@@ -87,7 +87,7 @@ class EmptyCommand : public std::exception
 class ErrorReusingSocket : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Impossible to reuse socket.");
 		}
@@ -96,7 +96,7 @@ class ErrorReusingSocket : public std::exception
 class ReadImpossible : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Read impossible.");
 		}
@@ -106,7 +106,7 @@ class ReadImpossible : public std::exception
 class ClientDisconnected : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Client seems to be disconnected. Server will be closed.");
 		}
@@ -116,7 +116,7 @@ class ClientDisconnected : public std::exception
 class ErrKQueue : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Error in kqueue initialisation.");
 		}
@@ -126,7 +126,7 @@ class ErrKQueue : public std::exception
 class ErrKEvent : public std::exception
 {
 	public:
-		virtual const std::string	info() const throw()
+		virtual const char*	what() const throw()
 		{
 			return ("Error in kevent.");
 		}

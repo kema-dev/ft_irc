@@ -7,9 +7,14 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <string>
 #include <sys/event.h>
+#include <sstream>
+#include <stdlib.h>
 
 void*	task1(void *);
+
+using namespace std;
 
 static int connFd;
 void	error(const char* msg)
@@ -18,70 +23,82 @@ void	error(const char* msg)
 	exit(1);
 }
 
-int	main(int argc, char** argv)
-{
-    log("------------------------------------");
+// ! SEND ONLY "<< overloaded" type !
+template<typename T>
+string	itos(T nb) {
+	return static_cast<ostringstream*>(&(ostringstream() << nb))->str();
+}
+
+int	check_params(int argc, char** argv) {
+	log("------------------------------------");
 	try {
 		if (argc != 3)
 			throw(BadNumberArgs());
 	}
-	catch(const BadNumberArgs e) {
-		std::cerr << e.info() << std::endl;
-		return (BAD_NUMBER_ARGS);
+	catch(BadNumberArgs& e) {
+		string str = itos(argc);
+		logError("Checking argc", str, e.what());
+		cerr << RED << "Bad number of arguments: " << str << ": " << e.what() << DEFAULT << endl;
+		exit(BAD_NUMBER_ARGS);
 	}
+	int portNo = atoi(argv[1]);
 	try {
-		if (std::atoi(argv[1]) < 1 || std::atoi(argv[1]) > 65535)
+		if (portNo < 1 || portNo > 65535)
 			throw(InvalidPort());
 	}
-	catch (const InvalidPort e) {
-		std::cerr << e.info() << std::endl;
-		return (INVALID_PORT);
+	catch (InvalidPort& e) {
+		logError("Checking port", argv[1], e.what());
+		cerr << RED << "Invalid port: " << portNo << ": " << e.what() << DEFAULT << endl;
+		exit(INVALID_PORT);
 	}
+	return portNo;
+}
 
-	int portNo, listenFd;
-	struct sockaddr_in svrAdd, clntAdd;
-
-	vector<pthread_t> threadV;
-	portNo = atoi(argv[1]);
-
-	//create socket
-	listenFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+int	create_socket(void) {
+	int listenFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	try {
+		if(listenFd < 0)
+			throw (ErrorInSocketCreation());
+	}
+	catch (ErrorInSocketCreation& e) {
+		logError("Creating socket", "FAIL", e.what());
+		cerr << RED << "Socket creation failed: " << e.what() << DEFAULT << endl;
+		exit(ERR_SOCKET_CREATION);
+	}
     try {
         int enable = 1;
         if (setsockopt(listenFd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
             throw(ErrorReusingSocket());
     }
-    catch (const ErrorReusingSocket e) {
-        std::cerr << e.info() << std::endl;
+    catch (ErrorReusingSocket& e) {
+        logError("setsockopt", "FAIL", e.what());
+		cerr << RED << "setsockopt failed: " << e.what() << DEFAULT << endl;
+		exit(ERR_SOCKET_CREATION);
     }
-	try {
-		if(listenFd < 0)
-			throw (ErrorInSocketCreation());
-	}
-	catch (const ErrorInSocketCreation e) {
-		std::cerr << e.info() << std::endl;
-		return (ERR_SOCKET_CREATION);
-	}
-	
-	bzero((char*) &svrAdd, sizeof(svrAdd));
+	return listenFd;
+}
 
+int	main(int argc, char** argv)
+{
+	int portNo = check_params(argc, argv);
+	int listenFd = create_socket();
+	struct sockaddr_in svrAdd, clntAdd;
+	bzero((char*) &svrAdd, sizeof(svrAdd));
 	svrAdd.sin_family = AF_INET;
 	svrAdd.sin_addr.s_addr = INADDR_ANY;
 	svrAdd.sin_port = htons(portNo);
 
-	//bind socket
 	try {
 		if(bind(listenFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0)
 			throw (ErrorInBinding());
 	}
 	catch (const ErrorInBinding e) {
-		std::cerr << e.info() << std::endl;
+		cerr << e.what() << endl;
 		return (ERR_BIND);
 	}
-	
 	listen(listenFd, 5);
-    t_params params;
 
+    t_params params;
     socklen_t len = sizeof(clntAdd);
     //TODO Add try/catch
     Server* irc_serv = new Server("IRC_SERVER", argv[2]);
@@ -89,6 +106,7 @@ int	main(int argc, char** argv)
     struct kevent event_list[1];
     init_kqueue(listenFd, kq);
     cout << "Listening to port " << argv[1] << endl;
+	vector<pthread_t> threadV;
     while(1)
     {
         try {
@@ -96,7 +114,7 @@ int	main(int argc, char** argv)
                 throw (ErrKEvent());
         }
         catch (const ErrKEvent e) {
-            std::cerr << e.info() << std::endl;
+            cerr << e.what() << endl;
             exit(KEVENT_ERR);
         }
         int event_fd = event_list[0].ident;
@@ -110,11 +128,11 @@ int	main(int argc, char** argv)
                 params.client_socket = connFd;
                 params.irc_serv = irc_serv;
                 pthread_create(&threadV.back(), NULL, task1, &params); 
-                std::cout << "Connection established." << std::endl;
+                cout << "Connection established." << endl;
             }
         }
         catch (const CannotAcceptConnection e){
-            std::cerr << e.info() << std::endl;
+            cerr << e.what() << endl;
             return (ERR_CONNECTION);
         }   
     }
@@ -134,9 +152,9 @@ string read_socket(int socket)
             throw(ReadImpossible());
     }
     catch (const ReadImpossible e){
-        // std::cerr << e.info() << std::endl;
+        // cerr << e.what() << endl;
     }
-    // std::cout << "Result from read:'" << input << "'" << std::endl;
+    // cout << "Result from read:'" << input << "'" << endl;
     input_s = input;
     if (buf.empty() == 0)
         input_s = buf.append(input_s);
@@ -157,7 +175,7 @@ void *task1 (void *dummyPt)
 	bool loop = false;
 
     // // ANCHOR xchat check
-    // if (input_s.find("CAP") != std::string::npos)
+    // if (input_s.find("CAP") != string::npos)
     //     input_s.erase(0, strlen("CAP LS\n\r"));
 
     cout << "-----------------" << endl;
@@ -208,7 +226,7 @@ void *task1 (void *dummyPt)
                     throw (ClientDisconnected());
             }
             catch (const ClientDisconnected e) {
-                std::cerr << e.info() << std::endl;
+                cerr << e.what() << endl;
                 close(params->client_socket);
                 exit(CLIENT_DISCONNECTED);
             }
