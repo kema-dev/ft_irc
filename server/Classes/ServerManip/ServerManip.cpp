@@ -11,7 +11,7 @@ void init_kqueue(int socket, int &kq)
             throw(ErrKQueue());
     }
     catch(const ErrKQueue e) {
-        std::cerr << e.info() << '\n';
+        std::cerr << e.what() << '\n';
         exit(KQUEUE_ERR);
     }
     EV_SET(&event_list[0], socket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
@@ -20,7 +20,7 @@ void init_kqueue(int socket, int &kq)
             throw(ErrKEvent());
     }
     catch (const ErrKEvent e){
-        std::cerr << e.info() << std::endl;
+        std::cerr << e.what() << std::endl;
         exit(KEVENT_ERR);
     }
 }

@@ -1,5 +1,6 @@
 #include "Crypto.hpp"
 
+// ? Hash <str> using SHA256
 string	sha256(string str) {
 	for (size_t i = 0; str[i]; i++) {
 		if (!(isalnum(str[i]))) {

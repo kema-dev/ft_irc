@@ -37,6 +37,7 @@ using namespace std;
 // 	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 // }
 
+// ? Create a user
 User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
 	if (username == "") {
 		throw (WrongUserName());
@@ -80,38 +81,47 @@ User::User(string username, string fullname, string nickname, string hostname, s
 	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 }
 
+// ? Get <this> nick name
 string	User::getNickName(void) {
 	return _nickname;
 }
 
+// ? Get <this> user name
 string	User::getUserName(void) {
 	return _username;
 }
 
+// ? Get <this> ful name
 string	User::getFullName(void) {
 	return _fullname;
 }
 
+// ? Get <this> host name
 string	User::getHostName(void) {
 	return _hostname;
 }
 
+// ? Get <this> number of sent messages
 ssize_t	User::getNbMsg(void) {
 	return _nb_msg;
 }
 
+// ? Get <this> ban status
 bool	User::getBanStatus(void) {
 	return _ban_status;	
 }
 
+// ? Get <this> active status
 bool	User::getActiveStatus(void) {
 	return _active_status;	
 }
 
+// ? Get <this> UID
 ssize_t	User::getUid(void) {
 	return _uid;	
 }
 
+// ? Get <this> password hash
 string	User::getHash(void) {
 	return _hash;	
 }
@@ -122,46 +132,57 @@ string	User::getHash(void) {
 //     return stream;
 // }
 
+// ? Set <this> user name
 void	User::setUserName(string new_username) {
 	_username = new_username;
 }
 
+// ? Set <this> nick name
 void	User::setNickName(string new_nickname) {
 	_nickname = new_nickname;
 }
 
+// ? Set <this> full name
 void	User::setFullName(string new_fullname) {
 	_fullname = new_fullname;
 }
 
+// ? Set <this> host name
 void	User::setHostName(string new_hostname) {
 	_hostname = new_hostname;
 }
 
+// ? Set <this> number of sent messages
 void	User::setNbMsg(ssize_t new_nb_msg) {
 	_nb_msg = new_nb_msg;
 }
 
+// ? Set <this> ban status
 void	User::setBanStatus(bool new_ban_status) {
 	_ban_status = new_ban_status;
 }
 
+// ? Set <this> active status
 void	User::setActiveStatus(bool new_active_status) {
 	_active_status = new_active_status;
 }
 
+// ? Set <this> UID
 void	User::setUid(ssize_t new_uid) {
 	_uid = new_uid;
 }
 
+// ? Set <this> password's hash
 void	User::setHash(string new_hash) {
 	_hash = new_hash;
 }
 
+// ? Set <this> password (by hashing it)
 void	User::setPass(string new_pass) {
 	_hash = sha256(new_pass);
 }
 
+// ? Log in to <server>
 void	User::logIn(Server& server) {
 	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
 		throw AlreadyLoggedGlobal();
@@ -170,6 +191,7 @@ void	User::logIn(Server& server) {
 	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
 }
 
+// ? Log out from <server>
 void	User::logOut(Server& server) {
 	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != true)) {
 		throw NotLoggedGlobal();
@@ -178,6 +200,7 @@ void	User::logOut(Server& server) {
 	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getUserName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
 }
 
+// ? Send <content> to <chan>
 void	User::sendMessage(string content, Channel& chan) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
@@ -193,9 +216,14 @@ void	User::sendMessage(string content, Channel& chan) {
 	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
 }
 
+// ? Join <chan> with password <pass>
 void	User::joinChannel(Channel& chan, string pass) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
+		return ;
+	}
+	if (chan.isLog(*this) == true) {
+		throw AlreadyLogged();
 		return ;
 	}
 	bool auth = chan.userJoin(*this, pass);
@@ -206,6 +234,7 @@ void	User::joinChannel(Channel& chan, string pass) {
 	return;
 }
 
+// ? Ban <usr> form <chan>
 void	User::ban(User& usr, Channel& chan) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
@@ -218,6 +247,7 @@ void	User::ban(User& usr, Channel& chan) {
 	return;
 }
 
+// ? Get banned from <chan> by <banner>
 void	User::getBanned(Channel& chan, User& banner) {
 	if (chan.isLog(banner) != true) {
 		throw NotLogged();
@@ -227,6 +257,7 @@ void	User::getBanned(Channel& chan, User& banner) {
 	// TODO Send ban info to *this
 }
 
+// ? Set <chan> password with password <pass>
 void	User::setPasswd(Channel& chan, string pass) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
@@ -243,6 +274,7 @@ void	User::setPasswd(Channel& chan, string pass) {
 	return;
 }
 
+// ? Set <chan> operator password with password <pass>
 void	User::setOperPasswd(Channel& chan, string pass) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
@@ -258,6 +290,7 @@ void	User::setOperPasswd(Channel& chan, string pass) {
 	chan.setOperPasswd(pass);
 }
 
+// ? Become operator of <chan> with password <pass>
 void	User::becomeOper(Channel& chan, string pass) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();

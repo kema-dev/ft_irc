@@ -1,5 +1,6 @@
 #include "Log.hpp"
 
+// ? Get local time in a pretty format
 string	getTime(void) {
 	time_t rawtime;
 	struct tm*	timeinfo;
@@ -12,6 +13,7 @@ string	getTime(void) {
 	return out;
 }
 
+// ? Log <str> in logfile
 void	log(string str) {
 	fstream log;
 	log.open(LOGFILE_PATH, ios_base::app);
@@ -21,6 +23,7 @@ void	log(string str) {
 	log.close();
 }
 
+// ? Get the content of the logfile
 string	getLog(void) {
 	ostringstream sstr;
 	ifstream file;
@@ -30,6 +33,7 @@ string	getLog(void) {
 	return sstr.str();
 }
 
+// ? Clear the content of the logfile
 void	clearLog(void) {
 	fstream log;
 	log.open(LOGFILE_PATH, ios::out | ios::trunc);
@@ -37,6 +41,7 @@ void	clearLog(void) {
 	log.close();
 }
 
+// ? Log <action> done by <spec> and appends <str>
 void	logError(string action, string spec, string str) {
 	fstream log;
 	log.open(LOGFILE_PATH, ios_base::app);

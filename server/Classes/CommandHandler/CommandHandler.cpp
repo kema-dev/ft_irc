@@ -9,7 +9,7 @@ int command_check(std::string message, t_params *params)
             throw(EmptyCommand());
     }
     catch (const EmptyCommand e) {
-        std::cerr << e.info() << std::endl;
+        std::cerr << e.what() << std::endl;
 		return (CLIENT_DISCONNECTED);
     }
     std::vector<std::string> commands; 
@@ -96,7 +96,7 @@ int command_check(std::string message, t_params *params)
         }
     }
     catch (const InvalidCommand e) {
-        std::cerr << e.info() << std::endl;
+        std::cerr << e.what() << std::endl;
 		return (UNKNOWN_COMMAND);
     }
     return (0);

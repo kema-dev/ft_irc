@@ -54,9 +54,8 @@ int main(void) {
 	catch (exception& e) {
 		logError(string("Becoming operator of channel " + channame), username, e.what());
 	}
-	// TODO create fct remove user
-	// TODO create fct remove channel
 	// TODO send message
 	// TODO send private message
 	// TODO print chan messages
+	// TODO count nb of messages per user
 }

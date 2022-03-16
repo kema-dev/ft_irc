@@ -1,6 +1,7 @@
 #include "Channel.hpp"
 
-Channel::Channel(string name, string pass, string oper_pass, string topic) {
+// ? Create a new channel
+Channel::Channel(string name, string pass, string topic, string oper_pass) {
 	if (name == "") {
 		throw (WrongChannelName());
 	}
@@ -12,7 +13,7 @@ Channel::Channel(string name, string pass, string oper_pass, string topic) {
 			throw (WrongChannelName());
 		}
 	}
-    _topic = topic;
+	_topic = topic;
 	_hash = sha256(pass);
 	_name = name;
 	// _hist.push_back(Message(motd, "MOTD", -1));
@@ -22,14 +23,17 @@ Channel::Channel(string name, string pass, string oper_pass, string topic) {
 	log(string(LIGHT_MAGENTA) + string("Channel ") + string(GREEN) + string(_name) + string(" (hash: ") + string(GREEN) + string(_hash) + string(") ") + string(LIGHT_BLUE) + string("has been created") + string(DEFAULT));
 }
 
-string	Channel::getName(void){
+// ? Get <this> name
+string	Channel::getName(void) {
 	return _name;
 }
 
+// ? Get <this> topic
 string Channel::getTopic(void) {
-    return _topic;
+	return _topic;
 }
 
+// ? Get the UID of the first message in <this> after timestamp <time>
 ssize_t	Channel::getUidAfter(timeval time) {
 	vector<Message>::iterator it, end;
 	it = _hist.begin();
@@ -43,11 +47,12 @@ ssize_t	Channel::getUidAfter(timeval time) {
 	return -1;
 }
 
-void    Channel::setTopic(string topic)
-{
-    _topic = topic;
+// ? Set <this> topic as <topic>
+void	Channel::setTopic(string topic) {
+	_topic = topic;
 }
 
+// ? Make <usr> log to channel <this> using password <pass>
 bool	Channel::userJoin(User& usr, string pass) {
 	if (usr.getActiveStatus() != true) {
 		throw NotLoggedGlobal();
@@ -64,6 +69,7 @@ bool	Channel::userJoin(User& usr, string pass) {
 	return true;
 }
 
+// ? Make <usr> leave channel channel <this>
 bool	Channel::userLeave(User& usr) {
 	if (usr.getActiveStatus() != true) {
 	throw NotLoggedGlobal();
@@ -89,10 +95,12 @@ bool	Channel::userLeave(User& usr) {
 	return false;
 }
 
+// ? Receive message <msg>
 void	Channel::receiveMsg(Message& msg) {
 	_hist.push_back(msg);
 }
 
+// ? Get next message UID of channel <this>
 ssize_t	Channel::getNextUid(void) {
 	if (_next_uid >= SSIZE_MAX) {
 		throw (PoolFull());
@@ -103,6 +111,7 @@ ssize_t	Channel::getNextUid(void) {
 	return id;
 }
 
+// ? Print all messages of channel <this>
 void	Channel::printAllMsg(void) {
 	vector<Message>::iterator	it, end;
 	it = _hist.begin();
@@ -113,6 +122,7 @@ void	Channel::printAllMsg(void) {
 	}
 }
 
+// ? Check if <usr> is logged to channel <this>
 bool	Channel::isLog(User& usr) {
 	vector<pair<User&, timeval> >::iterator	it, end;
 	it = _log.begin();
@@ -127,6 +137,7 @@ bool	Channel::isLog(User& usr) {
 	return false;
 }
 
+// ? Get channel <this> message history
 string	Channel::getMsgHist(User& usr) {
 	if (isLog(usr) == true) {
 		vector<pair<User&, timeval> >::iterator	it, end;
@@ -153,6 +164,7 @@ string	Channel::getMsgHist(User& usr) {
 	return "";
 }
 
+// ? Get the list of users' connected to channel <this> nicknames (as a vector)
 vector<string>	Channel::getNickLst(void) {
 	vector<string>vec;
 	vector<pair<User&, timeval> >::iterator	it, end;
@@ -165,6 +177,7 @@ vector<string>	Channel::getNickLst(void) {
 	return vec;
 }
 
+// ? Ban <usr> from channel <this> by <banner>
 bool	Channel::userBan(User& usr, User& banner) {
 	if (usr.getActiveStatus() != true) {
 		throw NotLoggedGlobal();
@@ -185,6 +198,7 @@ bool	Channel::userBan(User& usr, User& banner) {
 	return false;
 }
 
+// ? Check if <usr> has operator permissions for channel <this>
 bool	Channel::isOper(User& usr) {
 	vector<pair<User&, bool> >::iterator	it, end;
 	it = _roles.begin();
@@ -202,11 +216,13 @@ bool	Channel::isOper(User& usr) {
 	return false;
 }
 
+// ? Set channel <this> password
 bool	Channel::setPasswd(string pass) {
 	_hash = sha256(pass);
 	return true;
 }
 
+// ? Check if <pass> matches channel <this> operator password
 bool	Channel::checkOperPasswd(string pass) {
 	if (sha256(pass) == _oper) {
 		return true;
@@ -214,11 +230,13 @@ bool	Channel::checkOperPasswd(string pass) {
 	return false;
 }
 
+// ? Set channel <this> operator password
 bool	Channel::setOperPasswd(string oper_pass) {
 	_oper = sha256(oper_pass);
 	return true;
 }
 
+// ? Set <usr> role as operator for channel <this>
 bool	Channel::addOper(User& usr) {
 	if (usr.getActiveStatus() != true) {
 		throw NotLoggedGlobal();
@@ -231,6 +249,27 @@ bool	Channel::addOper(User& usr) {
 	while (it != end) {
 		if (it->first.getUid() == id) {
 			it->second = OPERATOR;
+			return true;
+		}
+		it++;
+	}
+	throw NotLogged();
+	return false;
+}
+
+// ? Set <usr> role as user for channel <this>
+bool	Channel::removeOper(User& usr) {
+	if (usr.getActiveStatus() != true) {
+		throw NotLoggedGlobal();
+		return false;
+	}
+	vector<pair<User&, bool> >::iterator	it, end;
+	it = _roles.begin();
+	end = _roles.end();
+	ssize_t	id = usr.getUid();
+	while (it != end) {
+		if (it->first.getUid() == id) {
+			it->second = USER;
 			return true;
 		}
 		it++;

@@ -119,6 +119,10 @@ kema2: directories $(KEMAOBJECTS2)
 	@$(CC) $(KEMAOBJECTS2) Classes/Main/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
 	@./$(TARGETDIR)/$(KEMAOUT)
 
+kema3: directories $(DODBJECTS)
+	@printf "\ec"
+	$(CC) $(DEBUGFLAG) $(DODBJECTS) Classes/Main/main.cpp -o $(TARGETDIR)/$(KEMAOUT)
+
 dod: directories $(DODBJECTS)
 	@printf "\ec"
 	$(CC) $(DEBUGFLAG) $(DODBJECTS) Classes/Main/main.cpp -o $(TARGETDIR)/$(DODOUT)

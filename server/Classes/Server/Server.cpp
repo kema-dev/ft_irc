@@ -1,5 +1,6 @@
 #include "../Server/Server.hpp"
 
+// ? Create a server
 Server::Server(string dname, string pass) {
 	try {
 		chanDB = new ChannelDB(dname + "_chanDB");
@@ -49,6 +50,7 @@ Server::~Server() {
 	_hash = "";
 }
 
+// ? Add a channel to <this>
 void	Server::addChan(string name, string pass, string motd, string oper_pass) {
 	try {
 		chanDB->chkDuplicate(name);
@@ -70,11 +72,13 @@ void	Server::addChan(string name, string pass, string motd, string oper_pass) {
 	this->chanDB->add(*chan);
 }
 
+// ? Get <this> password's hash
 string  Server::getHash()
 {
     return _hash;
 }
 
+// ? Add a user to <this>
 ssize_t	Server::addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
 	try {
 		userDB->chkDuplicate(username, fullname, nickname);
