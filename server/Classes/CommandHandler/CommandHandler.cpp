@@ -12,7 +12,7 @@ int command_check(std::string message, t_params *params)
         std::cerr << e.info() << std::endl;
 		return (CLIENT_DISCONNECTED);
     }
-    std::vector<std::string> commands;
+    std::vector<std::string> commands; 
     commands.push_back("JOIN");
     commands.push_back("PART");
     commands.push_back("QUIT");
@@ -39,30 +39,29 @@ int command_check(std::string message, t_params *params)
         else {
             throw (InvalidCommand());
         }
-        std::cout << message << std::endl;
+        // std::cout << message << std::endl;
         switch (index)
         {
             case 0:
                 channel_s = message.substr(pos + 1, message.length() - pos - 1);
-                // TODO Implement check_channel(std::string channel) check_channel(channel) < 0
-                cout << channel_s << endl;
-                if (channel_s.compare("#ratio") != 0 /* ratio cette condition */)
-                {
-                    std::string msg;
-                    msg = "Unable to join the channel: " + channel_s + " is unknown.\n";
-                    // send(fd, msg.c_str(), strlen(msg.c_str()), 0);
-                    std::cout << msg << std::endl;
+                try {
+                    params->irc_serv->userDB->search(params->user_id)->joinChannel(*(params->irc_serv->chanDB->search(channel_s)), "");
                 }
+                catch (exception& e) {
+                    try {
+                        params->irc_serv->addChan(channel_s, "", "", "");
+                    }
+                    catch (exception& e) {
+                        logError(string("Adding channel on server"), channel_s, e.what());
+                    }
+                }
+                reply(params, JOIN, channel_s);
+                if (params->irc_serv->chanDB->search(channel_s)->getTopic().empty())
+                    reply(params, RPL_NOTOPIC, channel_s);
                 else
-                {
-                    string reply;
-                    reply = header_2(params->irc_serv, params->user_id, "") + "JOIN " + channel_s + "\r\n";
-                    send(params->client_socket, reply.c_str(), strlen(reply.c_str()), 0);
-                    
-                    send(params->client_socket, ":127.0.0.1 332 dOD #ratio :Bonjour et gros ratio a toi:)\r\n", strlen(":127.0.0.1 332 dOD #ratio :Bonjour et gros ratio a toi:)\r\n"), 0);
-                    send(params->client_socket, ":127.0.0.1 353 dOD = #ratio :@dOD\r\n", strlen(":127.0.0.1 353 dOD = #ratio :@dOD\r\n"), 0);
-                    send(params->client_socket, ":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n", strlen(":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n"), 0);
-                }
+                    reply(params, RPL_TOPIC, channel_s);
+                send(params->client_socket, ":127.0.0.1 353 dOD = #ratio :@dOD\r\n", strlen(":127.0.0.1 353 dOD = #ratio :@dOD\r\n"), 0);
+                send(params->client_socket, ":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n", strlen(":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n"), 0);
                 break;
             case 1:
                 std::cout << "PART" << std::endl;

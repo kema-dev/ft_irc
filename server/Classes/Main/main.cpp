@@ -186,6 +186,13 @@ void *task1 (void *dummyPt)
             {
                 id = createUser(input, params->irc_serv, params->client_socket, nickname);
                 params->user_id = id;
+                try {
+                    params->irc_serv->userDB->search(id)->logIn(*params->irc_serv);
+                }
+                catch (exception& e) {
+                    string str = static_cast<ostringstream*>(&(ostringstream() << params->user_id))->str();
+                    logError(string("Logging in server"), str, e.what());
+                }
                 nbPass++;
             }
         }

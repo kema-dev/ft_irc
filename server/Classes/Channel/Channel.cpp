@@ -1,17 +1,21 @@
 #include "Channel.hpp"
 
-Channel::Channel(string name, string pass, string motd, string oper_pass) {
+Channel::Channel(string name, string pass, string oper_pass, string topic) {
 	if (name == "") {
 		throw (WrongChannelName());
 	}
-	for (size_t i = 0; name[i]; i++) {
+    if (name[0] != '#') {
+		throw (WrongChannelName());
+    }
+	for (size_t i = 1; name[i]; i++) {
 		if (!(isalnum(name[i]))) {
 			throw (WrongChannelName());
 		}
 	}
+    _topic = topic;
 	_hash = sha256(pass);
 	_name = name;
-	_hist.push_back(Message(motd, "MOTD", -1));
+	// _hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
 	_hash = sha256(pass);
 	_oper = sha256(oper_pass);
@@ -22,10 +26,7 @@ string	Channel::getName(void){
 	return _name;
 }
 
-string Channel::getTopic(void)
-{
-    if (_topic.empty())
-        return "No topic is set.";
+string Channel::getTopic(void) {
     return _topic;
 }
 
