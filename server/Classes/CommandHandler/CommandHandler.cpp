@@ -44,26 +44,11 @@ int command_check(std::string message, t_params *params)
         {
             case 0:
                 channel_s = message.substr(pos + 1, message.length() - pos - 1);
-
-                try {
-                    params->irc_serv->userDB->search(params->user_id)->tryJoinChannel(channel_s, "", "", "", params->irc_serv);
-                }
-                catch (exception& e) {
-                    string str = itos(params->user_id);
-                    logError(string("Joining channel " + channel_s + " on server"), str, e.what());
-                }
-
-                reply(params, JOIN, channel_s);
-                if (params->irc_serv->chanDB->search(channel_s)->getTopic().empty())
-                    reply(params, RPL_NOTOPIC, channel_s);
-                else
-                    reply(params, RPL_TOPIC, channel_s);
-                send(params->client_socket, ":127.0.0.1 353 dOD = #ratio :@dOD\r\n", strlen(":127.0.0.1 353 dOD = #ratio :@dOD\r\n"), 0);
-                send(params->client_socket, ":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n", strlen(":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n"), 0);
+                Join(params, channel_s);
                 break;
             case 1:
                 std::cout << "PART" << std::endl;
-                channel_s = message.substr(pos + 1, message.length() - pos - 3);
+                channel_s = message.substr(pos + 1, message.length() - pos - 1);
                 // TODO Implement inChannel(User user, std::string channel) check_channel(channel) < 0
                 if (channel_s.compare("#ratio") != 0 /* ratio cette condition */)
                 {

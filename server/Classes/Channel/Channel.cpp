@@ -199,13 +199,13 @@ bool	Channel::userBan(User& usr, User& banner) {
 }
 
 // ? Check if <usr> has operator permissions for channel <this>
-bool	Channel::isOper(User& usr) {
+bool	Channel::isOper(string nickname) {
 	vector<pair<User&, bool> >::iterator	it, end;
 	it = _roles.begin();
 	end = _roles.end();
-	ssize_t	id = usr.getUid();
+	// ssize_t	id = usr.getUid();
 	while (it != end) {
-		if (it->first.getUid() == id) {
+		if (it->first.getNickName() == nickname) {
 			if (it->second == OPERATOR) {
 				return true;
 			}

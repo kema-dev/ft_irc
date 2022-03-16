@@ -1,5 +1,5 @@
-#ifndef _COMMAND_HPP_
- #define _COMMAND_HPP_
+#ifndef _REPLY_HPP_
+ #define _REPLY_HPP_
 
 #include <iostream>
 #include <string>

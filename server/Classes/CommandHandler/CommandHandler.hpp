@@ -2,7 +2,8 @@
  #define _COMMAND_HANDLER_HPP_
 
 #include "../Error/Error.hpp"
-#include "../Command/Command.hpp"
+#include "../Commands/Commands.hpp"
+#include "../Reply/Reply.hpp"
 #include "../Channel/Channel.hpp"
 #include <iostream>
 #include <algorithm>
