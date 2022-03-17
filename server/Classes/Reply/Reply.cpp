@@ -24,6 +24,23 @@ void reply(t_params *params, string replyNb, string args)
 
     switch (atoi(replyNb.c_str()))
     {
+        //ANCHOR Improve the 0 in the fourth first messages
+        case 001:
+            reply = header_1(params->irc_serv, params->user_id, RPL_WELCOME);
+            reply += " : Welcome to the Internet Relay Network " + params->irc_serv->userDB->search(params->user_id)->getNickName() + "\r\n";
+            break;
+        case 002:
+            reply = header_1(params->irc_serv, params->user_id, RPL_YOURHOST);
+            reply += " : Your host is " + params->irc_serv->userDB->search(params->user_id)->getHostName() + ", running on version [42.42]\r\n";
+            break;
+        case 003:
+            reply = header_1(params->irc_serv, params->user_id, RPL_CREATED);
+            reply += " : This server was created " + getTime() + "\r\n";
+            break;
+        case 004:
+            reply = header_1(params->irc_serv, params->user_id, RPL_MYINFO);
+            reply += " : " + params->irc_serv->userDB->search(params->user_id)->getHostName() + " version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n";
+            break;
         case 331:
             reply = header_1(params->irc_serv, params->user_id, RPL_NOTOPIC);
             reply += params->irc_serv->chanDB->search(args)->getName() + " : No topic is set \r\n";

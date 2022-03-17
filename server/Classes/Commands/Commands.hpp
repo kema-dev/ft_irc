@@ -6,6 +6,7 @@
 #include "../Reply/Reply.hpp"
 #include "../CommandHandler/CommandHandler.hpp"
 
+void welcome_client(t_params *params, string channel_s);
 void Join(t_params *params, string channel_s);
 void Part(t_params *params, string channel_s);
 
