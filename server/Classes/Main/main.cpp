@@ -30,7 +30,7 @@ void error(const char *msg) {
 // }
 
 int check_params(int argc, char **argv) {
-	log("------------------------------------");
+	log("-------------------------------------------------------------------------------------");
 	try {
 		if (argc != 3)
 			throw(BadNumberArgs());
@@ -74,39 +74,54 @@ int create_socket(void) {
 	return listenFd;
 }
 
-int main(int argc, char **argv) {
-	int portNo = check_params(argc, argv);
-	int listenFd = create_socket();
-	struct sockaddr_in svrAdd, clntAdd;
+void bind_listen(int listenFd, int portNo) {
+	struct sockaddr_in svrAdd;
 	bzero((char *)&svrAdd, sizeof(svrAdd));
 	svrAdd.sin_family = AF_INET;
 	svrAdd.sin_addr.s_addr = INADDR_ANY;
 	svrAdd.sin_port = htons(portNo);
-
 	try {
 		if (bind(listenFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0)
 			throw(ErrorInBinding());
 	} catch (const ErrorInBinding e) {
-		cerr << e.what() << endl;
-		return (ERR_BIND);
+		logError("binding socket", "FAIL", e.what());
+		cerr << RED << "binding socket failed: " << e.what() << DEFAULT << endl;
+		exit(ERR_BIND);
 	}
 	listen(listenFd, 5);
+}
 
-	t_params params;
-	socklen_t len = sizeof(clntAdd);
-	// TODO Add try/catch
-	Server *irc_serv = new Server("IRC_SERVER", argv[2]);
-	int kq, new_event;
+int main(int argc, char **argv) {
+	int portNo = check_params(argc, argv);
+	int listenFd = create_socket();
+	bind_listen(listenFd, portNo);
+
+	// NOTE Create only one server
+	Server *irc_serv = nullptr;
+	string servername  = "IRC_SERV";
+	try {
+		irc_serv = new Server(servername, argv[2]);
+	} catch (exception &e) {
+		logError(string("Server creation"), servername, e.what());
+	}
 	struct kevent event_list[1];
+	int kq;
 	init_kqueue(listenFd, kq);
-	cout << "Listening to port " << argv[1] << endl;
+	cout << GREEN + string("Server initialized, now waiting for connections on port ") + argv[1] + DEFAULT << endl;
+	log(GREEN + string("Server initialized, now waiting for connections on port ") + argv[1] + DEFAULT);
+
+	int new_event;
+	struct sockaddr_in clntAdd;
+	socklen_t len = sizeof(clntAdd);
+	t_params params;
 	vector<pthread_t> threadV;
-	while (1) {
+	while (true) {
 		try {
 			if ((new_event = kevent(kq, NULL, 0, event_list, 1, NULL)) == -1)
 				throw(ErrKEvent());
 		} catch (const ErrKEvent e) {
-			cerr << e.what() << endl;
+			logError("kevent", "FAIL", e.what());
+			cerr << RED << "kevent failed: " << e.what() << DEFAULT << endl;
 			exit(KEVENT_ERR);
 		}
 		int event_fd = event_list[0].ident;
@@ -122,7 +137,8 @@ int main(int argc, char **argv) {
 				cout << "Connection established." << endl;
 			}
 		} catch (const CannotAcceptConnection e) {
-			cerr << e.what() << endl;
+			logError("Accepting connection", "FAIL", e.what());
+			cerr << RED << "Accepting connection: " << e.what() << DEFAULT << endl;
 			return (ERR_CONNECTION);
 		}
 	}

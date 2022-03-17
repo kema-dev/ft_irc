@@ -78,7 +78,7 @@ ssize_t createUser(std::string input, Server *server, int socket, string nicknam
     if (nickname.empty() == true)
     {
         pos = cmd.find("NICK");
-        // TODO Fix that
+        // FIXME
         if (pos == std::string::npos)
         {
             send(socket, "Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n", strlen("Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n"), 0);
