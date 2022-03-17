@@ -10,13 +10,12 @@ void Join(t_params *params, string channel_s)
         logError(string("Joining channel " + channel_s + " on server"), str, e.what());
     }
     reply(params, JOIN, channel_s);
-    if (params->irc_serv->chanDB->search(channel_s)->getTopic().empty())
+    if (params->irc_serv->chanDB->search(channel_s)->getTopic().empty() == true)
         reply(params, RPL_NOTOPIC, channel_s);
     else
         reply(params, RPL_TOPIC, channel_s);
-    
-    send(params->client_socket, ":127.0.0.1 353 dOD = #ratio :@dOD\r\n", strlen(":127.0.0.1 353 dOD = #ratio :@dOD\r\n"), 0);
-    send(params->client_socket, ":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n", strlen(":127.0.0.1 366 dOD #ratio :End of NAMES list\r\n"), 0);
+    reply(params, RPL_NAMEREPLY, channel_s);
+    reply(params, RPL_ENDOFNAMES, channel_s);
     return;
 }
 

@@ -78,6 +78,7 @@ ssize_t createUser(std::string input, Server *server, int socket, string nicknam
     if (nickname.empty() == true)
     {
         pos = cmd.find("NICK");
+        // TODO Fix that
         if (pos == std::string::npos)
         {
             send(socket, "Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n", strlen("Registration incomplete : Execute these command(s) first: /NICK <nickname>\r\n"), 0);
@@ -87,8 +88,7 @@ ssize_t createUser(std::string input, Server *server, int socket, string nicknam
         else
         {
             nickname = cmd.substr(strlen("NICK") + 1 , cmd.length() - strlen("NICK") - (cmd.length() - (cmd.find("\n") - 2)));
-            cmd.erase(0, strlen("NICK ") + nickname.length() + 2);
-            
+            cmd.erase(0, strlen("NICK ") + nickname.length() + 2);  
         }
     }
     else
@@ -97,10 +97,6 @@ ssize_t createUser(std::string input, Server *server, int socket, string nicknam
         sscanf(cmd.c_str(), "%s %s %s", username, hostname, servername);
         cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
         fullname = cmd.substr(0, cmd.length() - 2);
-        // cout << username << endl;
-        // cout << hostname << endl;
-        // cout << servername << endl;
-        // cout << fullname << endl;
     }
     try {
 		id = server->addUser(username, fullname, nickname, hostname, servername, server);
