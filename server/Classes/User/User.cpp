@@ -292,7 +292,7 @@ void	User::setPasswd(Channel& chan, string pass) {
 		throw NotLogged();
 		return;
 	}
-	if (chan.isOper(*this) != true) {
+	if (chan.isOper(this->getNickName()) != true) {
 		throw BadRole();
 	}
 	chan.setPasswd(pass);
@@ -309,7 +309,7 @@ void	User::setOperPasswd(Channel& chan, string pass) {
 		throw NotLogged();
 		return;
 	}
-	if (chan.isOper(*this) != true) {
+	if (chan.isOper(this->getNickName()) != true) {
 		throw BadRole();
 	}
 	chan.setOperPasswd(pass);

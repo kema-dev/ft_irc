@@ -1,5 +1,5 @@
-#ifndef _COMMAND_HPP_
- #define _COMMAND_HPP_
+#ifndef _REPLY_HPP_
+ #define _REPLY_HPP_
 
 #include <iostream>
 #include <string>
@@ -16,6 +16,7 @@ void reply(t_params *params, string rplyNb, string args);
 
 // Custom Reply
 #define JOIN                    "4545"
+#define PART                    "4546"
 
 // Reply
 #define RPL_WELCOME				"001"

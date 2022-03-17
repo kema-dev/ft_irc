@@ -161,7 +161,7 @@ void *task1(void *dummyPt) {
 	int nbError = 0;
 	bool loop = false;
 
-	// // ANCHOR xchat check
+	// ANCHOR xchat check
 	// if (input_s.find("CAP") != string::npos)
 	//     input_s.erase(0, strlen("CAP LS\n\r"));
 

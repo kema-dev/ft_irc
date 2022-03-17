@@ -53,7 +53,7 @@ class Channel {
 	string	getMsgHist(User& usr);
 	vector<string>	getNickLst(void);
 	bool	userBan(User& usr, User& banner);
-	bool	isOper(User& usr);
+	bool	isOper(string nickname);
 	bool	setPasswd(string pass);
 	bool	checkOperPasswd(string pass);
 	bool	setOperPasswd(string oper_pass);
