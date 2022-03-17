@@ -16,7 +16,7 @@ void Join(t_params *params, string channel_s)
     catch (exception& e) {
         string str = itos(params->user_id);
         logError(string("Joining channel " + channel_s + " on server"), str, e.what());
-        
+
         return;
     }
     reply(params, JOIN, channel_s);
@@ -32,20 +32,13 @@ void Join(t_params *params, string channel_s)
 void Part(t_params *params, string channel_s)
 {
     try {
-        params->irc_serv->userDB->search(params->user_id)->tryJoinChannel(channel_s, "", "", "", params->irc_serv);
+        params->irc_serv->chanDB->search(channel_s)->userLeave(*(params->irc_serv->userDB->search(params->user_id)));
     }
     catch (exception& e) {
         string str = itos(params->user_id);
-        logError(string("Joining channel " + channel_s + " on server"), str, e.what());
+        logError(string("Leaving channel " + channel_s + " on server"), str, e.what());
         return;
     }
-    reply(params, JOIN, channel_s);
-    if (params->irc_serv->chanDB->search(channel_s)->getTopic().empty() == true)
-        reply(params, RPL_NOTOPIC, channel_s);
-    else
-        reply(params, RPL_TOPIC, channel_s);
-    reply(params, RPL_NAMEREPLY, channel_s);
-    reply(params, RPL_ENDOFNAMES, channel_s);
+    reply(params, PART, channel_s);
     return;
-
 }

@@ -74,10 +74,15 @@ void reply(t_params *params, string replyNb, string args)
             reply = header_2(params->irc_serv, params->user_id, "");
             reply += "JOIN " + params->irc_serv->chanDB->search(args)->getName() + "\r\n";
             break;
+        case 4546:
+            reply = header_2(params->irc_serv, params->user_id, "");
+            reply += "PART " + params->irc_serv->chanDB->search(args)->getName() + "\r\n";
+            break;
         default:
             break;
     }
     cout << reply << endl;
+    //TODO Send this message to all clients
     send(params->client_socket, reply.c_str(), strlen(reply.c_str()), 0);
     return;
 }

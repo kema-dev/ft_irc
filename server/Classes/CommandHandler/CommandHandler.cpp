@@ -47,21 +47,8 @@ int command_check(std::string message, t_params *params)
                 Join(params, channel_s);
                 break;
             case 1:
-                std::cout << "PART" << std::endl;
                 channel_s = message.substr(pos + 1, message.length() - pos - 1);
-                // TODO Implement inChannel(User user, std::string channel) check_channel(channel) < 0
-                if (channel_s.compare("#ratio") != 0 /* ratio cette condition */)
-                {
-                    std::string msg;
-                    msg = "Unable to join the channel: " + channel_s + " is unknown.\n";
-                    // send(fd, msg.c_str(), strlen(msg.c_str()), 0);
-                }
-                else
-                {
-                    std::string msg;
-                    msg = std::string(channel_s + " joined.\n");
-                    // send(fd, msg.c_str(), strlen(msg.c_str()), 0);
-                }
+                Part(params, channel_s);
                 break;
             case 2:
                 send(params->client_socket, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
