@@ -51,7 +51,7 @@ Server::~Server() {
 }
 
 // ? Add a channel to <this>
-void	Server::addChan(string name, string pass, string motd, string oper_pass) {
+void	Server::addChan(string name, string pass, string topic, string oper_pass) {
 	try {
 		chanDB->chkDuplicate(name);
 	}
@@ -62,7 +62,7 @@ void	Server::addChan(string name, string pass, string motd, string oper_pass) {
 	}
 	Channel* chan = nullptr;
 	try {
-		chan = new Channel(name, pass, motd, oper_pass);
+		chan = new Channel(name, pass, topic, oper_pass);
 	}
 	catch (exception& e) {
 		logError(string("Creating channel"), name, e.what());

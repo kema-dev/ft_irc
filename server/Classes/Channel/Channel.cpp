@@ -16,7 +16,6 @@ Channel::Channel(string name, string pass, string topic, string oper_pass) {
 	_topic = topic;
 	_hash = sha256(pass);
 	_name = name;
-	// _hist.push_back(Message(motd, "MOTD", -1));
 	_next_uid = 0;
 	_hash = sha256(pass);
 	_oper = sha256(oper_pass);

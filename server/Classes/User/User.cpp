@@ -236,7 +236,6 @@ void	User::joinChannel(Channel& chan, string pass) {
 
 // ? Try to join <chan> with password <pass> and create it if non-existent
 void	User::tryJoinChannel(string name, string pass, string topic, string oper_pass, Server* server) {
-	// TODO remove "motd" in channels and replace by topic in appropriate position
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return ;

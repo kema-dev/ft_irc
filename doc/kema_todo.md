@@ -1,3 +1,1 @@
 # TODOLIST
-
-RATIO

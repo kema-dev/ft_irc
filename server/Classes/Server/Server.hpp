@@ -79,7 +79,7 @@ class Server {
 	~Server();
 
     string  getHash();
-	void	addChan(string name, string pass, string motd, string oper_pass);
+	void	addChan(string name, string pass, string topic, string oper_pass);
 	ssize_t	addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server);
 };
 

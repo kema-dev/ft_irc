@@ -34,10 +34,10 @@ int main(void) {
 	}
 	string channame = "channame";
 	string chanpasswd = "chanpasswd";
-	string motd = "motd";
+	string topic = "topic";
 	string operpassword = "operpassword";
 	try {
-		server->addChan(channame, chanpasswd, motd, operpassword);
+		server->addChan(channame, chanpasswd, topic, operpassword);
 	}
 	catch (exception& e) {
 		logError(string("Adding channel on server " + servername), channame, e.what());
