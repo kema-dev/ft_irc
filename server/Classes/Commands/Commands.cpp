@@ -42,3 +42,34 @@ void Part(t_params *params, string channel_s)
     reply(params, PART, channel_s);
     return;
 }
+
+void PrivateMessage(t_params *params, string args, string message)
+{
+    bool pass = true;
+    int arg_i = atoi(args.c_str());
+    try {
+        params->irc_serv->chanDB->search(args);
+    }
+    catch(exception& e) {
+        pass = false;
+        logError(string("Searching channel"), args, e.what());
+    }
+    if (pass == true){
+        reply(params, PRVMSG_C, message);
+        return;
+    }
+    else {
+        try {
+            params->irc_serv->userDB->search(arg_i);
+        }
+        catch(exception& e) {
+            pass = false;
+            logError(string("Searching User"), args, e.what());
+        }
+        if (pass == true){
+            reply(params, PRVMSG_U, message);
+            return;
+        }
+    }
+    return;
+}

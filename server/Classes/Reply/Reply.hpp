@@ -17,6 +17,8 @@ void reply(t_params *params, string rplyNb, string args);
 // Custom Reply
 #define JOIN                    "4545"
 #define PART                    "4546"
+#define PRVMSG_U                "4547"
+#define PRVMSG_C                "4548"
 
 // Reply
 #define RPL_WELCOME				"001"

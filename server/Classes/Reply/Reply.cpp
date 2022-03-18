@@ -78,6 +78,14 @@ void reply(t_params *params, string replyNb, string args)
             reply = header_2(params->irc_serv, params->user_id, "");
             reply += "PART " + params->irc_serv->chanDB->search(args)->getName() + "\r\n";
             break;
+        case 4547:
+            reply = header_2(params->irc_serv, params->user_id, "");
+            reply += "PRVIMSG " + params->irc_serv->userDB->search(params->user_id)->getNickName() + " " + args + "\r\n";
+            break;
+        case 4548:
+            reply = header_2(params->irc_serv, params->user_id, "");
+            reply += "PRVIMSG " + params->irc_serv->chanDB->search(args)->getName() + " " + args + "\r\n";
+            break;
         default:
             break;
     }

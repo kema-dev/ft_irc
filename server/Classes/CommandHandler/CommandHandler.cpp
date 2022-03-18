@@ -2,7 +2,21 @@
 
 using namespace std;
 
-int command_check(std::string message, t_params *params)
+void parse_privmsg(string message, string* channel_s , string* msg)
+{
+    string cmd;
+    size_t pos;
+
+    cmd = message;
+    pos = cmd.find(' ');
+    cmd.erase(0, pos + 1);
+    pos = cmd.find(' ');
+    *channel_s = cmd.substr(0, pos);
+    cmd.erase(0, pos + 1);
+    *msg = cmd.substr(0, cmd.length());
+}
+
+int command_check(string message, t_params *params)
 {
     try{
         if (message.empty() == true)
@@ -12,34 +26,31 @@ int command_check(std::string message, t_params *params)
         std::cerr << e.what() << std::endl;
 		return (CLIENT_DISCONNECTED);
     }
-    std::vector<std::string> commands; 
+    vector<string> commands; 
     commands.push_back("JOIN");
     commands.push_back("PART");
     commands.push_back("QUIT");
     commands.push_back("NICK");
     commands.push_back("USER");
     commands.push_back("PONG");
+    commands.push_back("PRIVMSG");
     try {
         size_t pos;
-        std::string cmd;
-
-        std::string channel_s;
-        
+        string cmd;
+        string channel_s;
+        int index;
+    
         cmd = message;
         pos = cmd.find(' ');
-        if (pos == std::string::npos)
+        if (pos == string::npos)
             throw(InvalidCommand());
         cmd.erase(pos, cmd.length() - pos);
-    
-        int index;
-        std::vector<std::string>::iterator it = find(commands.begin(), commands.end(), cmd);
- 
+        vector<string>::iterator it = find(commands.begin(), commands.end(), cmd);
         if (it != commands.end())
             index = it - commands.begin();
         else {
             throw (InvalidCommand());
         }
-        // std::cout << message << std::endl;
         switch (index)
         {
             case 0:
@@ -61,6 +72,13 @@ int command_check(std::string message, t_params *params)
                 break;
             case 5:
                 break;
+            case 6:
+                {
+                string msg;
+                parse_privmsg(message, &channel_s, &msg);
+                PrivateMessage(params, channel_s, msg);
+                break;
+                }
             default:
                 throw(InvalidCommand());
         }
