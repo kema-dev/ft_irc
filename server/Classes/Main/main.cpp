@@ -23,7 +23,7 @@ void error(const char *msg) {
 	exit(1);
 }
 
-// ! SEND ONLY "<< overloaded" type !
+// // ! SEND ONLY "<< overloaded" type !
 // template<typename T>
 // string	itos(T nb) {
 // 	return static_cast<ostringstream*>(&(ostringstream() << nb))->str();
