@@ -12,6 +12,7 @@ using namespace std;
 // string header_1(Server *server, ssize_t id, string rplyNb);
 // string header_2(Server *server, ssize_t id, string rplyNb);
 
+void reply_2(t_params *params, string replyNb, string args, string args2);
 void reply(t_params *params, string rplyNb, string args);
 
 // Custom Reply

@@ -29,7 +29,7 @@ User*	UserDB::search(User& usr) {
 	return nullptr;
 }
 
-// ? Search <usr> in database (from ID)
+// ? Search user in database from ID <id>
 User*	UserDB::search(ssize_t id) {
 	try {
 		vector<User>::iterator it = _db.begin(), end = _db.end();
@@ -43,6 +43,25 @@ User*	UserDB::search(ssize_t id) {
 	}
 	catch (exception& e) {
 		logError(string("Searching user"), to_string(id), e.what());
+		throw UserAddFail();
+	}
+	return nullptr;
+}
+
+// ? Search user in database from NickName <nickname>
+User*	UserDB::search(string nickname) {
+	try {
+		vector<User>::iterator it = _db.begin(), end = _db.end();
+		while (it != end) {
+			if (it->getNickName() == nickname) {
+				return &(*it);
+			}
+			it++;
+		}
+		throw NoSuchUser();
+	}
+	catch (exception& e) {
+		logError(string("Searching user"), nickname, e.what());
 		throw UserAddFail();
 	}
 	return nullptr;

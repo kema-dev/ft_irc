@@ -18,6 +18,29 @@ string header_2(Server *server, ssize_t id, string rplyNb)
     return (reply);
 }
 
+void reply_2(t_params *params, string replyNb, string args, string args2)
+{
+    string reply;
+
+    switch (atoi(replyNb.c_str()))
+    {
+        case 4547:
+            reply = header_2(params->irc_serv, params->user_id, "");
+            reply += "PRVIMSG " + params->irc_serv->userDB->search(params->user_id)->getNickName() + " " + args2 + "\r\n";
+            break;
+        case 4548:
+            reply = header_2(params->irc_serv, params->user_id, "");
+            reply += "PRVIMSG " + params->irc_serv->chanDB->search(args)->getName() + " " + args2 + "\r\n";
+            break;
+        default:
+            break;
+    }
+    cout << reply << endl;
+    ///TODO Send this message to all clients
+    send(params->client_socket, reply.c_str(), strlen(reply.c_str()), 0);
+    return;
+}
+
 void reply(t_params *params, string replyNb, string args)
 {
     string reply;
@@ -77,14 +100,6 @@ void reply(t_params *params, string replyNb, string args)
         case 4546:
             reply = header_2(params->irc_serv, params->user_id, "");
             reply += "PART " + params->irc_serv->chanDB->search(args)->getName() + "\r\n";
-            break;
-        case 4547:
-            reply = header_2(params->irc_serv, params->user_id, "");
-            reply += "PRVIMSG " + params->irc_serv->userDB->search(params->user_id)->getNickName() + " " + args + "\r\n";
-            break;
-        case 4548:
-            reply = header_2(params->irc_serv, params->user_id, "");
-            reply += "PRVIMSG " + params->irc_serv->chanDB->search(args)->getName() + " " + args + "\r\n";
             break;
         default:
             break;

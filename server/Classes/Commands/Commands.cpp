@@ -16,7 +16,6 @@ void Join(t_params *params, string channel_s)
     catch (exception& e) {
         string str = itos(params->user_id);
         logError(string("Joining channel " + channel_s + " on server"), str, e.what());
-
         return;
     }
     reply(params, JOIN, channel_s);
@@ -46,7 +45,6 @@ void Part(t_params *params, string channel_s)
 void PrivateMessage(t_params *params, string args, string message)
 {
     bool pass = true;
-    int arg_i = atoi(args.c_str());
     try {
         params->irc_serv->chanDB->search(args);
     }
@@ -55,19 +53,20 @@ void PrivateMessage(t_params *params, string args, string message)
         logError(string("Searching channel"), args, e.what());
     }
     if (pass == true){
-        reply(params, PRVMSG_C, message);
+        reply_2(params, PRVMSG_C, args, message);
         return;
     }
     else {
+        pass = true;
         try {
-            params->irc_serv->userDB->search(arg_i);
+            params->irc_serv->userDB->search(args);
         }
         catch(exception& e) {
             pass = false;
             logError(string("Searching User"), args, e.what());
         }
         if (pass == true){
-            reply(params, PRVMSG_U, message);
+            reply_2(params, PRVMSG_U, args, message);
             return;
         }
     }

@@ -58,6 +58,7 @@ class UserDB {
 	ssize_t	add(User& usr);
 	User*	search(User& usr);
 	User*	search(ssize_t id);
+    User*	search(string nickname);
 	void	chkDuplicate(string username, string fullname, string nickname);
 	// void	remove(string name);
 };
