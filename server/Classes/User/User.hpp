@@ -109,6 +109,11 @@ class BadPasswd : public exception
 		}
 };
 
+#define NOT_CONNECTED	0
+#define CONNECTED		1
+#define BANNED			2
+#define UNKNOWN			3
+
 class User {
 	private:
 	Server*		_server;
@@ -118,13 +123,11 @@ class User {
     string      _hostname;
     string      _servername;
 	ssize_t		_nb_msg;
-	bool		_ban_status;
 	bool		_active_status;
 	ssize_t		_uid;
 	string		_hash;
 
 	public:
-	// User(string username, string fullname, string hostname, string servername, Server* server);
 	User(string username, string fullname, string nickname, string hostname, string servername, Server* server);
 
 	~User() {};
@@ -144,7 +147,6 @@ class User {
 	void	setFullName(string new_fullname);
     void    setHostName(string new_hostname);
 	void	setNbMsg(ssize_t new_nb_msg);
-	void	setBanStatus(bool new_ban_status);
 	void	setActiveStatus(bool new_active_status);
 	void	setUid(ssize_t new_uid);
 	void	setHash(string new_hash);

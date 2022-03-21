@@ -1,42 +1,5 @@
 #include "User.hpp"
 
-using namespace std;
-
-// User::User(string username, string fullname, string hostname, string servername, Server* server) {
-// 	if (username == "") {
-// 		throw (WrongUserName());
-// 	}
-// 	for (size_t i = 0; username[i]; i++) {
-// 		if (!(isalnum(username[i]))) {
-// 				throw (WrongUserName());
-// 		}
-// 	}
-// 	if (fullname == "") {
-// 		throw (WrongFullName());
-// 	}
-// 	for (size_t i = 0; fullname[i]; i++) {
-// 		if (!(isalnum(fullname[i])) && fullname[i] != ' ') {
-// 			throw (WrongFullName());
-// 		}
-// 	}
-// 	size_t id;
-// 	_server = server;
-// 	id = server->pool->generate();
-// 	_username = username;
-//     _fullname = fullname;
-// 	_nickname = "";
-// 	_hostname = hostname;
-// 	_servername = servername;
-// 	_uid = id;
-// 	_nb_msg = 0;
-// 	_ban_status = false;
-// 	_active_status = false;
-// 	char s[20]; // ? length of max_ssize
-// 	sprintf(s, "%ld", _uid);
-// 	string str = string(s);
-// 	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
-// }
-
 // ? Create a user
 User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
 	if (username == "") {
@@ -73,7 +36,6 @@ User::User(string username, string fullname, string nickname, string hostname, s
 	_servername = servername;
 	_uid = id;
 	_nb_msg = 0;
-	_ban_status = false;
 	_active_status = false;
 	char s[20]; // ? length of ssize_max
 	sprintf(s, "%ld", _uid);
@@ -104,11 +66,6 @@ string	User::getHostName(void) {
 // ? Get <this> number of sent messages
 ssize_t	User::getNbMsg(void) {
 	return _nb_msg;
-}
-
-// ? Get <this> ban status
-bool	User::getBanStatus(void) {
-	return _ban_status;	
 }
 
 // ? Get <this> active status
@@ -155,11 +112,6 @@ void	User::setHostName(string new_hostname) {
 // ? Set <this> number of sent messages
 void	User::setNbMsg(ssize_t new_nb_msg) {
 	_nb_msg = new_nb_msg;
-}
-
-// ? Set <this> ban status
-void	User::setBanStatus(bool new_ban_status) {
-	_ban_status = new_ban_status;
 }
 
 // ? Set <this> active status

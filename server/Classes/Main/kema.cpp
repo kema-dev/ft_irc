@@ -32,7 +32,7 @@ int main(void) {
 	catch (exception& e) {
 		logError(string("Logging in server " + servername), username, e.what());
 	}
-	string channame = "channame";
+	string channame = "#channame";
 	string chanpasswd = "chanpasswd";
 	string topic = "topic";
 	string operpassword = "operpassword";
