@@ -65,13 +65,15 @@ void User(t_params * params, string args)
     }
 }
 
-void Topic(t_params *params, string args)
+void Topic(t_params *params, string args, string topic)
 {
-    string topic;
-    string channel_s;
+    string channel_s = args;
+
+    if (topic.empty())
 
     try {
-        params->irc_serv->chanDB->search(channel_s)->isLog(params->irc_serv->userDB->search(params->user_id));
+        if (params->irc_serv->chanDB->search(channel_s)->isLog(*(params->irc_serv->userDB->search(params->user_id))) != CONNECTED)
+            throw isNotLogged();  
     }
     catch(exception& e) {
         logError(string("Not logged in"), channel_s, e.what());
@@ -84,7 +86,10 @@ void Topic(t_params *params, string args)
         logError(string("Searching channel"), channel_s, e.what());
         return ;
     }
-    reply(params, TOPIC, args);
+    if (topic.empty())
+        args = topic;
+     
+    reply_2(params, TOPIC, args, topic);
 }
 
 void PrivateMessage(t_params *params, string args, string message)
@@ -98,6 +103,14 @@ void PrivateMessage(t_params *params, string args, string message)
         logError(string("Searching channel"), args, e.what());
     }
     if (pass == true){
+        try {
+            if (params->irc_serv->chanDB->search(args)->isLog(*(params->irc_serv->userDB->search(params->user_id))) != CONNECTED)
+            throw isNotLogged();  
+        }
+        catch(exception& e) {
+            logError(string("Not logged in"), args, e.what());
+            return ;
+        }
         reply_2(params, PRVMSG_C, args, message);
         return;
     }

@@ -2,6 +2,20 @@
 
 using namespace std;
 
+void parse_topic(string message, string *channel_s, string *topic)
+{
+    string cmd;
+    size_t pos;
+
+    cmd = message;
+    pos = cmd.find(' ');
+    cmd.erase(0, pos + 1);
+    pos = cmd.find(' ');
+    *channel_s = cmd.substr(0, pos);
+    cmd.erase(0, pos + 1);
+    *topic = cmd.substr(0, cmd.length());
+}
+
 void parse_privmsg(string message, string* channel_s , string* msg)
 {
     string cmd;
@@ -34,6 +48,7 @@ int command_check(string message, t_params *params)
     commands.push_back("USER");
     commands.push_back("PONG");
     commands.push_back("PRIVMSG");
+    commands.push_back("TOPIC");
     try {
         size_t pos;
         string cmd;
@@ -77,6 +92,13 @@ int command_check(string message, t_params *params)
                 string msg;
                 parse_privmsg(message, &channel_s, &msg);
                 PrivateMessage(params, channel_s, msg);
+                break;
+                }
+            case 7:
+                {
+                string topic;
+                parse_topic(message, &channel_s, &topic);
+                Topic(params, channel_s, topic);
                 break;
                 }
             default:

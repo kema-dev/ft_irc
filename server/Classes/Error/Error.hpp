@@ -132,4 +132,13 @@ class ErrKEvent : public std::exception
 		}
 };
 
+class isNotLogged : public std::exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("User is not logged in the channel.");
+		}
+};
+
 #endif

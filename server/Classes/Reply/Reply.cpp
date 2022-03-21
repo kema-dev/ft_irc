@@ -14,7 +14,7 @@ string header_2(Server *server, ssize_t id, string rplyNb)
     if (rplyNb.empty())
         reply = ":" + server->userDB->search(id)->getNickName() + "!" + server->userDB->search(id)->getUserName() + "@" + server->userDB->search(id)->getHostName() + " ";
     else
-        reply = ":" + server->userDB->search(id)->getNickName() + "!" + server->userDB->search(id)->getUserName() + "@" + server->userDB->search(id)->getHostName() + " " + rplyNb + " : ";
+        reply = ":" + server->userDB->search(id)->getNickName() + "!" + server->userDB->search(id)->getUserName() + "@" + server->userDB->search(id)->getHostName() + " " + rplyNb + " ";
     return (reply);
 }
 
@@ -31,6 +31,10 @@ void reply_2(t_params *params, string replyNb, string args, string args2)
         case 4548:
             reply = header_2(params->irc_serv, params->user_id, "");
             reply += "PRVIMSG " + params->irc_serv->chanDB->search(args)->getName() + " " + args2 + "\r\n";
+            break;
+        case 4551:
+            reply = header_2(params->irc_serv, params->user_id, "");
+            reply += "TOPIC " + args + " :" + args2 + "\r\n";
             break;
         default:
             break;
@@ -66,11 +70,11 @@ void reply(t_params *params, string replyNb, string args)
             break;
         case 331:
             reply = header_1(params->irc_serv, params->user_id, RPL_NOTOPIC);
-            reply += params->irc_serv->chanDB->search(args)->getName() + " : No topic is set \r\n";
+            reply += params->irc_serv->chanDB->search(args)->getName() + " :No topic is set\r\n";
             break;
         case 332:
             reply = header_1(params->irc_serv, params->user_id, RPL_TOPIC);
-            reply += params->irc_serv->chanDB->search(args)->getName() + " : " + params->irc_serv->chanDB->search(args)->getTopic() + "\r\n";
+            reply += params->irc_serv->chanDB->search(args)->getName() + " :" + params->irc_serv->chanDB->search(args)->getTopic() + "\r\n";
             break;
         case 353:
             {
@@ -106,10 +110,6 @@ void reply(t_params *params, string replyNb, string args)
             reply += "NICK " + args + "\r\n";
         case 4550:
             //TODO
-            break;
-        case 4551:
-            reply = header_2(params->irc_serv, params->user_id, "");
-            reply += "TOPIC " + args + "\r\n";
             break;
         default:
             break;
