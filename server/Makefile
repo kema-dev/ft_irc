@@ -99,7 +99,7 @@ check: all
 
 nc:
 	@printf "Launch test client\n"
-	@nc 172.0.0.1 6667
+	@nc 127.0.0.1 4242
 
 template:
 	@mkdir -p $(LOGPATH)

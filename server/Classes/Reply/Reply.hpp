@@ -20,6 +20,8 @@ void reply(t_params *params, string rplyNb, string args);
 #define PART                    "4546"
 #define PRVMSG_U                "4547"
 #define PRVMSG_C                "4548"
+#define NICK                    "4549"
+#define USER_R                  "4550"
 
 // Reply
 #define RPL_WELCOME				"001"

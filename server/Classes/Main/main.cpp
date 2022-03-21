@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
 	int new_event;
 	struct sockaddr_in clntAdd;
 	socklen_t len = sizeof(clntAdd);
-	t_params params;
+	
 	vector<pthread_t> threadV;
 	while (true) {
 		try {
@@ -129,11 +129,13 @@ int main(int argc, char **argv) {
 			if ((connFd = accept(event_fd, (struct sockaddr *)&clntAdd, (socklen_t *)&len)) == -1)
 				throw(CannotAcceptConnection());
 			else {
+                t_params *params = new t_params;
 				pthread_t a;
 				threadV.push_back(a);
-				params.client_socket = connFd;
-				params.irc_serv = irc_serv;
-				pthread_create(&threadV.back(), NULL, task1, &params);
+				params->client_socket = connFd;
+				params->irc_serv = irc_serv;
+                cout << "socket: " << connFd << endl;
+				pthread_create(&threadV.back(), NULL, task1, params);
 				cout << "Connection established." << endl;
 			}
 		} catch (const CannotAcceptConnection e) {
@@ -198,7 +200,10 @@ void *task1(void *dummyPt) {
 				nickname = parseNickname(input);
 				nbPass++;
 			} else {
+
 				id = createUser(input, params->irc_serv, params->client_socket, nickname);
+                if (id < 0)
+                    continue;
 				params->user_id = id;
 				try {
 					params->irc_serv->userDB->search(id)->logIn(*params->irc_serv);

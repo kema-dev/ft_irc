@@ -42,6 +42,29 @@ void Part(t_params *params, string channel_s)
     return;
 }
 
+void Nick(t_params * params, string args)
+{
+    try {
+        params->irc_serv->userDB->search(params->user_id)->setNickName(args);
+    }
+    catch(exception& e) {
+        logError(string("Set Nickname"), args, e.what());
+        return ;
+    }
+    reply(params, NICK, args);
+}
+
+void User(t_params * params, string args)
+{
+    try {
+        params->irc_serv->userDB->search(params->user_id)->setNickName(args);
+    }
+    catch(exception& e) {
+        logError(string("Set Usename"), args, e.what());
+        return;
+    }
+}
+
 void PrivateMessage(t_params *params, string args, string message)
 {
     bool pass = true;

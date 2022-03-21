@@ -101,6 +101,9 @@ void reply(t_params *params, string replyNb, string args)
             reply = header_2(params->irc_serv, params->user_id, "");
             reply += "PART " + params->irc_serv->chanDB->search(args)->getName() + "\r\n";
             break;
+        case 4549:
+            reply = header_2(params->irc_serv, params->user_id, "");
+            reply += "NICK " + args + "\r\n";
         default:
             break;
     }

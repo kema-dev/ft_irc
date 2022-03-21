@@ -65,10 +65,10 @@ int command_check(string message, t_params *params)
                 send(params->client_socket, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
                 exit(EXIT_SUCCESS);
             case 3:
-                std::cout << "SETNICKNAME" << std::endl;
+                Nick(params, channel_s);
                 break;
             case 4:
-                std::cout << "SETUSERNAME" << std::endl;
+                User(params, channel_s);
                 break;
             case 5:
                 break;
