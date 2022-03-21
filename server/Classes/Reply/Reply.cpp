@@ -104,6 +104,13 @@ void reply(t_params *params, string replyNb, string args)
         case 4549:
             reply = header_2(params->irc_serv, params->user_id, "");
             reply += "NICK " + args + "\r\n";
+        case 4550:
+            //TODO
+            break;
+        case 4551:
+            reply = header_2(params->irc_serv, params->user_id, "");
+            reply += "TOPIC " + args + "\r\n";
+            break;
         default:
             break;
     }
