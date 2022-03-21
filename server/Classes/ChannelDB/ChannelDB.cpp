@@ -30,39 +30,27 @@ void	ChannelDB::remove(string name) {
 
 // ? Search <chan>
 Channel*	ChannelDB::search(Channel& chan) {
-	try {
-		vector<Channel>::iterator it = _db.begin(), end = _db.end();
-		while (it != end) {
-			if (it->getName() == chan.getName()) {
-				return &(*it);
-			}
-			it++;
-		}
-		throw NoSuchChan();
-	}
-	catch (exception& e) {
-		logError(string("Searching channel"), chan.getName(), e.what());
-		throw ChanSearchFail();
-	}
+    vector<Channel>::iterator it = _db.begin(), end = _db.end();
+    while (it != end) {
+        if (it->getName() == chan.getName()) {
+            return &(*it);
+        }
+        it++;
+    }
+    throw NoSuchChan();
 	return nullptr;
 }
 
 // ? Search chan with name <name> in database
 Channel*	ChannelDB::search(string name) {
-	try {
-		vector<Channel>::iterator it = _db.begin(), end = _db.end();
-		while (it != end) {
-			if (it->getName() == name) {
-				return &(*it);
-			}
-			it++;
-		}
-		throw NoSuchChan();
-	}
-	catch (exception& e) {
-		logError(string("Searching channel"), name, e.what());
-		throw ChanSearchFail();
-	}
+    vector<Channel>::iterator it = _db.begin(), end = _db.end();
+    while (it != end) {
+        if (it->getName() == name) {
+            return &(*it);
+        }
+        it++;
+    }
+    throw NoSuchChan();
 	return nullptr;
 }
 

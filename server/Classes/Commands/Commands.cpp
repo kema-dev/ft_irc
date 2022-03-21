@@ -65,6 +65,28 @@ void User(t_params * params, string args)
     }
 }
 
+void Topic(t_params *params, string args)
+{
+    string topic;
+    string channel_s;
+
+    try {
+        params->irc_serv->chanDB->search(channel_s)->isLog(params->irc_serv->userDB->search(params->user_id));
+    }
+    catch(exception& e) {
+        logError(string("Not logged in"), channel_s, e.what());
+        return ;
+    }
+    try{
+        params->irc_serv->chanDB->search(channel_s)->setTopic(topic);
+    }
+    catch(exception& e){
+        logError(string("Searching channel"), channel_s, e.what());
+        return ;
+    }
+    reply(params, TOPIC, args);
+}
+
 void PrivateMessage(t_params *params, string args, string message)
 {
     bool pass = true;
