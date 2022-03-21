@@ -18,7 +18,16 @@ class WrongChannelName : public exception
 	public:
 		virtual const char*	what() const throw()
 		{
-			return ("Channel should only contain alphanumeric characters");
+			return ("Channel should only contain alphanumeric characters and start with a #");
+		}
+};
+
+class UserIsBanned : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("User is banned from channel");
 		}
 };
 
@@ -33,7 +42,7 @@ class Channel {
     string          _topic;
 	ssize_t			_next_uid;
 	vector<Message>	_hist;
-	vector<pair<User&, timeval> >	_log;
+	vector<pair<User&, int> >	_log;
 	vector<pair<User&, bool> >	_roles;
 
 	public:
@@ -49,8 +58,8 @@ class Channel {
 	bool	userLeave(User& usr);
 	void	receiveMsg(Message& msg);
 	void	printAllMsg(void);
-	bool	isLog(User& usr);
-	string	getMsgHist(User& usr);
+	int		isLog(User& usr);
+	// string	getMsgHist(User& usr);
 	vector<string>	getNickLst(void);
 	bool	userBan(User& usr, User& banner);
 	bool	isOper(string nickname);

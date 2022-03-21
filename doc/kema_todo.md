@@ -13,6 +13,7 @@ add commands:
 
 - [ ] NOTICE
 - [ ] All operator functions (see RFC)
+- [ ] unban a user
 
 check for:
 
