@@ -88,17 +88,15 @@ string parseNickname(string input)
     return (nickname);
 }
 
-ssize_t createUser(string input, Server *server, int socket, string nickname)
+ssize_t createUser(string input, Server *server, string nickname)
 {
     ssize_t id;
     string fullname;
     char username[50];
     char hostname[50];
     char servername[50];
-    size_t pos;
     string cmd;
-    (void)socket;
-    (void)pos;
+
 
     if (input.empty() || nickname.empty())
         return (-1);

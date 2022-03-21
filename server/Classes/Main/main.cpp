@@ -200,8 +200,7 @@ void *task1(void *dummyPt) {
 				nickname = parseNickname(input);
 				nbPass++;
 			} else {
-
-				id = createUser(input, params->irc_serv, params->client_socket, nickname);
+				id = createUser(input, params->irc_serv, nickname);
                 if (id < 0)
                     continue;
 				params->user_id = id;
