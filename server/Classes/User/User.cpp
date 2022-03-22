@@ -1,7 +1,7 @@
 #include "User.hpp"
 
 // ? Create a user
-User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
+User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket) {
 	if (username == "") {
 		throw (WrongUserName());
 	}
@@ -34,6 +34,7 @@ User::User(string username, string fullname, string nickname, string hostname, s
 	_nickname = nickname;
 	_hostname = hostname;
 	_servername = servername;
+    _socket = socket;
 	_uid = id;
 	_nb_msg = 0;
 	_active_status = false;
@@ -81,6 +82,10 @@ ssize_t	User::getUid(void) {
 // ? Get <this> password hash
 string	User::getHash(void) {
 	return _hash;	
+}
+
+int     User::getSocket(void) {
+    return (_socket);
 }
 
 // ostream &operator<<(ostream &stream, User &rhs)
@@ -248,6 +253,11 @@ void	User::setPasswd(Channel& chan, string pass) {
 	}
 	chan.setPasswd(pass);
 	return;
+}
+
+void    User::setSocket(int socket)
+{
+    _socket = socket;
 }
 
 // ? Set <chan> operator password with password <pass>

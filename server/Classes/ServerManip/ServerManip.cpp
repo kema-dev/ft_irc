@@ -85,7 +85,7 @@ string parseNickname(string input)
     return (nickname);
 }
 
-ssize_t createUser(string input, Server *server, string nickname)
+ssize_t createUser(string input, t_params *params, string nickname)
 {
     ssize_t id;
     string fullname;
@@ -103,7 +103,7 @@ ssize_t createUser(string input, Server *server, string nickname)
     cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
     fullname = cmd.substr(0, cmd.length() - 2);
     try {
-		id = server->addUser(username, fullname, nickname, hostname, servername, server);
+		id = params->irc_serv->addUser(username, fullname, nickname, hostname, servername, params->irc_serv, params->client_socket);
         cout << "User created!" << endl;
 	}
 	catch (exception& e) {

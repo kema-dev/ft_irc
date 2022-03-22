@@ -79,7 +79,7 @@ string  Server::getHash()
 }
 
 // ? Add a user to <this>
-ssize_t	Server::addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server) {
+ssize_t	Server::addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket) {
 	try {
 		userDB->chkDuplicate(username, fullname, nickname);
 	}
@@ -90,7 +90,7 @@ ssize_t	Server::addUser(string username, string fullname, string nickname, strin
 	}
 	User* usr = nullptr;
 	try {
-		usr = new User(username, fullname, nickname, hostname, servername, server);
+		usr = new User(username, fullname, nickname, hostname, servername, server, socket);
 	}
 	catch (exception& e) {
 		logError(string("Creating user"), username, e.what());

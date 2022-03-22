@@ -116,6 +116,18 @@ void reply(t_params *params, string replyNb, string args)
     }
     cout << reply << endl;
     //TODO Send this message to all clients
-    send(params->client_socket, reply.c_str(), strlen(reply.c_str()), 0);
+    // if (replyNb == || )
+    // {
+    //     vector<string> list = params->irc_serv->chanDB->search(args)->getNickLst();
+    //     vector<string>::iterator it = list.begin();
+    //     vector<string>::iterator ite = list.end();
+    //     while (it != ite)
+    //     {
+    //         send(params->irc_serv->userDB->search(*it)->getSocket(), reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
+    //         it++;
+    //     }
+    // }
+    // else
+        send(params->client_socket, reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
     return;
 }

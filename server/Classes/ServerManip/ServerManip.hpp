@@ -11,7 +11,7 @@
 #include <sys/event.h>
 
 void init_kqueue(int socket, int &kq);
-ssize_t createUser(std::string input, Server *server, string nickname);
+ssize_t createUser(std::string input, t_params *params, string nickname);
 string parseNickname(string input);
 int check_password(string input, Server *irc_serv, int socket);
 

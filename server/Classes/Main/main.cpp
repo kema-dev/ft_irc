@@ -195,24 +195,27 @@ void *task1(void *dummyPt) {
 				nbPass++;
 			continue;
 		}
-		if (((nbPass == 1) || (nbPass == 2)) && (input.find("NICK") != string::npos || input.find("USER") != string::npos)) {
-			if (nickname.empty() == true) {
-				nickname = parseNickname(input);
-				nbPass++;
-			} else {
-				id = createUser(input, params->irc_serv, nickname);
-                if (id < 0)
-                    continue;
-				params->user_id = id;
-				try {
-					params->irc_serv->userDB->search(id)->logIn(*params->irc_serv);
-				} catch (exception &e) {
-					string str = static_cast<ostringstream *>(&(ostringstream() << params->user_id))->str();
-					logError(string("Logging in server"), str, e.what());
-				}
-				nbPass++;
-			}
+		if (nbPass == 1 && input.find("NICK") != string::npos) {
+            nickname = parseNickname(input);
+            nbPass++;
 		}
+        if (nbPass == 2 && input.find("USER") != string::npos)
+        {
+            id = createUser(input, params, nickname);
+            if (id < 0)
+            {
+                nbPass--;
+                continue;
+            }
+            params->user_id = id;
+            try {
+                params->irc_serv->userDB->search(id)->logIn(*params->irc_serv);
+            } catch (exception &e) {
+                string str = static_cast<ostringstream *>(&(ostringstream() << params->user_id))->str();
+                logError(string("Logging in server"), str, e.what());
+            }
+            nbPass++;
+        }
 		if (nbPass == 3) {
 			welcome_client(params, "");
 			nbPass++;

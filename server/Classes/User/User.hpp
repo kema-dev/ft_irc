@@ -126,9 +126,10 @@ class User {
 	bool		_active_status;
 	ssize_t		_uid;
 	string		_hash;
+    int         _socket;
 
 	public:
-	User(string username, string fullname, string nickname, string hostname, string servername, Server* server);
+	User(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket);
 
 	~User() {};
 	
@@ -141,6 +142,7 @@ class User {
 	bool	getActiveStatus(void);
 	ssize_t	getUid(void);
 	string	getHash(void);
+    int     getSocket(void);
 
 	void	setUserName(string new_username);
 	void	setNickName(string new_nickname);
@@ -151,6 +153,7 @@ class User {
 	void	setUid(ssize_t new_uid);
 	void	setHash(string new_hash);
 	void	setPass(string new_pass);
+    void    setSocket(int socket);
 
 	void	logIn(Server& server);
 	void	logOut(Server& server);
