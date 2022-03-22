@@ -28,7 +28,7 @@ void Join(t_params *params, string channel_s)
     return;
 }
 
-void Part(t_params *params, string channel_s)
+void Part(t_params *params, string channel_s, string msg)
 {
     try {
         params->irc_serv->chanDB->search(channel_s)->userLeave(*(params->irc_serv->userDB->search(params->user_id)));
@@ -38,7 +38,7 @@ void Part(t_params *params, string channel_s)
         logError(string("Leaving channel " + channel_s + " on server"), str, e.what());
         return;
     }
-    reply(params, PART, channel_s);
+    reply_2(params, PART, channel_s, msg);
     return;
 }
 

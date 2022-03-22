@@ -24,6 +24,10 @@ void reply_2(t_params *params, string replyNb, string args, string args2)
 
     switch (atoi(replyNb.c_str()))
     {
+        case 4546:
+            reply = header_2(params->irc_serv, params->user_id, "");
+            reply += "PART " + params->irc_serv->chanDB->search(args)->getName() + " :" + args2 + "\r\n";
+            break;
         case 4547:
             reply = header_2(params->irc_serv, params->user_id, "");
             reply += "PRVIMSG " + params->irc_serv->userDB->search(params->user_id)->getNickName() + " " + args2 + "\r\n";
@@ -100,10 +104,6 @@ void reply(t_params *params, string replyNb, string args)
         case 4545:
             reply = header_2(params->irc_serv, params->user_id, "");
             reply += "JOIN " + params->irc_serv->chanDB->search(args)->getName() + "\r\n";
-            break;
-        case 4546:
-            reply = header_2(params->irc_serv, params->user_id, "");
-            reply += "PART " + params->irc_serv->chanDB->search(args)->getName() + "\r\n";
             break;
         case 4549:
             reply = header_2(params->irc_serv, params->user_id, "");

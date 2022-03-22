@@ -2,6 +2,30 @@
 
 using namespace std;
 
+
+void parse_part(string message, string *channel_s, string *msg)
+{
+    string cmd;
+    size_t pos;
+
+    cmd = message;
+    pos = cmd.find(' ');
+    cmd.erase(0, pos + 1);
+    pos = cmd.find(' ');
+    if (pos == string::npos)
+        pos = cmd.length();
+    *channel_s = cmd.substr(0, pos);
+    cout << cmd << "'" << endl;
+    cmd.erase(0, pos + 1);
+    cout << cmd << "'" << endl;
+    if (cmd.empty())
+       return;
+    if (cmd.find(':') != string::npos)
+        *msg = cmd.substr(1, cmd.length());
+    else
+        *msg = cmd.substr(0, cmd.length());
+}
+
 void parse_topic(string message, string *channel_s, string *topic)
 {
     string cmd;
@@ -19,7 +43,10 @@ void parse_topic(string message, string *channel_s, string *topic)
     cout << cmd << "'" << endl;
     if (cmd.empty())
        return;
-    *topic = cmd.substr(0, cmd.length());
+    if (cmd.find(':') != string::npos)
+        *topic = cmd.substr(1, cmd.length());
+    else
+        *topic = cmd.substr(0, cmd.length());
 }
 
 void parse_privmsg(string message, string* channel_s , string* msg)
@@ -79,9 +106,12 @@ int command_check(string message, t_params *params)
                 Join(params, channel_s);
                 break;
             case 1:
-                channel_s = message.substr(pos + 1, message.length() - pos - 1);
-                Part(params, channel_s);
+                {
+                string msg;
+                parse_part(message, &channel_s, &msg);
+                Part(params, channel_s, msg);
                 break;
+                }
             case 2:
                 send(params->client_socket, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
                 exit(EXIT_SUCCESS);
