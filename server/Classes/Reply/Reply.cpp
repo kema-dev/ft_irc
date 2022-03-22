@@ -69,7 +69,7 @@ void reply(t_params *params, string replyNb, string args)
             reply += " : " + params->irc_serv->userDB->search(params->user_id)->getHostName() + " version [42.42]. Available user MODE : +Oa . Avalaible channel MODE : none.\r\n";
             break;
         case 331:
-            reply = header_1(params->irc_serv, params->user_id, RPL_NOTOPIC);
+            reply = header_1(params->irc_serv, params->user_id, RPL_TOPIC);
             reply += params->irc_serv->chanDB->search(args)->getName() + " :No topic is set\r\n";
             break;
         case 332:

@@ -11,8 +11,14 @@ void parse_topic(string message, string *channel_s, string *topic)
     pos = cmd.find(' ');
     cmd.erase(0, pos + 1);
     pos = cmd.find(' ');
+    if (pos == string::npos)
+        pos = cmd.length();
     *channel_s = cmd.substr(0, pos);
+    cout << cmd << "'" << endl;
     cmd.erase(0, pos + 1);
+    cout << cmd << "'" << endl;
+    if (cmd.empty())
+       return;
     *topic = cmd.substr(0, cmd.length());
 }
 

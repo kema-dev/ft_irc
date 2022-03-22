@@ -69,8 +69,6 @@ void Topic(t_params *params, string args, string topic)
 {
     string channel_s = args;
 
-    if (topic.empty())
-
     try {
         if (params->irc_serv->chanDB->search(channel_s)->isLog(*(params->irc_serv->userDB->search(params->user_id))) != CONNECTED)
             throw isNotLogged();  
@@ -86,9 +84,14 @@ void Topic(t_params *params, string args, string topic)
         logError(string("Searching channel"), channel_s, e.what());
         return ;
     }
+    cerr << "'" << topic << "'" << endl;
     if (topic.empty())
-        args = topic;
-     
+    {
+        if (params->irc_serv->chanDB->search(args)->getTopic().empty())
+            topic = "No topic is set.";
+        else
+            topic = params->irc_serv->chanDB->search(args)->getTopic();
+    }
     reply_2(params, TOPIC, args, topic);
 }
 

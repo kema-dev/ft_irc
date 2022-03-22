@@ -68,7 +68,7 @@ int check_password(string input, Server *irc_serv, int socket)
     else{
         return (-1);
     }
-    cerr << "Password valid" << endl;
+    // cerr << "Password valid" << endl;
     return (0);
 }
 
@@ -81,10 +81,7 @@ string parseNickname(string input)
     if (input.find("NICK") == std::string::npos)
         return (NULL);
     else
-    {
-        cout << ft_find(input) << endl;
-        nickname = input.substr(strlen("NICK ") , input.length() - strlen("NICK ") - (input.length() - ft_find(input)));
-    }    
+        nickname = input.substr(strlen("NICK ") , input.length() - strlen("NICK ") - (input.length() - ft_find(input)));  
     return (nickname);
 }
 

@@ -195,7 +195,7 @@ void *task1(void *dummyPt) {
 				nbPass++;
 			continue;
 		}
-		if ((nbPass == 1) || (nbPass == 2)) {
+		if (((nbPass == 1) || (nbPass == 2)) && (input.find("NICK") != string::npos || input.find("USER") != string::npos)) {
 			if (nickname.empty() == true) {
 				nickname = parseNickname(input);
 				nbPass++;
