@@ -101,6 +101,8 @@ ssize_t createUser(string input, t_params *params, string nickname)
     cmd.erase(0, strlen("USER "));
     sscanf(cmd.c_str(), "%s %s %s", username, hostname, servername);
     cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
+    if (cmd.find(' ') == string::npos)
+        return (-1);
     fullname = cmd.substr(0, cmd.length() - 2);
     try {
 		id = params->irc_serv->addUser(username, fullname, nickname, hostname, servername, params->irc_serv, params->client_socket);

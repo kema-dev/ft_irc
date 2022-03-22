@@ -45,6 +45,13 @@ void Part(t_params *params, string channel_s, string msg)
 void Nick(t_params * params, string args)
 {
     try {
+        if (params->irc_serv->userDB->search(args) != nullptr)
+            
+    }
+    catch(exception& e) {
+        // NOTHING TO DO KEKW
+    }
+    try {
         params->irc_serv->userDB->search(params->user_id)->setNickName(args);
     }
     catch(exception& e) {
