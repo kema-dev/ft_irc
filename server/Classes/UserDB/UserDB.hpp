@@ -46,9 +46,10 @@ class DuplicateNickname : public exception
 		}
 };
 
-class UserDB {
+class   UserDB {
 	private:
-	vector<User>	_db;
+	vector<pair<User&, bool> >	_db;
+	string			_oper;
 	string			_name;
 
 	public:
@@ -61,6 +62,12 @@ class UserDB {
     User*	search(string nickname);
 	void	chkDuplicate(string username, string fullname, string nickname);
 	// void	remove(string name);
+	bool	isOper(string nickname);
+	bool	checkOperPasswd(string pass);
+	bool	setOperPasswd(string oper_pass);
+	bool	addOper(User& usr);
+	bool	removeOper(User& usr);
+
 };
 
 #endif

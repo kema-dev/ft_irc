@@ -51,7 +51,7 @@ Server::~Server() {
 }
 
 // ? Add a channel to <this>
-void	Server::addChan(string name, string pass, string topic, string oper_pass) {
+void	Server::addChan(string name, string pass, string topic) {
 	try {
 		chanDB->chkDuplicate(name);
 	}
@@ -62,7 +62,7 @@ void	Server::addChan(string name, string pass, string topic, string oper_pass) {
 	}
 	Channel* chan = nullptr;
 	try {
-		chan = new Channel(name, pass, topic, oper_pass);
+		chan = new Channel(name, pass, topic);
 	}
 	catch (exception& e) {
 		logError(string("Creating channel"), name, e.what());
@@ -98,4 +98,8 @@ ssize_t	Server::addUser(string username, string fullname, string nickname, strin
 		return -1;
 	}
 	return this->userDB->add(*usr);
+}
+
+void	Server::setPasswd(string pass) {
+	_hash = sha256(pass);
 }

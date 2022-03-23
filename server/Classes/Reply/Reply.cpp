@@ -89,7 +89,7 @@ void reply(t_params *params, string replyNb, string args)
             vector<string>::iterator ite = tmp.end();
             while (it != ite)
             {
-                if (params->irc_serv->chanDB->search(args)->isOper(*it) == true)
+                if (params->irc_serv->userDB->isOper(*it) == true)
                     reply += "@";
                 reply += ((*it) + " ");
                 it++;

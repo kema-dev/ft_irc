@@ -1,7 +1,29 @@
 #include "Channel.hpp"
 
+// // ? Create a new channel
+// Channel::Channel(string name, string pass, string topic, string oper_pass) {
+// 	if (name == "") {
+// 		throw (WrongChannelName());
+// 	}
+//     if (name[0] != '#') {
+// 		throw (WrongChannelName());
+//     }
+// 	for (size_t i = 1; name[i]; i++) {
+// 		if (!(isalnum(name[i]))) {
+// 			throw (WrongChannelName());
+// 		}
+// 	}
+// 	_topic = topic;
+// 	_hash = sha256(pass);
+// 	_name = name;
+// 	_next_uid = 0;
+// 	_hash = sha256(pass);
+// 	_oper = sha256(oper_pass);
+// 	log(string(LIGHT_MAGENTA) + string("Channel ") + string(GREEN) + string(_name) + string(" (hash: ") + string(GREEN) + string(_hash) + string(") ") + string(LIGHT_BLUE) + string("has been created") + string(DEFAULT));
+// }
+
 // ? Create a new channel
-Channel::Channel(string name, string pass, string topic, string oper_pass) {
+Channel::Channel(string name, string pass, string topic) {
 	if (name == "") {
 		throw (WrongChannelName());
 	}
@@ -17,8 +39,6 @@ Channel::Channel(string name, string pass, string topic, string oper_pass) {
 	_hash = sha256(pass);
 	_name = name;
 	_next_uid = 0;
-	_hash = sha256(pass);
-	_oper = sha256(oper_pass);
 	log(string(LIGHT_MAGENTA) + string("Channel ") + string(GREEN) + string(_name) + string(" (hash: ") + string(GREEN) + string(_hash) + string(") ") + string(LIGHT_BLUE) + string("has been created") + string(DEFAULT));
 }
 
@@ -61,7 +81,6 @@ bool	Channel::userJoin(User& usr, string pass) {
 		return false;
 	}
 	_log.push_back(pair<User&, int>(usr, CONNECTED));
-	_roles.push_back(pair<User&, bool>(usr, USER));
 	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" joined ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(_name) + string(DEFAULT));
 	return true;
 }
@@ -73,21 +92,16 @@ bool	Channel::userLeave(User& usr) {
 	return false;
 	}
 	vector<pair<User&, int> >::iterator	it, end;
-	vector<pair<User&, bool> >::iterator	it2, end2;
 	it = _log.begin();
 	end = _log.end();
-	it2 = _roles.begin();
-	end2 = _roles.end();
 	ssize_t	id = usr.getUid();
-	while (it != end && it2 != end2) {
+	while (it != end) {
 		if (it->first.getUid() == id) {
 			_log.erase(it);
-			_roles.erase(it2);
 			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
 			return true;
 		}
 		it++;
-		it2++;
 	}
 	return false;
 }
@@ -197,23 +211,23 @@ bool	Channel::userBan(User& usr, User& banner) {
 	return false;
 }
 
-// ? Check if <usr> has operator permissions for channel <this>
-bool	Channel::isOper(string nickname) {
-	vector<pair<User&, bool> >::iterator	it, end;
-	it = _roles.begin();
-	end = _roles.end();
-	// ssize_t	id = usr.getUid();
-	while (it != end) {
-		if (it->first.getNickName() == nickname) {
-			if (it->second == OPERATOR) {
-				return true;
-			}
-			return false;
-		}
-		it++;
-	}
-	return false;
-}
+// // ? Check if <usr> has operator permissions for channel <this>
+// bool	Channel::isOper(string nickname) {
+// 	vector<pair<User&, bool> >::iterator	it, end;
+// 	it = _roles.begin();
+// 	end = _roles.end();
+// 	// ssize_t	id = usr.getUid();
+// 	while (it != end) {
+// 		if (it->first.getNickName() == nickname) {
+// 			if (it->second == OPERATOR) {
+// 				return true;
+// 			}
+// 			return false;
+// 		}
+// 		it++;
+// 	}
+// 	return false;
+// }
 
 // ? Set channel <this> password
 bool	Channel::setPasswd(string pass) {
@@ -221,58 +235,58 @@ bool	Channel::setPasswd(string pass) {
 	return true;
 }
 
-// ? Check if <pass> matches channel <this> operator password
-bool	Channel::checkOperPasswd(string pass) {
-	if (sha256(pass) == _oper) {
-		return true;
-	}
-	return false;
-}
+// // ? Check if <pass> matches channel <this> operator password
+// bool	Channel::checkOperPasswd(string pass) {
+// 	if (sha256(pass) == _oper) {
+// 		return true;
+// 	}
+// 	return false;
+// }
 
-// ? Set channel <this> operator password
-bool	Channel::setOperPasswd(string oper_pass) {
-	_oper = sha256(oper_pass);
-	return true;
-}
+// // ? Set channel <this> operator password
+// bool	Channel::setOperPasswd(string oper_pass) {
+// 	_oper = sha256(oper_pass);
+// 	return true;
+// }
 
-// ? Set <usr> role as operator for channel <this>
-bool	Channel::addOper(User& usr) {
-	if (usr.getActiveStatus() != true) {
-		throw NotLoggedGlobal();
-		return false;
-	}
-	vector<pair<User&, bool> >::iterator	it, end;
-	it = _roles.begin();
-	end = _roles.end();
-	ssize_t	id = usr.getUid();
-	while (it != end) {
-		if (it->first.getUid() == id) {
-			it->second = OPERATOR;
-			return true;
-		}
-		it++;
-	}
-	throw NotLogged();
-	return false;
-}
+// // ? Set <usr> role as operator for channel <this>
+// bool	Channel::addOper(User& usr) {
+// 	if (usr.getActiveStatus() != true) {
+// 		throw NotLoggedGlobal();
+// 		return false;
+// 	}
+// 	vector<pair<User&, bool> >::iterator	it, end;
+// 	it = _roles.begin();
+// 	end = _roles.end();
+// 	ssize_t	id = usr.getUid();
+// 	while (it != end) {
+// 		if (it->first.getUid() == id) {
+// 			it->second = OPERATOR;
+// 			return true;
+// 		}
+// 		it++;
+// 	}
+// 	throw NotLogged();
+// 	return false;
+// }
 
-// ? Set <usr> role as user for channel <this>
-bool	Channel::removeOper(User& usr) {
-	if (usr.getActiveStatus() != true) {
-		throw NotLoggedGlobal();
-		return false;
-	}
-	vector<pair<User&, bool> >::iterator	it, end;
-	it = _roles.begin();
-	end = _roles.end();
-	ssize_t	id = usr.getUid();
-	while (it != end) {
-		if (it->first.getUid() == id) {
-			it->second = USER;
-			return true;
-		}
-		it++;
-	}
-	throw NotLogged();
-	return false;
-}
+// // ? Set <usr> role as user for channel <this>
+// bool	Channel::removeOper(User& usr) {
+// 	if (usr.getActiveStatus() != true) {
+// 		throw NotLoggedGlobal();
+// 		return false;
+// 	}
+// 	vector<pair<User&, bool> >::iterator	it, end;
+// 	it = _roles.begin();
+// 	end = _roles.end();
+// 	ssize_t	id = usr.getUid();
+// 	while (it != end) {
+// 		if (it->first.getUid() == id) {
+// 			it->second = USER;
+// 			return true;
+// 		}
+// 		it++;
+// 	}
+// 	throw NotLogged();
+// 	return false;
+// }

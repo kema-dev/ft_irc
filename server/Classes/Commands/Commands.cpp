@@ -11,7 +11,7 @@ void welcome_client(t_params * params, string channel_s)
 void Join(t_params *params, string channel_s)
 {
     try {
-        params->irc_serv->userDB->search(params->user_id)->tryJoinChannel(channel_s, "", "", "", params->irc_serv);
+        params->irc_serv->userDB->search(params->user_id)->tryJoinChannel(channel_s, "", "", params->irc_serv);
     }
     catch (exception& e) {
         string str = itos(params->user_id);
