@@ -82,10 +82,6 @@ void parse_oper(string message, string* name, string* password) {
 }
 
 void parse_kick(string message, string* chan, vector<string>* user) {
-	// cmd = message;
-	(void)message;
-	(void)chan;
-	(void)user;
 	istringstream iss(message);
 	string s;
 	vector<string>	arg;
@@ -213,7 +209,7 @@ int command_check(string message, t_params *params) {
 						usr = *(user.begin());
 					}
 				}
-				// TODO catch (thus throw) kick errors
+				// TODO catch (thus throw) kick errors (+ multiple kick)
 				catch (exception& e) {
 					logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
 				}
