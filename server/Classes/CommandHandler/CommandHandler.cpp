@@ -59,51 +59,37 @@ void parse_privmsg(string message, string *channel_s, string *msg) {
 	*msg = cmd.substr(0, cmd.length());
 }
 
-void parse_oper(string message, string* name, string* password) {
+void parse_oper(string message, string* password) {
 	string cmd;
 	size_t pos;
 
 	cmd = message;
 	pos = cmd.find(' ');
 	cmd.erase(0, pos + 1);
-	pos = cmd.find(' ');
-	*name = cmd.substr(0, pos);
-	if (name->empty()) {
-		throw BadNumberArgs();
-	}
-	pos = cmd.find(' ');
-	if (pos == SIZE_T_MAX) {
-		*password = "";
-	}
-	else {
-		cmd.erase(0, pos + 1);
-		*password = cmd.substr(0, cmd.length());
-	}
+	*password = string(cmd);
 }
 
 void parse_kick(string message, string* chan, vector<string>* user, string* kickMsg, Server* serv) {
 	// FIXME parse on "," between users / channels
 	istringstream iss(message);
 	string s;
-	vector<string>	arg;
 	while (getline(iss, s, ' ')) {
-		arg.push_back(s);
+		user->push_back(s);
 	}
-	arg.erase(arg.begin());
-	*chan = *(arg.begin());
+	user->erase(user->begin());
+	*chan = *(user->begin());
 	if (chan->empty()) {
-		throw BadNumberArgs();
+		throw NeedMoreParams();
 	}
-	arg.erase(arg.begin());
-	if (arg.empty()) {
-		throw BadNumberArgs();
+	user->erase(user->begin());
+	if (user->empty()) {
+		throw NeedMoreParams();
 	}
-	*user = arg;
 	try {
-		serv->userDB->search(arg.back());
+		serv->userDB->search(user->back());
 	}
 	catch (exception& e) {
-		*kickMsg = arg.back();
+		*kickMsg = user->back();
 	}
 }
 
@@ -187,86 +173,18 @@ int command_check(string message, t_params *params) {
 			}
 			// ? OPER
 			case 8: {
-				string name;
-				string password;
-				try {
-					parse_oper(message, &name, &password);
-				}
-				catch (BadNumberArgs& e) {
-					logError(string("Set new operator on server " + params->irc_serv->name), name, e.what());
-					// TODO send ERR_NEEDMOREPARAMS
-				}
-				try {
-					(*params->irc_serv->userDB->search(params->user_id)).becomeOper(*params->irc_serv, password);
-				}
-				catch (BadPasswd& e) {
-					// TODO send ERR_PASSWDMISMATCH
-					logError(string("Set new operator on server " + params->irc_serv->name), name, e.what());
-				}
-				catch (exception& e) {
-					// TODO send ERR_PASSWDMISMATCH (as default error)
-					logError(string("Set new operator on server " + params->irc_serv->name + "(default error)"), name, e.what());
-				}
-				// TODO send RPL_YOUREOPER
-				// TODO send MODE
+				Oper(message, params);
+				break;
 			}
 			// ? KICK
 			case 9: {
-				string	kicker;
-				try {
-					kicker = params->irc_serv->userDB->search(params->user_id)->getNickName();
-				}
-				catch (exception& e) {
-					logError(string("Kick user from channel"), "Unknown kicker", e.what());
-				}
-				string	kickMsg = kicker;
-				string	chan;
-				vector<string>	user;
-				try {
-					parse_kick(message, &chan, &user, &kickMsg, &params->irc_serv);
-				}
-				catch (exception& e) {
-					logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
-					// TODO send ERR_NEEDMOREPARAMS
-				}
-				try {
-					params->irc_serv->chanDB->search(chan);
-				}
-				catch (exception& e) {
-					logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
-					// TODO send ERR_NOSUCHCHANNEL
-				}
-				try {
-					params->irc_serv->chanDB->search(chan)->isLog(*(params->irc_serv->userDB->search(kicker)));
-				}
-				catch (exception& e) {
-					logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
-					// TODO send ERR_NOTONCHANNEL
-				}
-				string	usr = *(user.begin());
-				try {
-					while (!usr.empty() && usr != ":") {
-						try {
-							params->irc_serv->chanDB->search(chan)->userLeave(*(params->irc_serv->userDB->search(usr)));
-						}
-						catch (exception& e) {
-							logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
-							// TODO send ERR_USERNOTINCHANNEL with kickMsg
-						}
-						log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  usr +  string(LIGHT_BLUE) +  string(" has been kicked out from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + chan + string(LIGHT_BLUE) + " by " +  string(RED) + kicker + string(DEFAULT));
-						user.erase(user.begin());
-						usr = *(user.begin());
-					}
-				}
-				catch (exception& e) {
-					logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
-				}
+				Kick(message, params);
 			}
 			default:
 				throw(InvalidCommand());
 		}
 	} catch (const InvalidCommand e) {
-		std::cerr << e.what() << std::endl;
+		// std::cerr << e.what() << std::endl;
 		return (UNKNOWN_COMMAND);
 	}
 	return (0);

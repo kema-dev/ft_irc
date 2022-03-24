@@ -260,8 +260,13 @@ void	User::becomeOper(Server& serv, string pass) {
 		return ;
 	}
 	if (serv.userDB->checkOperPasswd(pass) == true) {
+		if (serv.userDB->isOper(this->getNickName()) == true) {
+			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" is already operator and successfuly requested operator permissions again on ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
+		}
+		else {
+			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
+		}
 		serv.userDB->addOper(*this);
-		log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
 		return;
 	}
 	else {

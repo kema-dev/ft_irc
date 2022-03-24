@@ -46,6 +46,9 @@ class DuplicateNickname : public exception
 		}
 };
 
+// ? operator password
+#define OPER_PASS "password"
+
 class   UserDB {
 	private:
 	vector<pair<User&, bool> >	_db;
@@ -53,7 +56,7 @@ class   UserDB {
 	string			_name;
 
 	public:
-	UserDB(string name) {_name = name;};
+	UserDB(string name) {_name = name; _oper = sha256(OPER_PASS);};
 	~UserDB() {};
 
 	ssize_t	add(User& usr);

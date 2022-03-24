@@ -114,7 +114,7 @@ void reply(t_params *params, string replyNb, string args)
         default:
             break;
     }
-    cout << reply << endl;
+    // cout << reply << endl;
     //TODO Send this message to all clients
     // if (replyNb == || )
     // {

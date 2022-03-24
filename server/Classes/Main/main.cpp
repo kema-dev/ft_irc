@@ -188,7 +188,7 @@ void *task1(void *dummyPt) {
 		while ((input = read_socket(params->client_socket)).empty() == true) {
 			;
 		}
-		cout << "Input = '" << input << "'" << endl;
+		cout << DARK_GRAY <<  "Input = '" << input << "'" << DEFAULT << endl;
 		// TODO add try/catch
 		if (nbPass == 0) {
 			if (check_password(input, params->irc_serv, params->client_socket) == 0)
