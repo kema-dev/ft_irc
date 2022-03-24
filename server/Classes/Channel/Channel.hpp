@@ -31,6 +31,15 @@ class UserIsBanned : public exception
 		}
 };
 
+class NotInChan : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("User is not in channel");
+		}
+};
+
 #define USER		false
 #define OPERATOR	true
 

@@ -88,8 +88,8 @@ bool	Channel::userJoin(User& usr, string pass) {
 // ? Make <usr> leave channel channel <this>
 bool	Channel::userLeave(User& usr) {
 	if (usr.getActiveStatus() != true) {
-	throw NotLoggedGlobal();
-	return false;
+		throw NotLoggedGlobal();
+		return false;
 	}
 	vector<pair<User&, int> >::iterator	it, end;
 	it = _log.begin();
@@ -103,6 +103,7 @@ bool	Channel::userLeave(User& usr) {
 		}
 		it++;
 	}
+	throw NotInChan();
 	return false;
 }
 

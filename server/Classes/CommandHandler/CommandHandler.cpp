@@ -81,7 +81,8 @@ void parse_oper(string message, string* name, string* password) {
 	}
 }
 
-void parse_kick(string message, string* chan, vector<string>* user) {
+void parse_kick(string message, string* chan, vector<string>* user, string* kickMsg, Server* serv) {
+	// FIXME parse on "," between users / channels
 	istringstream iss(message);
 	string s;
 	vector<string>	arg;
@@ -98,6 +99,12 @@ void parse_kick(string message, string* chan, vector<string>* user) {
 		throw BadNumberArgs();
 	}
 	*user = arg;
+	try {
+		serv->userDB->search(arg.back());
+	}
+	catch (exception& e) {
+		*kickMsg = arg.back();
+	}
 }
 
 int command_check(string message, t_params *params) {
@@ -137,39 +144,48 @@ int command_check(string message, t_params *params) {
 			throw(InvalidCommand());
 		}
 		switch (index) {
+			// ? JOIN
 			case 0:
 				channel_s = message.substr(pos + 1, message.length() - pos - 1);
 				Join(params, channel_s);
 				break;
+			// ? PART
 			case 1: {
 				string msg;
 				parse_part(message, &channel_s, &msg);
 				Part(params, channel_s, msg);
 				break;
 			}
+			// ? QUIT
 			case 2:
 				send(params->client_socket, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
 				exit(EXIT_SUCCESS);
+			// ? NICK
 			case 3:
 				Nick(params, channel_s);
 				break;
+			// ? USER
 			case 4:
 				User(params, channel_s);
 				break;
+			// ? PONG
 			case 5:
 				break;
+			// ? PRIVMSG
 			case 6: {
 				string msg;
 				parse_privmsg(message, &channel_s, &msg);
 				PrivateMessage(params, channel_s, msg);
 				break;
 			}
+			// ? TOPIC
 			case 7: {
 				string topic;
 				parse_topic(message, &channel_s, &topic);
 				Topic(params, channel_s, topic);
 				break;
 			}
+			// ? OPER
 			case 8: {
 				string name;
 				string password;
@@ -194,22 +210,54 @@ int command_check(string message, t_params *params) {
 				// TODO send RPL_YOUREOPER
 				// TODO send MODE
 			}
+			// ? KICK
 			case 9: {
+				string	kicker;
+				try {
+					kicker = params->irc_serv->userDB->search(params->user_id)->getNickName();
+				}
+				catch (exception& e) {
+					logError(string("Kick user from channel"), "Unknown kicker", e.what());
+				}
+				string	kickMsg = kicker;
 				string	chan;
 				vector<string>	user;
-				parse_kick(message, &chan, &user);
-				// ? Maybe try catch this
-				string	kicker = params->irc_serv->userDB->search(params->user_id)->getNickName();
+				try {
+					parse_kick(message, &chan, &user, &kickMsg, &params->irc_serv);
+				}
+				catch (exception& e) {
+					logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
+					// TODO send ERR_NEEDMOREPARAMS
+				}
+				try {
+					params->irc_serv->chanDB->search(chan);
+				}
+				catch (exception& e) {
+					logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
+					// TODO send ERR_NOSUCHCHANNEL
+				}
+				try {
+					params->irc_serv->chanDB->search(chan)->isLog(*(params->irc_serv->userDB->search(kicker)));
+				}
+				catch (exception& e) {
+					logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
+					// TODO send ERR_NOTONCHANNEL
+				}
 				string	usr = *(user.begin());
 				try {
 					while (!usr.empty() && usr != ":") {
-						params->irc_serv->chanDB->search(chan)->userLeave(*(params->irc_serv->userDB->search(usr)));
+						try {
+							params->irc_serv->chanDB->search(chan)->userLeave(*(params->irc_serv->userDB->search(usr)));
+						}
+						catch (exception& e) {
+							logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
+							// TODO send ERR_USERNOTINCHANNEL with kickMsg
+						}
 						log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  usr +  string(LIGHT_BLUE) +  string(" has been kicked out from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + chan + string(LIGHT_BLUE) + " by " +  string(RED) + kicker + string(DEFAULT));
 						user.erase(user.begin());
 						usr = *(user.begin());
 					}
 				}
-				// TODO catch (thus throw) kick errors (+ multiple kick)
 				catch (exception& e) {
 					logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
 				}
