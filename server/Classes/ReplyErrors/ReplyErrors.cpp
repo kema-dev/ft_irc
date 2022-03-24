@@ -1,6 +1,6 @@
 // #include
 
-// void ft_error(std::string nb_str, Client* client, Channel* channel, std::string arg)
+// void replyError(t_params *params, string replyNb, string args)
 // {
 // 	int nb = atoi(nb_str.c_str());
 //     std::string error;
