@@ -81,7 +81,7 @@ bool	Channel::userJoin(User& usr, string pass) {
 		return false;
 	}
 	_log.push_back(pair<User&, int>(usr, CONNECTED));
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" joined ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(_name) + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" joined ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(_name) + string(DEFAULT));
 	return true;
 }
 
@@ -98,7 +98,7 @@ bool	Channel::userLeave(User& usr) {
 	while (it != end) {
 		if (it->first.getUid() == id) {
 			_log.erase(it);
-			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
 			return true;
 		}
 		it++;
@@ -204,7 +204,7 @@ bool	Channel::userBan(User& usr, User& banner) {
 	while (it != end) {
 		if (it->first.getUid() == id) {
 			it->second = BANNED;
-			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" has been banned from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT) + string(" by ") + string(RED) + string(banner.getUserName()) + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been banned from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT) + string(" by ") + string(RED) + string(banner.getNickName()) + string(DEFAULT));
 			return true;
 		}
 		it++;

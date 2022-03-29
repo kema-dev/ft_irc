@@ -5,7 +5,7 @@ using namespace std;
 // ? Add a <usr> to database
 ssize_t	UserDB::add(User& usr) {
 	_db.push_back(pair<User&, bool>(usr, USER));
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getUserName()) + string(LIGHT_BLUE) + string(" has been added to ") + string(LIGHT_MAGENTA) + string("userDB ") + string(GREEN) + string(this->_name) + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been added to ") + string(LIGHT_MAGENTA) + string("userDB ") + string(GREEN) + string(this->_name) + string(DEFAULT));
 	return usr.getUid();
 }
 

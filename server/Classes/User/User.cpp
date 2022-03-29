@@ -41,7 +41,7 @@ User::User(string username, string fullname, string nickname, string hostname, s
 	char s[20]; // ? length of ssize_max
 	sprintf(s, "%ld", _uid);
 	string str = string(s);
-	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_nickname) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 }
 
 // ? Get <this> nick name
@@ -130,7 +130,7 @@ void	User::logIn(Server& server) {
 		throw AlreadyLoggedGlobal();
 	}
 	this->setActiveStatus(true);
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
 }
 
 // ? Log out from <server>
@@ -139,7 +139,7 @@ void	User::logOut(Server& server) {
 		throw NotLoggedGlobal();
 	}
 	this->setActiveStatus(false);
-	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getUserName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
+	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getNickName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
 }
 
 // ? Send <content> to <chan>
@@ -152,10 +152,10 @@ void	User::sendMessage(string content, Channel& chan) {
 		throw NotLogged();
 		return;
 	}
-	Message msg = Message(content, this->getUserName(), chan.getNextUid());
+	Message msg = Message(content, this->getNickName(), chan.getNextUid());
 	chan.receiveMsg(msg);
 	this->setNbMsg(getNbMsg() + 1);
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
 }
 
 // ? Join <chan> with password <pass>
@@ -261,10 +261,10 @@ void	User::becomeOper(Server& serv, string pass) {
 	}
 	if (serv.userDB->checkOperPasswd(pass) == true) {
 		if (serv.userDB->isOper(this->getNickName()) == true) {
-			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" is already operator and successfuly requested operator permissions again on ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" is already operator and successfuly requested operator permissions again on ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
 		}
 		else {
-			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
 		}
 		serv.userDB->addOper(*this);
 		return;
