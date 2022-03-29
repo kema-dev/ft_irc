@@ -69,27 +69,30 @@ void parse_oper(string message, string* password) {
 	*password = string(cmd);
 }
 
-void parse_kick(string message, string* chan, vector<string>* user, string* kickMsg, Server* serv) {
-	// FIXME parse on "," between users / channels
+void parse_kick(string message, string* chan, string* user, string* kickMsg, Server* serv) {
 	istringstream iss(message);
 	string s;
-	while (getline(iss, s, ' ')) {
-		user->push_back(s);
-	}
-	user->erase(user->begin());
-	*chan = *(user->begin());
+	getline(iss, s, ' '); // ? Skip "KICK"
+	getline(iss, s, ' ');
+	*chan = s;
 	if (chan->empty()) {
 		throw NeedMoreParams();
 	}
-	user->erase(user->begin());
+	getline(iss, s, ' ');
+	*user = s;
 	if (user->empty()) {
 		throw NeedMoreParams();
 	}
+	getline(iss, s, '\n');
+	if (s[0] == ':')
+		s = &s[1];
 	try {
-		serv->userDB->search(user->back());
+		serv->userDB->search(s);
 	}
 	catch (exception& e) {
-		*kickMsg = user->back();
+		if (!s.empty()) {
+			*kickMsg = s;
+		}
 	}
 }
 

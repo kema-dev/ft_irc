@@ -177,48 +177,47 @@ void	Kick(string message, t_params* params) {
 	}
 	catch (exception& e) {
 		logError(string("Kick user from channel"), "Unknown kicker", e.what());
+		return;
 	}
 	string	kickMsg = kicker;
 	string	chan;
-	vector<string>	user;
+	string	user;
 	try {
 		parse_kick(message, &chan, &user, &kickMsg, params->irc_serv);
 	}
 	catch (exception& e) {
-		logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
+		logError(string("Kick user from channel " + chan), user, e.what());
 		// TODO send ERR_NEEDMOREPARAMS
+		return;
+	}
+	if (params->irc_serv->userDB->isOper(kicker) != true) {
+		// TODO send ERR_CHANOPRIVSNEEDED
+		logError(string("Kick user from channel " + chan), user, kicker + " is not operator");
+		return;
 	}
 	try {
 		params->irc_serv->chanDB->search(chan);
 	}
 	catch (exception& e) {
-		logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
+		logError(string("Kick user from channel " + chan), user, e.what());
 		// TODO send ERR_NOSUCHCHANNEL
+		return;
 	}
 	try {
 		params->irc_serv->chanDB->search(chan)->isLog(*(params->irc_serv->userDB->search(kicker)));
 	}
 	catch (exception& e) {
-		logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
+		logError(string("Kick user from channel " + chan), user, e.what());
 		// TODO send ERR_NOTONCHANNEL
+		return;
 	}
-	string	usr = *(user.begin());
-	// string	usr = "";
 	try {
-		while (!usr.empty() && usr != ":") {
-			try {
-				params->irc_serv->chanDB->search(chan)->userLeave(*(params->irc_serv->userDB->search(usr)));
-			}
-			catch (exception& e) {
-				logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
-				// TODO send ERR_USERNOTINCHANNEL with kickMsg
-			}
-			log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  usr +  string(LIGHT_BLUE) +  string(" has been kicked out from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + chan + string(LIGHT_BLUE) + " by " +  string(RED) + kicker + string(DEFAULT));
-			user.erase(user.begin());
-			usr = *(user.begin());
-		}
+		params->irc_serv->chanDB->search(chan)->userLeave(*(params->irc_serv->userDB->search(user)));
 	}
 	catch (exception& e) {
-		logError(string("Kick user from channel " + chan), *(user.begin()), e.what());
+		logError(string("Kick user from channel " + chan), user, e.what());
+		// TODO send ERR_USERNOTINCHANNEL with kickMsg
+		return;
 	}
+	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  user +  string(LIGHT_BLUE) +  string(" has been kicked out from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + chan + string(LIGHT_BLUE) + " by " +  string(RED) + kicker + string(DEFAULT));
 }
