@@ -60,7 +60,10 @@ void parse_privmsg(string message, string* channel_s , string* msg)
     pos = cmd.find(' ');
     *channel_s = cmd.substr(0, pos);
     cmd.erase(0, pos + 1);
-    *msg = cmd.substr(0, cmd.length());
+    if (cmd.find('\n') == string::npos)
+        *msg = cmd.substr(1, cmd.length());
+    else
+        *msg = cmd.substr(0, cmd.find('\n'));
 }
 
 int command_check(string message, t_params *params)
@@ -103,6 +106,8 @@ int command_check(string message, t_params *params)
         {
             case 0:
                 channel_s = message.substr(pos + 1, message.length() - pos - 1);
+                if (channel_s.find('\n') != string::npos)
+                    channel_s.erase(channel_s.find('\n'), 1);
                 Join(params, channel_s);
                 break;
             case 1:

@@ -18,6 +18,31 @@ string header_2(Server *server, ssize_t id, string rplyNb)
     return (reply);
 }
 
+void reply_privmsg(t_params *params, string replyNb, string args, string reply)
+{
+    if (replyNb == PRVMSG_U)
+    {
+        cout << "socket =" << params->irc_serv->userDB->search(args)->getSocket() << endl;
+        cout << reply << endl;
+        send(params->irc_serv->userDB->search(args)->getSocket(), reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
+        return ;
+    }
+    if (replyNb == PRVMSG_C)
+     {
+        vector<string> list = params->irc_serv->chanDB->search(args)->getNickLst();
+        vector<string>::iterator it = list.begin();
+        vector<string>::iterator ite = list.end();
+        while (it != ite)
+        {
+            cout << reply << endl;
+            cout << "socket =" << params->irc_serv->userDB->search(*it)->getSocket() << endl;
+            send(params->irc_serv->userDB->search(*it)->getSocket(), reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
+            it++;
+        }
+        return ;
+    }
+}
+
 void reply_2(t_params *params, string replyNb, string args, string args2)
 {
     string reply;
@@ -30,11 +55,15 @@ void reply_2(t_params *params, string replyNb, string args, string args2)
             break;
         case 4547:
             reply = header_2(params->irc_serv, params->user_id, "");
-            reply += "PRVIMSG " + params->irc_serv->userDB->search(params->user_id)->getNickName() + " " + args2 + "\r\n";
+            reply += "PRIVMSG " + params->irc_serv->userDB->search(args)->getNickName() + " :" + args2 + "\r\n";
+            reply_privmsg(params, replyNb, args, reply);
+            return;
             break;
         case 4548:
             reply = header_2(params->irc_serv, params->user_id, "");
-            reply += "PRVIMSG " + params->irc_serv->chanDB->search(args)->getName() + " " + args2 + "\r\n";
+            reply += "PRIVMSG " + params->irc_serv->chanDB->search(args)->getName() + " " + args2 + "\r\n";
+            reply_privmsg(params, replyNb, args, reply);
+            return;
             break;
         case 4551:
             reply = header_2(params->irc_serv, params->user_id, "");
@@ -44,7 +73,7 @@ void reply_2(t_params *params, string replyNb, string args, string args2)
             break;
     }
     cout << reply << endl;
-    ///TODO Send this message to all clients
+    // TODO Send this message to all clients
     send(params->client_socket, reply.c_str(), strlen(reply.c_str()), 0);
     return;
 }
@@ -115,19 +144,6 @@ void reply(t_params *params, string replyNb, string args)
             break;
     }
     cout << reply << endl;
-    //TODO Send this message to all clients
-    // if (replyNb == || )
-    // {
-    //     vector<string> list = params->irc_serv->chanDB->search(args)->getNickLst();
-    //     vector<string>::iterator it = list.begin();
-    //     vector<string>::iterator ite = list.end();
-    //     while (it != ite)
-    //     {
-    //         send(params->irc_serv->userDB->search(*it)->getSocket(), reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
-    //         it++;
-    //     }
-    // }
-    // else
-        send(params->client_socket, reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
+    send(params->client_socket, reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
     return;
 }
