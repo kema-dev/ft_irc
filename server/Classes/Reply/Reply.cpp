@@ -118,7 +118,7 @@ void reply(t_params *params, string replyNb, string args)
             vector<string>::iterator ite = tmp.end();
             while (it != ite)
             {
-                if (params->irc_serv->chanDB->search(args)->isOper(*it) == true)
+                if (params->irc_serv->userDB->isOper(*it) == true)
                     reply += "@";
                 reply += ((*it) + " ");
                 it++;
@@ -143,7 +143,20 @@ void reply(t_params *params, string replyNb, string args)
         default:
             break;
     }
-    cout << reply << endl;
-    send(params->client_socket, reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
+    // cout << reply << endl;
+    //TODO Send this message to all clients
+    // if (replyNb == || )
+    // {
+    //     vector<string> list = params->irc_serv->chanDB->search(args)->getNickLst();
+    //     vector<string>::iterator it = list.begin();
+    //     vector<string>::iterator ite = list.end();
+    //     while (it != ite)
+    //     {
+    //         send(params->irc_serv->userDB->search(*it)->getSocket(), reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
+    //         it++;
+    //     }
+    // }
+    // else
+        send(params->client_socket, reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
     return;
 }

@@ -188,7 +188,7 @@ void *task1(void *dummyPt) {
 		while ((input = read_socket(params->client_socket)).empty() == true) {
 			;
 		}
-		cout << "Input = '" << input << "'" << endl;
+		cout << DARK_GRAY <<  "Input = '" << input << "'" << DEFAULT << endl;
 		// TODO add try/catch
         cout << "nbPass:" << nbPass << endl;
 		if (nbPass == 0) {

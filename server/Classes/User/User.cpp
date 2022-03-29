@@ -41,7 +41,7 @@ User::User(string username, string fullname, string nickname, string hostname, s
 	char s[20]; // ? length of ssize_max
 	sprintf(s, "%ld", _uid);
 	string str = string(s);
-	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_username) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_nickname) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 }
 
 // ? Get <this> nick name
@@ -76,12 +76,7 @@ bool	User::getActiveStatus(void) {
 
 // ? Get <this> UID
 ssize_t	User::getUid(void) {
-	return _uid;	
-}
-
-// ? Get <this> password hash
-string	User::getHash(void) {
-	return _hash;	
+	return _uid;
 }
 
 int     User::getSocket(void) {
@@ -129,23 +124,13 @@ void	User::setUid(ssize_t new_uid) {
 	_uid = new_uid;
 }
 
-// ? Set <this> password's hash
-void	User::setHash(string new_hash) {
-	_hash = new_hash;
-}
-
-// ? Set <this> password (by hashing it)
-void	User::setPass(string new_pass) {
-	_hash = sha256(new_pass);
-}
-
 // ? Log in to <server>
 void	User::logIn(Server& server) {
 	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
 		throw AlreadyLoggedGlobal();
 	}
 	this->setActiveStatus(true);
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
 }
 
 // ? Log out from <server>
@@ -154,7 +139,7 @@ void	User::logOut(Server& server) {
 		throw NotLoggedGlobal();
 	}
 	this->setActiveStatus(false);
-	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getUserName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
+	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  string(this->getNickName()) +  string(LIGHT_BLUE) +  string(" logged out from ") +  string(RED) + string(LIGHT_MAGENTA) + string("server ") +  string(DEFAULT));
 }
 
 // ? Send <content> to <chan>
@@ -167,10 +152,10 @@ void	User::sendMessage(string content, Channel& chan) {
 		throw NotLogged();
 		return;
 	}
-	Message msg = Message(content, this->getUserName(), chan.getNextUid());
+	Message msg = Message(content, this->getNickName(), chan.getNextUid());
 	chan.receiveMsg(msg);
 	this->setNbMsg(getNbMsg() + 1);
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
 }
 
 // ? Join <chan> with password <pass>
@@ -192,7 +177,7 @@ void	User::joinChannel(Channel& chan, string pass) {
 }
 
 // ? Try to join <chan> with password <pass> and create it if non-existent
-void	User::tryJoinChannel(string name, string pass, string topic, string oper_pass, Server* server) {
+void	User::tryJoinChannel(string name, string pass, string topic, Server* server) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return ;
@@ -201,7 +186,7 @@ void	User::tryJoinChannel(string name, string pass, string topic, string oper_pa
 		server->chanDB->search(name);
 	}
 	catch (exception& e) {
-		server->addChan(name, pass, topic, oper_pass);
+		server->addChan(name, pass, topic);
 	}
 	if (server->chanDB->search(name)->isLog(*this) == true) {
 		throw AlreadyLogged();
@@ -238,20 +223,16 @@ void	User::getBanned(Channel& chan, User& banner) {
 	// TODO Send ban info to *this
 }
 
-// ? Set <chan> password with password <pass>
-void	User::setPasswd(Channel& chan, string pass) {
+// ? Set <serv> password with password <pass>
+void	User::setPasswd(Server& serv, string pass) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return ;
 	}
-	if (chan.isLog(*this) != true) {
-		throw NotLogged();
-		return;
-	}
-	if (chan.isOper(this->getNickName()) != true) {
+	if (serv.userDB->isOper(this->getNickName()) != true) {
 		throw BadRole();
 	}
-	chan.setPasswd(pass);
+	serv.setPasswd(pass);
 	return;
 }
 
@@ -260,40 +241,36 @@ void    User::setSocket(int socket)
     _socket = socket;
 }
 
-// ? Set <chan> operator password with password <pass>
-void	User::setOperPasswd(Channel& chan, string pass) {
+// ? Set <serv> operator password with password <pass>
+void	User::setOperPasswd(Server& serv, string pass) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return ;
 	}
-	if (chan.isLog(*this) != true) {
-		throw NotLogged();
-		return;
-	}
-	if (chan.isOper(this->getNickName()) != true) {
+	if (serv.userDB->isOper(this->getNickName()) != true) {
 		throw BadRole();
 	}
-	chan.setOperPasswd(pass);
+	serv.userDB->setOperPasswd(pass);
 }
 
 // ? Become operator of <chan> with password <pass>
-void	User::becomeOper(Channel& chan, string pass) {
+void	User::becomeOper(Server& serv, string pass) {
 	if (this->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return ;
 	}
-	if (chan.isLog(*this)) {
-		if (chan.checkOperPasswd(pass) == true) {
-			chan.addOper(*this);
-			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getUserName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
-			return;
+	if (serv.userDB->checkOperPasswd(pass) == true) {
+		if (serv.userDB->isOper(this->getNickName()) == true) {
+			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" is already operator and successfuly requested operator permissions again on ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
 		}
 		else {
-			throw BadPasswd();
-			return;
+			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
 		}
+		serv.userDB->addOper(*this);
+		return;
 	}
 	else {
-		throw NotLogged();
+		throw BadPasswd();
+		return;
 	}
 }

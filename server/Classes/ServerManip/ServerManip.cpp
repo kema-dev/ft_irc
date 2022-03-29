@@ -106,7 +106,7 @@ ssize_t createUser(string input, t_params *params, string nickname)
     fullname = cmd.substr(0, cmd.length() - 2);
     try {
 		id = params->irc_serv->addUser(username, fullname, nickname, hostname, servername, params->irc_serv, params->client_socket);
-        cout << "User created!" << endl;
+        // cout << "User created!" << endl;
 	}
 	catch (exception& e) {
 		logError(string("Adding user on server " + string(servername)), username, e.what());

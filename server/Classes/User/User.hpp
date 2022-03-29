@@ -113,6 +113,7 @@ class BadPasswd : public exception
 #define CONNECTED		1
 #define BANNED			2
 #define UNKNOWN			3
+#define AWAY			4
 
 class User {
 	private:
@@ -125,7 +126,6 @@ class User {
 	ssize_t		_nb_msg;
 	bool		_active_status;
 	ssize_t		_uid;
-	string		_hash;
     int         _socket;
 
 	public:
@@ -151,20 +151,19 @@ class User {
 	void	setNbMsg(ssize_t new_nb_msg);
 	void	setActiveStatus(bool new_active_status);
 	void	setUid(ssize_t new_uid);
-	void	setHash(string new_hash);
-	void	setPass(string new_pass);
     void    setSocket(int socket);
 
 	void	logIn(Server& server);
 	void	logOut(Server& server);
 	void	sendMessage(string content, Channel& chan);
 	void	joinChannel(Channel& chan, string pass);
-	void	tryJoinChannel(string name, string pass, string topic, string oper_pass, Server* server);
+	void	tryJoinChannel(string name, string pass, string topic, Server* server);
+	// void	tryJoinChannel(string name, string pass, string topic, string oper_pass, Server* server);
 	void	ban(User& usr, Channel& chan);
 	void	getBanned(Channel& chan, User& banner);
-	void	setPasswd(Channel& chan, string pass);
-	void	setOperPasswd(Channel& chan, string pass);
-	void	becomeOper(Channel& chan, string pass);
+	void	setPasswd(Server& serv, string pass);
+	void	setOperPasswd(Server& serv, string pass);
+	void	becomeOper(Server& serv, string pass);
 };
 
 // std::ostream &	operator<<(std::ostream &stream, User &rhs);

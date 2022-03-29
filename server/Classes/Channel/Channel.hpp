@@ -31,6 +31,15 @@ class UserIsBanned : public exception
 		}
 };
 
+class NotInChan : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("User is not in channel");
+		}
+};
+
 #define USER		false
 #define OPERATOR	true
 
@@ -38,15 +47,16 @@ class Channel {
 	private:
 	string			_name;
 	string			_hash;
-	string			_oper;
+	// string			_oper;
     string          _topic;
 	ssize_t			_next_uid;
 	vector<Message>	_hist;
 	vector<pair<User&, int> >	_log;
-	vector<pair<User&, bool> >	_roles;
+	// vector<pair<User&, bool> >	_roles;
 
 	public:
-	Channel(string name, string pass, string oper_pass, string topic);
+	// Channel(string name, string pass, string oper_pass, string topic);
+	Channel(string name, string pass, string topic);
 	~Channel() {};
 
 	string	getName(void);
@@ -62,12 +72,12 @@ class Channel {
 	// string	getMsgHist(User& usr);
 	vector<string>	getNickLst(void);
 	bool	userBan(User& usr, User& banner);
-	bool	isOper(string nickname);
+	// bool	isOper(string nickname);
 	bool	setPasswd(string pass);
-	bool	checkOperPasswd(string pass);
-	bool	setOperPasswd(string oper_pass);
-	bool	addOper(User& usr);
-	bool	removeOper(User& usr);
+	// bool	checkOperPasswd(string pass);
+	// bool	setOperPasswd(string oper_pass);
+	// bool	addOper(User& usr);
+	// bool	removeOper(User& usr);
 };
 
 #endif
