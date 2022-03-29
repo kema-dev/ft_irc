@@ -113,6 +113,7 @@ class BadPasswd : public exception
 #define CONNECTED		1
 #define BANNED			2
 #define UNKNOWN			3
+#define AWAY			4
 
 class User {
 	private:

@@ -141,7 +141,6 @@ void PrivateMessage(t_params *params, string args, string message)
     return;
 }
 
-// FIXME check if more than 2 params
 void	Oper(string message, t_params* params) {
 	string password;
 	try {
@@ -223,6 +222,61 @@ void	Kick(string message, t_params* params) {
 }
 
 void	Mode(string message, t_params* params) {
-	parse_mode(message);
-	(void)params;
+	string user;
+	int req_op, req_away;
+	try {
+		parse_mode(message, &user, &req_op, &req_away);
+	}
+	catch (NeedMoreParams& e) {
+		logError(string("MODE command"), user, e.what());
+		// TODO send ERR_NEEDMOREPARAMS
+		return;
+	}
+	catch (UnknownParam& e) {
+		logError(string("MODE command"), user, e.what());
+		// TODO send ERR_UNKNOWNMODE
+		return;
+	}
+	if (params->irc_serv->userDB->search(user)->getNickName() != user) {
+		logError(string("MODE command"), user, "User uses MODE for another user");
+		// TODO send ERR_USERSDONTMATCH
+	}
+	try {
+		params->irc_serv->userDB->search(user);
+	}
+	catch (exception& e) {
+		logError(string("MODE command"), user, e.what());
+		// TODO send ERR_NOSUCHNICK
+		return;
+	}
+	if (req_op == 1) {
+		if (params->irc_serv->userDB->isOper(user) != true) {
+			logError(string("MODE command"), user, user + " is not operator");
+			// TODO send ERR_CHANOPRIVSNEEDED
+			return;
+		}
+		else {
+			params->irc_serv->userDB->addOper(*(params->irc_serv->userDB->search(user)));
+		}
+	}
+	else if (req_op == 1) {
+		if (params->irc_serv->userDB->isOper(user) != true) {
+			logError(string("MODE command"), user, user + " is not operator");
+			// TODO send ERR_CHANOPRIVSNEEDED
+			return;
+		}
+		else {
+			params->irc_serv->userDB->removeOper(*(params->irc_serv->userDB->search(user)));
+		}
+	}
+	if (req_away == 1) {
+		params->irc_serv->userDB->search(user)->setActiveStatus(AWAY);
+		log(string(LIGHT_MAGENTA) +  string("User ") + string(RED) +  user +  string(LIGHT_BLUE) +  string(" is now away from ") +  string(LIGHT_MAGENTA) + string("server ") + params->irc_serv->name + string(DEFAULT));
+		// TODO send YOUREAWAY ??
+	}
+	else if (req_away == -1) {
+		params->irc_serv->userDB->search(user)->setActiveStatus(CONNECTED);
+		log(string(LIGHT_MAGENTA) +  string("User ") + string(GREEN) +  user +  string(LIGHT_BLUE) +  string(" is back to ") +  string(LIGHT_MAGENTA) + string("server ") + params->irc_serv->name + string(DEFAULT));
+		// TODO send YOUREAWAY ??
+	}
 }

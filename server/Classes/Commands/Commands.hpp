@@ -15,6 +15,24 @@ class NeedMoreParams : public exception
 		}
 };
 
+class UnknownParam : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Unknown parameter");
+		}
+};
+
+class ChanOpeNeeded : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Operator status needed");
+		}
+};
+
 void	welcome_client(t_params *params, string channel_s);
 void	Join(t_params *params, string channel_s);
 void	Part(t_params *params, string channel_s, string msg);

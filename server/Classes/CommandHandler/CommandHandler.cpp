@@ -96,10 +96,43 @@ void parse_kick(string message, string* chan, string* user, string* kickMsg, Ser
 	}
 }
 
-void parse_mode(string message) {
+void parse_mode(string message, string* user, int* req_op, int* req_away) {
 	istringstream iss(message);
 	string s;
+	int i;
 	getline(iss, s, ' '); // ? Skip "MODE"
+	getline(iss, s, ' ');
+	*user = s;
+	if (user->empty()) {
+		throw NeedMoreParams();
+	}
+	*req_op = 0;
+	*req_away = 0;
+	getline(iss, s, '\n');
+	if ((s[0] != '+') && (s[0] != '-')) {
+		throw NeedMoreParams();
+	}
+	if (s[0] == '+') {
+		i = ACTION_ADD;
+		s.erase(0, 1);
+	}
+	else if (s[0] == '-') {
+		i = ACTION_REMOVE;
+		s.erase(0, 1);
+	}
+	if (!s.empty() && s.find('o') != string::npos) {
+		*req_op = 1;
+		s.erase(s.find('o'), 1);
+	}
+	if (!s.empty() && s.find('a') != string::npos) {
+		*req_away = 1;
+		s.erase(s.find('a'), 1);
+	}
+	if (!s.empty()) {
+		throw UnknownParam();
+	}
+	*req_op *= i;
+	*req_away *= i;
 }
 
 int command_check(string message, t_params *params) {
