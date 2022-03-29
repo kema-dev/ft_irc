@@ -24,5 +24,6 @@ void	Topic(t_params *params, string args, string topic);
 void	PrivateMessage(t_params *params, string args, string message);
 void	Oper(string message, t_params* params);
 void	Kick(string message, t_params* params);
+void	Mode(string message, t_params* params);
 
 #endif

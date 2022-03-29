@@ -22,5 +22,6 @@ string	itos(T nb) {
 int		command_check(std::string message, t_params *params);
 void	parse_oper(string message, string* password);
 void	parse_kick(string message, string* chan, string* user, string* kickMsg, Server* serv);
+void	parse_mode(string message);
 
 #endif

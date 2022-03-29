@@ -221,3 +221,8 @@ void	Kick(string message, t_params* params) {
 	}
 	log(string(LIGHT_MAGENTA) +  string("User ") +  string(RED) +  user +  string(LIGHT_BLUE) +  string(" has been kicked out from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + chan + string(LIGHT_BLUE) + " by " +  string(RED) + kicker + string(DEFAULT));
 }
+
+void	Mode(string message, t_params* params) {
+	parse_mode(message);
+	(void)params;
+}

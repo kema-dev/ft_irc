@@ -96,6 +96,12 @@ void parse_kick(string message, string* chan, string* user, string* kickMsg, Ser
 	}
 }
 
+void parse_mode(string message) {
+	istringstream iss(message);
+	string s;
+	getline(iss, s, ' '); // ? Skip "MODE"
+}
+
 int command_check(string message, t_params *params) {
 	try {
 		if (message.empty() == true)
@@ -115,6 +121,7 @@ int command_check(string message, t_params *params) {
 	commands.push_back("TOPIC");
 	commands.push_back("OPER");
 	commands.push_back("KICK");
+	commands.push_back("MODE");
 	try {
 		size_t pos;
 		string cmd;
@@ -182,6 +189,10 @@ int command_check(string message, t_params *params) {
 			// ? KICK
 			case 9: {
 				Kick(message, params);
+			}
+			// ? MODE
+			case 10: {
+				Mode(message, params);
 			}
 			default:
 				throw(InvalidCommand());
