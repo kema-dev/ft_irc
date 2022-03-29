@@ -190,6 +190,7 @@ void *task1(void *dummyPt) {
 		}
 		cout << DARK_GRAY <<  "Input = '" << input << "'" << DEFAULT << endl;
 		// TODO add try/catch
+        cout << "nbPass:" << nbPass << endl;
 		if (nbPass == 0) {
 			if (check_password(input, params->irc_serv, params->client_socket) == 0)
 				nbPass++;

@@ -16,8 +16,8 @@ Commands:
     -part                   DONE
     -kick               
     -topic                  DONE
-    -nick
-    -user               
+    -nick                   
+    -user               	
     -pass                   DONE
     -privmsg                DONE
     -notice
