@@ -1,7 +1,7 @@
 #ifndef _USER_HPP
  #define _USER_HPP
 
-class Server;
+class User;
 
 #include "../Server/Server.hpp"
 
@@ -130,7 +130,7 @@ class User {
 
 	public:
 	User(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket);
-
+    User();
 	~User() {};
 	
 	string	getNickName(void);

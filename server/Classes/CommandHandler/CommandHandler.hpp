@@ -5,6 +5,7 @@
 #include "../Commands/Commands.hpp"
 #include "../Reply/Reply.hpp"
 #include "../Channel/Channel.hpp"
+#include "../Server/Server.hpp"
 #include <iostream>
 #include <algorithm>
 #include <string>

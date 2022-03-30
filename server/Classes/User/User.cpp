@@ -1,5 +1,20 @@
 #include "User.hpp"
 
+// ? Create a user in kqueue
+User::User ()
+{
+	_server = NULL;
+	_username = "";
+	_fullname = "";
+	_nickname = "";
+	_hostname = "";
+	_servername = "";
+    _socket = -1;
+	_uid = -1;
+	_nb_msg = -1;
+	_active_status = false;
+}
+
 // ? Create a user
 User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket) {
 	if (username == "") {

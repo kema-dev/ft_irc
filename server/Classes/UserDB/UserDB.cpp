@@ -49,6 +49,11 @@ User*	UserDB::search(string nickname) {
 	return nullptr;
 }
 
+// ? Return User database
+vector<pair<User&, bool> > UserDB::getDB() {
+    return _db;
+}
+
 // ? Check if <username>, <fullname> and <nickname> are uniques
 void	UserDB::chkDuplicate(string username, string fullname, string nickname) {
 	try {

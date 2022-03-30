@@ -100,50 +100,11 @@ int main(int argc, char **argv) {
 	Server *irc_serv = nullptr;
 	string servername  = "IRC_SERV";
 	try {
-		irc_serv = new Server(servername, argv[2]);
+		irc_serv = new Server(servername, argv[2], listenFd);
 	} catch (exception &e) {
 		logError(string("Server creation"), servername, e.what());
 	}
-	struct kevent event_list[1];
-	int kq;
-	init_kqueue(listenFd, kq);
-	cout << GREEN + string("Server initialized, now waiting for connections on port ") + argv[1] + DEFAULT << endl;
-	log(GREEN + string("Server initialized, now waiting for connections on port ") + argv[1] + DEFAULT);
-
-	int new_event;
-	struct sockaddr_in clntAdd;
-	socklen_t len = sizeof(clntAdd);
-	
-	vector<pthread_t> threadV;
-	while (true) {
-		try {
-			if ((new_event = kevent(kq, NULL, 0, event_list, 1, NULL)) == -1)
-				throw(ErrKEvent());
-		} catch (const ErrKEvent e) {
-			logError("kevent", "FAIL", e.what());
-			cerr << RED << "kevent failed: " << e.what() << DEFAULT << endl;
-			exit(KEVENT_ERR);
-		}
-		int event_fd = event_list[0].ident;
-		try {
-			if ((connFd = accept(event_fd, (struct sockaddr *)&clntAdd, (socklen_t *)&len)) == -1)
-				throw(CannotAcceptConnection());
-			else {
-                t_params *params = new t_params;
-				pthread_t a;
-				threadV.push_back(a);
-				params->client_socket = connFd;
-				params->irc_serv = irc_serv;
-                cout << "socket: " << connFd << endl;
-				pthread_create(&threadV.back(), NULL, task1, params);
-				cout << "Connection established." << endl;
-			}
-		} catch (const CannotAcceptConnection e) {
-			logError("Accepting connection", "FAIL", e.what());
-			cerr << RED << "Accepting connection: " << e.what() << DEFAULT << endl;
-			return (ERR_CONNECTION);
-		}
-	}
+    irc_serv->start();
 }
 
 string read_socket(int socket) {
@@ -152,7 +113,6 @@ string read_socket(int socket) {
 	string ret;
 	string input_s;
 
-	bzero(input, 256);
 	int n = recv(socket, input, 255, MSG_DONTWAIT);
 	try {
 		if (n < 0)
@@ -169,7 +129,7 @@ string read_socket(int socket) {
 	return (ret);
 }
 
-void *task1(void *dummyPt) {
+void handleConnection(t_KDescriptor desc, int socket) {
 	t_params *params = reinterpret_cast<t_params *>(dummyPt);
 	string nickname;
 	string input;
