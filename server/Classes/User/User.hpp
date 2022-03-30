@@ -1,6 +1,7 @@
 #ifndef _USER_HPP
  #define _USER_HPP
 
+class Channel;
 class User;
 
 #include "../Server/Server.hpp"

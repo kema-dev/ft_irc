@@ -105,11 +105,12 @@ class Server {
     int     getSocket( void );
     void    setSocket( int socket );
     string  getHash();
-    void    acceptConnection(int socket);
+    void    acceptConnection(t_KDescriptor *desc,int socket);
 	void	addChan(string name, string pass, string topic);
     void    handleConnection(t_KDescriptor *desc, int socket);
     string  readSocket(int socket);
 	// void	addChan(string name, string pass, string topic, string oper_pass);
+    void    addVoidUser( void );
 	ssize_t	addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket);
 	void	setPasswd(string pass);
 	// bool	checkOperPasswd(string pass);

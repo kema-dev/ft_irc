@@ -1,8 +1,6 @@
 #ifndef _CHANNEL_HPP
  #define _CHANNEL_HPP
 
-class User;
-
 #include "../Crypto/Crypto.hpp"
 #include "../Message/Message.hpp"
 #include "../User/User.hpp"

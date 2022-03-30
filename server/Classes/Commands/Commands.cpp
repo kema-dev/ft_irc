@@ -61,7 +61,7 @@ void Nick(t_params * params, string args)
     reply(params, NICK, args);
 }
 
-void User(t_params * params, string args)
+void UserCMD(t_params * params, string args)
 {
     try {
         params->irc_serv->userDB->search(params->user_id)->setNickName(args);

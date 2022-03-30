@@ -195,7 +195,7 @@ int command_check(string message, t_params *params) {
 				break;
 			// ? USER
 			case 4:
-				User(params, channel_s);
+				UserCMD(params, channel_s);
 				break;
 			// ? PONG
 			case 5:

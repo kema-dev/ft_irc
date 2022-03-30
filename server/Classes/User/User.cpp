@@ -139,6 +139,11 @@ void	User::setUid(ssize_t new_uid) {
 	_uid = new_uid;
 }
 
+void    User::setSocket(int socket)
+{
+    _socket = socket;
+}
+
 // ? Log in to <server>
 void	User::logIn(Server& server) {
 	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
@@ -251,10 +256,6 @@ void	User::setPasswd(Server& serv, string pass) {
 	return;
 }
 
-void    User::setSocket(int socket)
-{
-    _socket = socket;
-}
 
 // ? Set <serv> operator password with password <pass>
 void	User::setOperPasswd(Server& serv, string pass) {

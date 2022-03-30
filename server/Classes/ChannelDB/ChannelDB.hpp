@@ -1,9 +1,11 @@
 #ifndef _CHANNELDB_HPP
  #define _CHANNELDB_HPP
 
+
 class Channel;
 class User;
 #include "../Channel/Channel.hpp"
+
 
 #include <sys/types.h>
 #include <iostream>
