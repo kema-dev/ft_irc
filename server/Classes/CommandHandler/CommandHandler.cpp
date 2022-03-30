@@ -131,6 +131,9 @@ void parse_mode(string message, string* user, int* req_op, int* req_away) {
 	if (!s.empty()) {
 		throw UnknownParam();
 	}
+	if (*req_op == 0 && *req_away == 0) {
+		throw NeedMoreParams();
+	}
 	*req_op *= i;
 	*req_away *= i;
 }
@@ -144,6 +147,7 @@ int command_check(string message, t_params *params) {
 		return (CLIENT_DISCONNECTED);
 	}
 	vector<string> commands;
+	commands.reserve(20);
 	commands.push_back("JOIN");
 	commands.push_back("PART");
 	commands.push_back("QUIT");
@@ -159,19 +163,19 @@ int command_check(string message, t_params *params) {
 		size_t pos;
 		string cmd;
 		string channel_s;
-		int index;
+		int index = -1;
 
 		cmd = message;
 		pos = cmd.find(' ');
-		if (pos == string::npos)
-			throw(InvalidCommand());
-		cmd.erase(pos, cmd.length() - pos);
+		if (pos == string::npos) {
+			cmd = message;
+		}
+		else {
+			cmd.erase(pos, cmd.length() - pos);
+		}
 		vector<string>::iterator it = find(commands.begin(), commands.end(), cmd);
 		if (it != commands.end())
 			index = it - commands.begin();
-		else {
-			throw(InvalidCommand());
-		}
 		switch (index) {
 			// ? JOIN
 			case 0:
@@ -198,8 +202,10 @@ int command_check(string message, t_params *params) {
 				User(params, channel_s);
 				break;
 			// ? PONG
-			case 5:
+			case 5: {
+				// TODO handle it + send PING every minute
 				break;
+			}
 			// ? PRIVMSG
 			case 6: {
 				string msg;
@@ -222,16 +228,20 @@ int command_check(string message, t_params *params) {
 			// ? KICK
 			case 9: {
 				Kick(message, params);
+				break;
 			}
 			// ? MODE
 			case 10: {
+				cerr << "MODE" << endl;
 				Mode(message, params);
+				break;
 			}
-			default:
+			default: {
 				throw(InvalidCommand());
+			}
 		}
 	} catch (const InvalidCommand e) {
-		// std::cerr << e.what() << std::endl;
+		logError("Received command", message, e.what());
 		return (UNKNOWN_COMMAND);
 	}
 	return (0);

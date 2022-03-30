@@ -256,17 +256,33 @@ void	Mode(string message, t_params* params) {
 			return;
 		}
 		else {
-			params->irc_serv->userDB->addOper(*(params->irc_serv->userDB->search(user)));
+			try {
+				params->irc_serv->userDB->addOper(*(params->irc_serv->userDB->search(user)));
+				log(string(LIGHT_MAGENTA) +  string("User ") + string(GREEN) +  user +  string(LIGHT_BLUE) +  string(" is now operator of ") +  string(LIGHT_MAGENTA) + string("server ") + params->irc_serv->name + string(DEFAULT));
+			}
+			catch (exception& e) {
+				logError(string("MODE command"), user, e.what());
+				// TODO send ERR_NOSUCHNICK
+				return;
+			}
 		}
 	}
-	else if (req_op == 1) {
+	else if (req_op == -1) {
 		if (params->irc_serv->userDB->isOper(user) != true) {
 			logError(string("MODE command"), user, user + " is not operator");
 			// TODO send ERR_CHANOPRIVSNEEDED
 			return;
 		}
 		else {
-			params->irc_serv->userDB->removeOper(*(params->irc_serv->userDB->search(user)));
+			try {
+				params->irc_serv->userDB->removeOper(*(params->irc_serv->userDB->search(user)));
+				log(string(LIGHT_MAGENTA) +  string("User ") + string(RED) +  user +  string(LIGHT_BLUE) +  string(" is no longer operator of ") +  string(LIGHT_MAGENTA) + string("server ") + params->irc_serv->name + string(DEFAULT));
+			}
+			catch (exception& e) {
+				logError(string("MODE command"), user, e.what());
+				// TODO send ERR_NOSUCHNICK
+				return;
+			}
 		}
 	}
 	if (req_away == 1) {
@@ -276,7 +292,7 @@ void	Mode(string message, t_params* params) {
 	}
 	else if (req_away == -1) {
 		params->irc_serv->userDB->search(user)->setActiveStatus(CONNECTED);
-		log(string(LIGHT_MAGENTA) +  string("User ") + string(GREEN) +  user +  string(LIGHT_BLUE) +  string(" is back to ") +  string(LIGHT_MAGENTA) + string("server ") + params->irc_serv->name + string(DEFAULT));
+		log(string(LIGHT_MAGENTA) +  string("User ") + string(GREEN) +  user +  string(LIGHT_BLUE) +  string(" is back on ") +  string(LIGHT_MAGENTA) + string("server ") + params->irc_serv->name + string(DEFAULT));
 		// TODO send YOUREAWAY ??
 	}
 }
