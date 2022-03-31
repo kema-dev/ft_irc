@@ -25,18 +25,17 @@ void Server::start( void )
         t_KDescriptor* desc = new t_KDescriptor();
         desc->server = this;
         desc->user = new User();
-        desc->connected = false;
+        desc->user->setSocket(_socket);
+        desc->user->setConnectStatus(false);
         _descriptors.push_back(desc);
         EV_SET(&mEvents[k], _socket, EVFILT_READ, EV_ADD | EV_ERROR, 0, 0, _descriptors.back());
         k++;
-        // cout << userDB->getDB().size() << endl;
-        // cout << _socket << endl;
         for (unsigned long j = 0; j < userDB->getDB().size(); j++)
         {
             t_KDescriptor* desc = new t_KDescriptor();
             desc->server = this;
-            desc->user = new User();
-            desc->connected = false;
+            desc->user = &userDB->getDB()[j].first;
+            // desc->user->setConnectStatus(false);
             _descriptors.push_back(desc);
             EV_SET(&mEvents[k], userDB->getDB()[j].first.getSocket(), EVFILT_READ, EV_ADD | EV_ERROR, 0, 0, _descriptors.back());
             k++;
@@ -51,38 +50,34 @@ void Server::start( void )
         }
         else if (nev > 0)
         {
-            // cout << nev << endl;
             for (int i = 0; i < nev; i++)
             {
                 t_KDescriptor* desc = reinterpret_cast<t_KDescriptor*>(tEvents[i].udata);
                 if (tEvents[i].flags & EV_EOF)
                 {
-                    if (desc->connected == true)
+                    if (desc->user->getConnectStatus() == true)
                     {
                         close(desc->user->getSocket()); 
-                        desc->connected = false;
+                        desc->user->setConnectStatus(false);
                     }
                 }
                 else if (tEvents[i].flags & EV_ERROR)
                 {
-                    if (desc->connected == true)
+                    if (desc->user->getConnectStatus() == true)
                     {
                         close(desc->user->getSocket()); 
-                        desc->connected = false;
+                        desc->user->setConnectStatus(false);
                     }
                 }
                 else
                 {
-                    if (desc->connected == false)
+                    if (desc->user->getConnectStatus() == false)
                     {
-                        cout << static_cast<int>(tEvents[i].ident) << endl;
                         desc->server->acceptConnection(desc, static_cast<int>(tEvents[i].ident));
-                        desc->server->handleConnection(desc, static_cast<int>(tEvents[i].ident));
                     }
                     else
                     {
-                        cout << " PASS " << endl;
-                        desc->server->handleConnection(desc, tEvents[i].data);
+                        desc->server->handleConnection(desc);
                     }
                 }
                 if (!_running)
@@ -97,52 +92,66 @@ void Server::start( void )
     }
 }
 
-string Server::readSocket(int socket)
+string Server::readSocket(int socket, string *buf)
 {
     char input[256];
-	static string buf;
+	
 	string ret;
 	string input_s;
 
+    bzero(input, 256);
 	int n = recv(socket, input, 255, MSG_DONTWAIT);
 	try {
 		if (n < 0)
 			throw(ReadImpossible());
 	} catch (const ReadImpossible e) {
-		// cerr << e.what() << endl;
+        cout << "buf= '" << buf* << "'" << endl;
+		if ((*buf).empty() == false)
+        {
+	        ret = (*buf).substr(0, (*buf).find("\r"));
+	        *buf = (*buf).substr((*buf).find("\n") + 1, (*buf).length() - (ret.length() + 1));	    
+            return (ret);
+        }
 	}
-	// cout << "Result from read:'" << input << "'" << endl;
 	input_s = input;
-	if (buf.empty() == 0)
-		input_s = buf.append(input_s);
+	if ((*buf).empty() == false)
+		input_s = (*buf).append(input_s);
 	ret = input_s.substr(0, input_s.find("\r"));
-	buf = input_s.substr(input_s.find("\n") + 1, input_s.length() - (ret.length() + 1));
+	*buf = input_s.substr(input_s.find("\n") + 1, input_s.length() - (ret.length() + 1));
+    cout << *buf << endl;
 	return (ret);
 }
 
 // ? Handle connection
-void Server::handleConnection(t_KDescriptor *desc, int socket) {
-	t_params *params = new t_params();
+void Server::handleConnection(t_KDescriptor *desc) {
 	string nickname;
 	string input;
-	ssize_t id;
+	string buf = "";
+    ssize_t id;
+
+    // ANCHOR Absolument permaban
 	size_t nbPass = 0;
 	int security = 0;
 	int nbError = 0;
+    //
 
-    params->client_socket = socket;
-    params->irc_serv = desc->server;
+    ServerManip *manip = new ServerManip(input);
+    input = desc->server->readSocket(desc->user->getSocket());
 
-	cout << "-----------------" << endl;
-    while ((input = desc->server->readSocket(params->client_socket)).empty() == true) {
-        ;
+    manip->parseInput(input);
+
+    //TODO CHANGER TOUT LE MAIN
+
+    while (buf.empty() != true)
+    {
+        input = desc->server->readSocket(params->client_socket, &buf);
     }
     
-    
-    
-    
-    
-    cout << DARK_GRAY <<  "Input = '" << input << "'" << DEFAULT << endl;
+    if (input.empty() != true)
+    {
+	    cout << "-----------------" << endl;
+        cout << DARK_GRAY <<  "Input = '" << input << "'" << DEFAULT << endl;
+    }
     // TODO add try/catch
     if (nbPass == 0) {
         if (check_password(input, params->irc_serv, params->client_socket) == 0)
@@ -154,7 +163,7 @@ void Server::handleConnection(t_KDescriptor *desc, int socket) {
     }
     if (nbPass == 2 && input.find("USER") != string::npos)
     {
-        id = createUser(input, params, nickname);
+        id = createUser(input, params, nickname, desc);
         params->user_id = id;
         try {
             params->irc_serv->userDB->search(id)->logIn(*params->irc_serv);
@@ -170,7 +179,7 @@ void Server::handleConnection(t_KDescriptor *desc, int socket) {
     }
     if (nbPass > 3) {
         try {
-            security = command_check(input, params);
+            security = command_check(input, desc->user);
             if (security == CLIENT_DISCONNECTED)
                 nbError++;
             if (nbError >= 5)
@@ -190,7 +199,6 @@ void Server::acceptConnection(t_KDescriptor *desc, int socket)
 {
     struct sockaddr_in clntAdd;
 	socklen_t len = sizeof(clntAdd);
-    (void)socket;
     int connFd;
 
     if ((connFd = accept(socket, (struct sockaddr *)&clntAdd, (socklen_t *)&len)) == -1)
@@ -198,9 +206,10 @@ void Server::acceptConnection(t_KDescriptor *desc, int socket)
 		log("Cannot accept connection");
         return;
     }
+    // fcntl(connFd, F_SETFL, O_NONBLOCK);
     desc->user->setSocket(connFd);
-    desc->connected = true;
-    addVoidUser();
+    desc->user->setConnectStatus(true);
+    addVoidUser(desc->user);
 
     cout << "Connection established." << endl;
 }
@@ -293,23 +302,14 @@ string  Server::getHash()
     return _hash;
 }
 
-void Server::addVoidUser( void )
+void Server::addVoidUser( User* user )
 {
-    User* usr = NULL;
-    try {
-		usr = new User();
-	}
-	catch (exception& e) {
-		logError("Creating User", "", e.what());
-		throw UserAddFail();
-		return ;
-	}
-    this->userDB->add(*usr);
+    this->userDB->add(*user);
 	return ;
 }
 
 // ? Add a user to <this>
-ssize_t	Server::addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket) {
+ssize_t	Server::addUser(t_KDescriptor *desc, string username, string fullname, string nickname, string hostname, string servername) {
 	try {
 		userDB->chkDuplicate(username, fullname, nickname);
 	}
@@ -317,17 +317,24 @@ ssize_t	Server::addUser(string username, string fullname, string nickname, strin
 		logError(string("Creating user"), username, e.what());
 		throw UserAddFail();
 		return -1;
-	}
-	User* usr = NULL;
+    }
 	try {
-		usr = new User(username, fullname, nickname, hostname, servername, server, socket);
+        desc->user->setServer(desc->server);
+        desc->user->setUserName(username);
+        desc->user->setNickName(nickname);
+        desc->user->setFullName(fullname);
+        desc->user->setHostName(hostname);
+        desc->user->setServerName(servername);
+        desc->user->setNbMsg(0);
+        desc->user->setActiveStatus(false);
+        desc->user->setUid(desc->server->pool->generate());
 	}
 	catch (exception& e) {
 		logError(string("Creating user"), username, e.what());
 		throw UserAddFail();
 		return -1;
 	}
-	return this->userDB->add(*usr);
+	return desc->user->getUid();
 }
 
 void	Server::setPasswd(string pass) {

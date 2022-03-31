@@ -27,17 +27,19 @@ typedef struct s_params
 #include "../ChannelDB/ChannelDB.hpp"
 #include "../UserDB/UserDB.hpp"
 #include "../Error/Error.hpp"
-#include "../ServerManip/ServerManip.hpp"
-
-
-using namespace std;
+#include "../Crypto/Crypto.hpp"
 
 typedef struct s_KDescriptor 
 {
     Server  *server;
     User    *user;
-    bool    connected;
 }   t_KDescriptor;
+
+#include "../ServerManip/ServerManip.hpp"
+
+
+using namespace std;
+
 
 class ServerFail : public exception
 {
@@ -107,11 +109,11 @@ class Server {
     string  getHash();
     void    acceptConnection(t_KDescriptor *desc,int socket);
 	void	addChan(string name, string pass, string topic);
-    void    handleConnection(t_KDescriptor *desc, int socket);
-    string  readSocket(int socket);
+    void    handleConnection(t_KDescriptor *desc);
+    string  readSocket(int socket, string *buf);
 	// void	addChan(string name, string pass, string topic, string oper_pass);
-    void    addVoidUser( void );
-	ssize_t	addUser(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket);
+    void    addVoidUser( User* user );
+	ssize_t	addUser(t_KDescriptor *desc, string username, string fullname, string nickname, string hostname, string servername);
 	void	setPasswd(string pass);
 	// bool	checkOperPasswd(string pass);
 	// bool	setOperPasswd(string oper_pass);

@@ -128,16 +128,19 @@ class User {
 	bool		_active_status;
 	ssize_t		_uid;
     int         _socket;
+    bool        _connected;
 
 	public:
 	User(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket);
     User();
 	~User() {};
 	
+    bool    getConnectStatus(void);
 	string	getNickName(void);
 	string	getUserName(void);
 	string	getFullName(void);
     string  getHostName(void);
+    string  getServerName(void);
 	ssize_t	getNbMsg(void);
 	bool	getBanStatus(void);
 	bool	getActiveStatus(void);
@@ -145,14 +148,17 @@ class User {
 	string	getHash(void);
     int     getSocket(void);
 
+    void    setServer(Server *server);
 	void	setUserName(string new_username);
 	void	setNickName(string new_nickname);
 	void	setFullName(string new_fullname);
     void    setHostName(string new_hostname);
+    void    setServerName(string new_servername);
 	void	setNbMsg(ssize_t new_nb_msg);
 	void	setActiveStatus(bool new_active_status);
 	void	setUid(ssize_t new_uid);
     void    setSocket(int socket);
+    void    setConnectStatus(bool connected);
 
 	void	logIn(Server& server);
 	void	logOut(Server& server);

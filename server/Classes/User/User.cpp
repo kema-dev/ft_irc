@@ -13,6 +13,7 @@ User::User ()
 	_uid = -1;
 	_nb_msg = -1;
 	_active_status = false;
+    _connected = false;
 }
 
 // ? Create a user
@@ -69,7 +70,7 @@ string	User::getUserName(void) {
 	return _username;
 }
 
-// ? Get <this> ful name
+// ? Get <this> full name
 string	User::getFullName(void) {
 	return _fullname;
 }
@@ -77,6 +78,11 @@ string	User::getFullName(void) {
 // ? Get <this> host name
 string	User::getHostName(void) {
 	return _hostname;
+}
+
+// ? Get <this> server name
+string  User::getServerName(void) {
+    return _servername;
 }
 
 // ? Get <this> number of sent messages
@@ -98,11 +104,20 @@ int     User::getSocket(void) {
     return (_socket);
 }
 
+bool    User::getConnectStatus(void) {
+    return (_connected);
+}
+
 // ostream &operator<<(ostream &stream, User &rhs)
 // {
 // 	stream << "User infos:" << endl << "name: " << rhs.getFullName() << endl << "nb_msg: " << rhs.getNbMsg() << endl << "ban_status: " << rhs.getBanStatus() << endl << "active_status: " << rhs.getActiveStatus() << endl << "uid: " << rhs.getUid() << endl << "hash: " << rhs.getHash();
 //     return stream;
 // }
+
+// ? Set <this> server
+void    User::setServer(Server *server) {
+    _server = server;
+}
 
 // ? Set <this> user name
 void	User::setUserName(string new_username) {
@@ -124,6 +139,11 @@ void	User::setHostName(string new_hostname) {
 	_hostname = new_hostname;
 }
 
+// ? Set <this> server name
+void	User::setServerName(string new_servername) {
+	_servername = new_servername;
+}
+
 // ? Set <this> number of sent messages
 void	User::setNbMsg(ssize_t new_nb_msg) {
 	_nb_msg = new_nb_msg;
@@ -142,6 +162,10 @@ void	User::setUid(ssize_t new_uid) {
 void    User::setSocket(int socket)
 {
     _socket = socket;
+}
+
+void    User::setConnectStatus(bool connected) {
+    _connected = connected;
 }
 
 // ? Log in to <server>

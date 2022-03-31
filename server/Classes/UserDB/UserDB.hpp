@@ -4,6 +4,7 @@
 class UserDB;
 
 #include "../User/User.hpp"
+#include "../Crypto/Crypto.hpp"
 
 #include <sys/types.h>
 #include <iostream>

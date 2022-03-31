@@ -81,7 +81,7 @@ void	UserDB::chkDuplicate(string username, string fullname, string nickname) {
 // 	try {
 // 		vector<User>::iterator it = _db.begin(), end = _db.end();
 // 		while (it != end) {
-// 			if (it->getFullName() == name) {
+// 			if (it->getNickName() == name) {
 // 				_db.erase(it);
 // 				log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + name + string(LIGHT_BLUE) + string(" has been removed from ") + string(LIGHT_MAGENTA) + string("userDB ") + string(RED) + string(this->_name) + string(DEFAULT));
 // 				return ;
