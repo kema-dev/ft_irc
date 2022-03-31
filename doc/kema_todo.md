@@ -1,11 +1,15 @@
 # KEMA'S TODOLIST
 
+## Ongoing
+
+- [ ] join and welcome
+
 ## Commands
 
 - [x] JOIN
 - [x] PART
 - [x] QUIT
-- [x] NICK
+- [ ] NICK
 - [x] USER
 - [x] PONG
 - [ ] PRIVMSG (+ Send to all users of current channel)

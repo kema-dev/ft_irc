@@ -133,6 +133,7 @@ class User {
 
 	~User() {};
 	
+	Server*	getServer(void);
 	string	getNickName(void);
 	string	getUserName(void);
 	string	getFullName(void);

@@ -8,7 +8,9 @@
 #include <sstream>
 #include <string>
 
-#include "../CommandHandler/CommandHandler.hpp"
+// #include "../CommandHandler/CommandHandler.hpp"
+#include "../Command/Command/Command.hpp"
+#include "../Utils/Utils.hpp"
 #include "../Error/Error.hpp"
 #include "../Server/Server.hpp"
 #include "../ServerManip/ServerManip.hpp"
@@ -218,18 +220,22 @@ void *task1(void *dummyPt) {
             nbPass++;
         }
 		if (nbPass == 3) {
-			welcome_client(params, "");
+			// FIXME welcome_client(params, "");
+			Command cmd = Command();
+			cmd.welcome(params->irc_serv->userDB->search(params->user_id));
 			nbPass++;
 			continue;
 		}
 		if (nbPass > 3) {
 			try {
-				security = command_check(input, params);
-				if (security == CLIENT_DISCONNECTED)
-					nbError++;
-				if (nbError >= 5)
-					throw(ClientDisconnected());
-			} catch (const ClientDisconnected e) {
+				Command cmd = Command();
+				cmd.select(input, params->irc_serv->userDB->search(params->user_id));
+				// security = command_check(input, params);
+				// if (security == CLIENT_DISCONNECTED)
+				// 	nbError++;
+				// if (nbError >= 5)
+				// 	throw(ClientDisconnected());
+			} catch (const ClientDisconnected e) { // ! FIXME I don't throw this exception
 				cerr << e.what() << endl;
 				close(params->client_socket);
 				exit(CLIENT_DISCONNECTED);
