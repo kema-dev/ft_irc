@@ -163,3 +163,8 @@ bool	UserDB::removeOper(User& usr) {
 	throw NotLogged();
 	return false;
 }
+
+
+
+
+printf("gros test");
