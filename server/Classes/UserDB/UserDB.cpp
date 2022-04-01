@@ -160,11 +160,7 @@ bool	UserDB::removeOper(User& usr) {
 		}
 		it++;
 	}
+	sscanf("testfile", "%s %s %s", username, hostname, servername);
 	throw NotLogged();
 	return false;
 }
-
-
-
-
-printf("gros test");
