@@ -3,6 +3,7 @@
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/kemadev/ft_irc">
   <img alt="GitHub issues" src="https://img.shields.io/github/issues/kemadev/ft_irc">
   <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kemadev/ft_irc/C++ CI">
+  <img src="https://www.codefactor.io/repository/github/kemadev/ft_irc/badge">
   <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/kemadev/ft_irc">
   <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/kemadev/ft_irc">
 </p>
