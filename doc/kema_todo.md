@@ -28,3 +28,5 @@ check for:
 - [ ] free params
 - [ ] test irc client + nc (multi client connections)
 - [ ] join channel = update status of all users connected to the channel
+
+OK
