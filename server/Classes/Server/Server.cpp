@@ -193,7 +193,6 @@ void Server::handleConnection(t_KDescriptor *desc) {
 	return ;
 }
 
-
 // ? Accept connection on event
 void Server::acceptConnection(t_KDescriptor *desc, int socket)
 {
