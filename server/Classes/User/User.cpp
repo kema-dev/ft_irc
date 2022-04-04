@@ -12,7 +12,7 @@ User::User ()
     _socket = -1;
 	_uid = -1;
 	_nb_msg = -1;
-	_active_status = false;
+	_active_status = NOT_CONNECTED;
     _connected = false;
 }
 
@@ -96,7 +96,7 @@ ssize_t	User::getNbMsg(void) {
 }
 
 // ? Get <this> active status
-bool	User::getActiveStatus(void) {
+int	User::getActiveStatus(void) {
 	return _active_status;	
 }
 
@@ -155,7 +155,7 @@ void	User::setNbMsg(ssize_t new_nb_msg) {
 }
 
 // ? Set <this> active status
-void	User::setActiveStatus(bool new_active_status) {
+void	User::setActiveStatus(int new_active_status) {
 	_active_status = new_active_status;
 }
 
@@ -175,16 +175,16 @@ void    User::setConnectStatus(bool connected) {
 
 // ? Log in to <server>
 void	User::logIn(Server& server) {
-	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != false)) {
+	if ((server.userDB->search(*this) == NULL) || (server.userDB->search(*this)->getActiveStatus() != NOT_CONNECTED)) {
 		throw AlreadyLoggedGlobal();
 	}
-	this->setActiveStatus(true);
+	this->setActiveStatus(WELCOME);
 	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" logged in to ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(DEFAULT));
 }
 
 // ? Log out from <server>
 void	User::logOut(Server& server) {
-	if ((server.userDB->search(*this) == nullptr) || (server.userDB->search(*this)->getActiveStatus() != true)) {
+	if ((server.userDB->search(*this) == NULL) || (server.userDB->search(*this)->getActiveStatus() != CONNECTED)) {
 		throw NotLoggedGlobal();
 	}
 	this->setActiveStatus(false);
@@ -193,7 +193,7 @@ void	User::logOut(Server& server) {
 
 // ? Send <content> to <chan>
 void	User::sendMessage(string content, Channel& chan) {
-	if (this->getActiveStatus() != true) {
+	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return ;
 	}
@@ -209,7 +209,7 @@ void	User::sendMessage(string content, Channel& chan) {
 
 // ? Join <chan> with password <pass>
 void	User::joinChannel(Channel& chan, string pass) {
-	if (this->getActiveStatus() != true) {
+	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return ;
 	}
@@ -227,7 +227,7 @@ void	User::joinChannel(Channel& chan, string pass) {
 
 // ? Try to join <chan> with password <pass> and create it if non-existent
 void	User::tryJoinChannel(string name, string pass, string topic, Server* server) {
-	if (this->getActiveStatus() != true) {
+	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return ;
 	}
@@ -251,7 +251,7 @@ void	User::tryJoinChannel(string name, string pass, string topic, Server* server
 
 // ? Ban <usr> form <chan>
 void	User::ban(User& usr, Channel& chan) {
-	if (this->getActiveStatus() != true) {
+	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return ;
 	}
@@ -274,7 +274,7 @@ void	User::getBanned(Channel& chan, User& banner) {
 
 // ? Set <serv> password with password <pass>
 void	User::setPasswd(Server& serv, string pass) {
-	if (this->getActiveStatus() != true) {
+	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return ;
 	}
@@ -288,7 +288,7 @@ void	User::setPasswd(Server& serv, string pass) {
 
 // ? Set <serv> operator password with password <pass>
 void	User::setOperPasswd(Server& serv, string pass) {
-	if (this->getActiveStatus() != true) {
+	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return ;
 	}
@@ -300,7 +300,7 @@ void	User::setOperPasswd(Server& serv, string pass) {
 
 // ? Become operator of <chan> with password <pass>
 void	User::becomeOper(Server& serv, string pass) {
-	if (this->getActiveStatus() != true) {
+	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return ;
 	}

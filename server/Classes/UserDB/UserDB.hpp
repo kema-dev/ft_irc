@@ -64,7 +64,8 @@ class   UserDB {
 	User*	search(User& usr);
 	User*	search(ssize_t id);
     User*	search(string nickname);
-	void	chkDuplicate(string username, string fullname, string nickname);
+    void	chkNickDuplicate(string nickname);
+	void	chkDuplicate(string username, string fullname);
 	// void	remove(string name);
 	bool	isOper(string nickname);
 	bool	checkOperPasswd(string pass);

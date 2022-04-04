@@ -3,14 +3,15 @@
 
 #include <sys/types.h>
 #include <iostream>
+#include <vector>
 using namespace std;
 
-#include "../../Utils/Utils.hpp"
-#include "../../Server/Server.hpp"
-#include "../../Error/Error.hpp"
-#include "../../Reply/Reply.hpp"
 #include "../CommandExec/CommandExec.hpp"
 #include "../CommandParse/CommandParse.hpp"
+#include "../../Server/Server.hpp"
+#include "../../Utils/Utils.hpp"
+#include "../../Error/Error.hpp"
+#include "../../Reply/Reply.hpp"
 
 
 

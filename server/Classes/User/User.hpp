@@ -112,9 +112,10 @@ class BadPasswd : public exception
 
 #define NOT_CONNECTED	0
 #define CONNECTED		1
-#define BANNED			2
-#define UNKNOWN			3
-#define AWAY			4
+#define WELCOME         2
+#define BANNED			3
+#define UNKNOWN			4
+#define AWAY			5
 
 class User {
 	private:
@@ -125,7 +126,7 @@ class User {
     string      _hostname;
     string      _servername;
 	ssize_t		_nb_msg;
-	bool		_active_status;
+	int 		_active_status;
 	ssize_t		_uid;
     int         _socket;
     bool        _connected;
@@ -144,7 +145,7 @@ class User {
     string  getServerName(void);
 	ssize_t	getNbMsg(void);
 	bool	getBanStatus(void);
-	bool	getActiveStatus(void);
+	int	    getActiveStatus(void);
 	ssize_t	getUid(void);
 	string	getHash(void);
     int     getSocket(void);
@@ -156,7 +157,7 @@ class User {
     void    setHostName(string new_hostname);
     void    setServerName(string new_servername);
 	void	setNbMsg(ssize_t new_nb_msg);
-	void	setActiveStatus(bool new_active_status);
+	void	setActiveStatus(int new_active_status);
 	void	setUid(ssize_t new_uid);
     void    setSocket(int socket);
     void    setConnectStatus(bool connected);

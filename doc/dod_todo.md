@@ -27,3 +27,8 @@ Commands:
     -away
     -mode
     -quit                   DONE
+
+
+PASS password
+NICK jej
+USER jjourdan 0 * :Jeremy Jourdan

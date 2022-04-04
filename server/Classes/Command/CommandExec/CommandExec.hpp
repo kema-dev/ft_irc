@@ -2,6 +2,7 @@
  #define _COMMANDEXEC_HPP
 
 #include "../Command/Command.hpp"
+#include "../../User/User.hpp"
 #include <sys/types.h>
 #include <iostream>
 

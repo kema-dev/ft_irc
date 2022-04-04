@@ -38,7 +38,7 @@ Channel*	ChannelDB::search(Channel& chan) {
         it++;
     }
     throw NoSuchChan();
-	return nullptr;
+	return NULL;
 }
 
 // ? Search chan with name <name> in database
@@ -51,7 +51,7 @@ Channel*	ChannelDB::search(string name) {
         it++;
     }
     throw NoSuchChan();
-	return nullptr;
+	return NULL;
 }
 
 // ? Check if <name> already exists as channel name

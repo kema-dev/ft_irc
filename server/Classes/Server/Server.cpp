@@ -1,4 +1,4 @@
-#include "../Server/Server.hpp"
+#include "Server.hpp"
 // ? Start a server
 
 void Server::start( void )
@@ -35,7 +35,6 @@ void Server::start( void )
             t_KDescriptor* desc = new t_KDescriptor();
             desc->server = this;
             desc->user = &userDB->getDB()[j].first;
-            // desc->user->setConnectStatus(false);
             _descriptors.push_back(desc);
             EV_SET(&mEvents[k], userDB->getDB()[j].first.getSocket(), EVFILT_READ, EV_ADD | EV_ERROR, 0, 0, _descriptors.back());
             k++;
@@ -92,34 +91,19 @@ void Server::start( void )
     }
 }
 
-string Server::readSocket(int socket, string *buf)
+string Server::readSocket(int socket)
 {
     char input[256];
 	
-	string ret;
-	string input_s;
-
     bzero(input, 256);
 	int n = recv(socket, input, 255, MSG_DONTWAIT);
 	try {
 		if (n < 0)
 			throw(ReadImpossible());
 	} catch (const ReadImpossible e) {
-        cout << "buf= '" << buf* << "'" << endl;
-		if ((*buf).empty() == false)
-        {
-	        ret = (*buf).substr(0, (*buf).find("\r"));
-	        *buf = (*buf).substr((*buf).find("\n") + 1, (*buf).length() - (ret.length() + 1));	    
-            return (ret);
-        }
+        // ERROR RECV
 	}
-	input_s = input;
-	if ((*buf).empty() == false)
-		input_s = (*buf).append(input_s);
-	ret = input_s.substr(0, input_s.find("\r"));
-	*buf = input_s.substr(input_s.find("\n") + 1, input_s.length() - (ret.length() + 1));
-    cout << *buf << endl;
-	return (ret);
+	return (input);
 }
 
 // ? Handle connection
@@ -129,66 +113,70 @@ void Server::handleConnection(t_KDescriptor *desc) {
 	string buf = "";
     ssize_t id;
 
-    // ANCHOR Absolument permaban
-	size_t nbPass = 0;
-	int security = 0;
-	int nbError = 0;
-    //
-
-    ServerManip *manip = new ServerManip(input);
+    ServerManip *manip = new ServerManip();
+    Command *command = new Command();
     input = desc->server->readSocket(desc->user->getSocket());
 
-    manip->parseInput(input);
-
-    //TODO CHANGER TOUT LE MAIN
-
-    while (buf.empty() != true)
-    {
-        input = desc->server->readSocket(params->client_socket, &buf);
-    }
-    
-    if (input.empty() != true)
-    {
-	    cout << "-----------------" << endl;
-        cout << DARK_GRAY <<  "Input = '" << input << "'" << DEFAULT << endl;
-    }
-    // TODO add try/catch
-    if (nbPass == 0) {
-        if (check_password(input, params->irc_serv, params->client_socket) == 0)
-            nbPass++;
-    }
-    if (nbPass == 1 && input.find("NICK") != string::npos) {
-        nickname = parseNickname(input);
-        nbPass++;
-    }
-    if (nbPass == 2 && input.find("USER") != string::npos)
-    {
-        id = createUser(input, params, nickname, desc);
-        params->user_id = id;
-        try {
-            params->irc_serv->userDB->search(id)->logIn(*params->irc_serv);
-        } catch (exception &e) {
-            string str = static_cast<ostringstream *>(&(ostringstream() << params->user_id))->str();
-            logError(string("Logging in server"), str, e.what());
+    vector<string> str = manip->parseInput(input);
+    vector<string>::iterator it = str.begin(), end = str.end();
+    while (it != end) {
+        if ((*it).empty() == false)
+        {
+            cout << "-----------------" << endl;
+            cout << DARK_GRAY <<  "Input = '" << (*it) << "'" << DEFAULT << endl;
         }
-        nbPass++;
-    }
-    if (nbPass == 3) {
-        welcome_client(params, "");
-        nbPass++;
-    }
-    if (nbPass > 3) {
-        try {
-            security = command_check(input, desc->user);
-            if (security == CLIENT_DISCONNECTED)
-                nbError++;
-            if (nbError >= 5)
-                throw(ClientDisconnected());
-        } catch (const ClientDisconnected e) {
-            cerr << e.what() << endl;
-            close(params->client_socket);
-            exit(CLIENT_DISCONNECTED);
+        if ((*it).find("PASS") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED) {
+            if (manip->check_password((*it), desc->server, desc->user->getSocket()) != 0)
+            {
+                logError(string("Logging in server"), *it, "Bad password");
+                return;
+            }
+            cerr << "PASS completed" << endl;
         }
+        else if ((*it).find("NICK") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED) {
+            nickname = manip->parseNickname((*it));
+			if (nickname.empty() == true)
+			{
+				logError(string("Logging in server"), *it, "Bad nickname");
+                return;
+			}
+            try {
+		        userDB->chkNickDuplicate(nickname);
+            }
+            catch (exception& e) {
+                logError(string("Creating user"), nickname, e.what());
+                // throw UserAddFail();
+                return ;
+            }
+            desc->user->setNickName(nickname);
+        }
+        else if ((*it).find("USER") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED)
+        {
+            id = manip->createUser((*it), desc);
+			if (id < 0)
+            {
+                logError(string("Logging in server"), *it, "Create user fail");
+                return;
+            }
+            desc->user->setUid(id);
+            try {
+                desc->server->userDB->search(id)->logIn(*desc->server);
+            } catch (exception &e) {
+                string str = static_cast<ostringstream *>(&(ostringstream() << desc->user->getUid()))->str();
+                logError(string("Logging in server"), str, e.what());
+                return;
+            }
+            cerr << "USER completed" << endl;
+
+        }
+        if (desc->user->getActiveStatus() == WELCOME) {
+            command->welcome(desc->user);
+			desc->user->setActiveStatus(CONNECTED);
+        }
+        if (desc->user->getActiveStatus() == CONNECTED) {
+            command->select((*it), desc->user);
+        }
+        it++;
     }
 	return ;
 }
@@ -274,7 +262,7 @@ void	Server::addChan(string name, string pass, string topic) {
 		throw ChanAddFail();
 		return ;
 	}
-	Channel* chan = nullptr;
+	Channel* chan = NULL;
 	try {
 		chan = new Channel(name, pass, topic);
 	}
@@ -308,9 +296,9 @@ void Server::addVoidUser( User* user )
 }
 
 // ? Add a user to <this>
-ssize_t	Server::addUser(t_KDescriptor *desc, string username, string fullname, string nickname, string hostname, string servername) {
+ssize_t	Server::addUser(t_KDescriptor *desc, string username, string fullname, string hostname, string servername) {
 	try {
-		userDB->chkDuplicate(username, fullname, nickname);
+		userDB->chkDuplicate(username, fullname);
 	}
 	catch (exception& e) {
 		logError(string("Creating user"), username, e.what());
@@ -320,7 +308,6 @@ ssize_t	Server::addUser(t_KDescriptor *desc, string username, string fullname, s
 	try {
         desc->user->setServer(desc->server);
         desc->user->setUserName(username);
-        desc->user->setNickName(nickname);
         desc->user->setFullName(fullname);
         desc->user->setHostName(hostname);
         desc->user->setServerName(servername);

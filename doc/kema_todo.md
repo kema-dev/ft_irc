@@ -28,7 +28,7 @@
 - [ ] < realname > may contain space characters.
 - [ ] permaban les "username[x]"
 - [ ] leaks
-- [ ] no "to_string()" and "nullptr"
+- [ ] no "to_string()" and "NULL"
 - [ ] full tests for all errors
 - [ ] connect with nc
 - [ ] test multiple connections

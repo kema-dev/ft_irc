@@ -27,10 +27,9 @@ class ServerManip {
 
         int     check_password(string input, Server *irc_serv, int socket);
         size_t  ft_find(string input);
-        ssize_t createUser(string input, t_params *params, string nickname, t_KDescriptor *desc);
+        ssize_t createUser(string input, t_KDescriptor *desc);
         string  parseNickname(string input);
-        string  parseInput(string input);
+        vector<string>  parseInput(string input);
 };
-
 
 #endif

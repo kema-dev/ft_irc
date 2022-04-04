@@ -5,7 +5,7 @@
 int main(void) {
 	clearLog();
 	log("-------------------------------------------------------------------------------------");
-	Server*	server = nullptr;
+	Server*	server = NULL;
 	string hostname = "hostname";
 	string servername = "servername";
 	string serverpassword = "serverpassword";

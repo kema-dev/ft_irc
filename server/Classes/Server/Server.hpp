@@ -22,7 +22,7 @@ typedef struct s_params
     ssize_t user_id;
 }   t_params;
 
-#include "../Commands/Commands.hpp"
+#include "../Command/Command/Command.hpp"
 #include "../UidPool/UidPool.hpp"
 #include "../ChannelDB/ChannelDB.hpp"
 #include "../UserDB/UserDB.hpp"
@@ -110,10 +110,10 @@ class Server {
     void    acceptConnection(t_KDescriptor *desc,int socket);
 	void	addChan(string name, string pass, string topic);
     void    handleConnection(t_KDescriptor *desc);
-    string  readSocket(int socket, string *buf);
+    string  readSocket(int socket);
 	// void	addChan(string name, string pass, string topic, string oper_pass);
     void    addVoidUser( User* user );
-	ssize_t	addUser(t_KDescriptor *desc, string username, string fullname, string nickname, string hostname, string servername);
+	ssize_t	addUser(t_KDescriptor *desc, string username, string fullname, string hostname, string servername);
 	void	setPasswd(string pass);
 	// bool	checkOperPasswd(string pass);
 	// bool	setOperPasswd(string oper_pass);

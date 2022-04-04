@@ -3,7 +3,7 @@
 // ? Create a new message
 Message::Message(string content, string sender, ssize_t id) {
 	_uid = id;
-	gettimeofday(&_time, nullptr);
+	gettimeofday(&_time, NULL);
 	_msg = content;
 	_sender = sender;
 }

@@ -20,7 +20,7 @@ User*	UserDB::search(User& usr) {
         it++;
     }
     throw NoSuchUser();
-	return nullptr;
+	return NULL;
 }
 
 // ? Search user in database from ID <id>
@@ -33,7 +33,7 @@ User*	UserDB::search(ssize_t id) {
         it++;
     }
     throw NoSuchUser();
-	return nullptr;
+	return NULL;
 }
 
 // ? Search user in database from NickName <nickname>
@@ -46,7 +46,7 @@ User*	UserDB::search(string nickname) {
         it++;
     }
     throw NoSuchUser();
-	return nullptr;
+	return NULL;
 }
 
 // ? Return User database
@@ -54,8 +54,24 @@ vector<pair<User&, bool> > UserDB::getDB() {
     return _db;
 }
 
+void	UserDB::chkNickDuplicate(string nickname) {
+	try {
+		vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
+		while (it != end) {
+			if (it->first.getNickName() == nickname) {
+				throw DuplicateNickname();
+			}
+			it++;
+		}
+	}
+	catch (exception& e) {
+		logError(string("Checking nickname duplicate"), nickname, e.what());
+		throw UserDuplicate();
+	}
+}
+
 // ? Check if <username>, <fullname> and <nickname> are uniques
-void	UserDB::chkDuplicate(string username, string fullname, string nickname) {
+void	UserDB::chkDuplicate(string username, string fullname) {
 	try {
 		vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
 		while (it != end) {
@@ -65,9 +81,9 @@ void	UserDB::chkDuplicate(string username, string fullname, string nickname) {
 			if (it->first.getFullName() == fullname) {
 				throw DuplicateFullname();
 			}
-			if (it->first.getNickName() == nickname) {
-				throw DuplicateNickname();
-			}
+			// if (it->first.getNickName() == nickname) {
+			// 	throw DuplicateNickname();
+			// }
 			it++;
 		}
 	}

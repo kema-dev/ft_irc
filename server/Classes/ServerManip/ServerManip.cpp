@@ -47,7 +47,7 @@ int ServerManip::check_password(string input, Server *irc_serv, int socket)
     string hash;
     if (input.find("PASS") != std::string::npos)
     {
-        std::string password = input.substr(strlen("PASS") + 1 , input.length() - strlen("PASS ") - (input.length() - (ft_find(input))));
+        std::string password = input.substr(strlen("PASS "), input.length() - strlen("PASS "));
         try {
             hash = sha256(password);
         }
@@ -62,7 +62,6 @@ int ServerManip::check_password(string input, Server *irc_serv, int socket)
             std::cerr << "PasswordIncorrect" << std::endl;
             return (-1);
         }
-        input.erase(0, strlen("PASS ") + password.length() + 2); // OPTIONAL
     }
     else{
         return (-1);
@@ -84,7 +83,7 @@ string ServerManip::parseNickname(string input)
     return (nickname);
 }
 
-ssize_t ServerManip::createUser(string input, t_params *params, string nickname, t_KDescriptor *desc)
+ssize_t ServerManip::createUser(string input, t_KDescriptor *desc)
 {
     ssize_t id;
     string fullname;
@@ -93,8 +92,7 @@ ssize_t ServerManip::createUser(string input, t_params *params, string nickname,
     char servername[25];
     string cmd;
 
-
-    if (input.empty() || nickname.empty())
+    if (input.empty() || desc->user->getNickName().empty())
         return (-1);
     cmd = input;
     cmd.erase(0, strlen("USER "));
@@ -102,9 +100,9 @@ ssize_t ServerManip::createUser(string input, t_params *params, string nickname,
     cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
     if (cmd.find(' ') == string::npos)
         return (-1);
-    fullname = cmd.substr(0, cmd.length() - 2);
+    fullname = cmd.substr(0, cmd.length());
     try {
-		id = params->irc_serv->addUser(desc, username, fullname, nickname, hostname, servername);
+		id = desc->server->addUser(desc, username, fullname, hostname, servername);
         // cout << "User created!" << endl;
 	}
 	catch (exception& e) {
@@ -114,11 +112,22 @@ ssize_t ServerManip::createUser(string input, t_params *params, string nickname,
     return (id);
 }
 
-string  ServerManip::parseInput(string input)
+vector<string>  ServerManip::parseInput(string input)
 {
-    string ret;
-
-    //TODO 
+    istringstream iss(input);
+	string s;
+    vector<string> ret;
     
-    return ret; 
+    while (getline(iss, s, '\n'))
+    {
+		string buf;
+        try {
+    		buf = s.replace(s.find("\r"), 1, "");
+		}
+		catch (out_of_range& e) {
+			buf = s;
+		}
+		ret.push_back(buf);
+    }    
+    return (ret); 
 }
