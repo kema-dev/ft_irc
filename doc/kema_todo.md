@@ -1,25 +1,34 @@
-# TODOLIST
+# KEMA'S TODOLIST
 
-handle errors of:
+## Ongoing
 
-- [ ] join
-- [ ] part
-- [ ] nick
-- [ ] user
-- [ ] privmsg
-- [ ] topic
+- [ ] join and welcome
 
-add commands:
+## Commands
 
+- [x] JOIN
+- [x] PART
+- [x] QUIT
+- [ ] NICK
+- [x] USER
+- [x] PONG
+- [ ] PRIVMSG (+ Send to all users of current channel)
+- [x] TOPIC
+- [x] OPER
+- [x] KICK
+- [x] MODE
+- [ ] AWAY
+- [ ] NAMES
+- [ ] LIST
 - [ ] NOTICE
-- [ ] All operator functions (see RFC)
-- [ ] unban a user
+- [ ] PASS
 
-check for:
+## Check
 
+- [ ] < realname > may contain space characters.
+- [ ] permaban les "username[x]"
 - [ ] leaks
-- [ ] permaban les "username[50]"
-- [ ] permaban "to_string()" and "nullptr"
+- [ ] no "to_string()" and "nullptr"
 - [ ] full tests for all errors
 - [ ] connect with nc
 - [ ] test multiple connections

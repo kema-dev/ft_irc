@@ -89,9 +89,9 @@ ssize_t createUser(string input, t_params *params, string nickname)
 {
     ssize_t id;
     string fullname;
-    char username[50];
-    char hostname[50];
-    char servername[50];
+    char username[25];
+    char hostname[25];
+    char servername[25];
     string cmd;
 
 
@@ -99,7 +99,7 @@ ssize_t createUser(string input, t_params *params, string nickname)
         return (-1);
     cmd = input;
     cmd.erase(0, strlen("USER "));
-    sscanf(cmd.c_str(), "%s %s %s", username, hostname, servername);
+    sscanf(cmd.c_str(), "%25s %25s %25s", username, hostname, servername);
     cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
     if (cmd.find(' ') == string::npos)
         return (-1);

@@ -44,6 +44,11 @@ User::User(string username, string fullname, string nickname, string hostname, s
 	log(string(LIGHT_MAGENTA) + string("User" DEFAULT) + string(" ") + string(GREEN) + string(_nickname) + string(" (uid: ") + string(s) + string(")") + string(LIGHT_BLUE) + string(" has been created") + string(DEFAULT));
 }
 
+// ? Get <this> server
+Server*	User::getServer(void) {
+	return _server;
+}
+
 // ? Get <this> nick name
 string	User::getNickName(void) {
 	return _nickname;
