@@ -10,10 +10,10 @@
 
 // #include "../CommandHandler/CommandHandler.hpp"
 #include "../Command/Command/Command.hpp"
-#include "../Utils/Utils.hpp"
 #include "../Error/Error.hpp"
 #include "../Server/Server.hpp"
 #include "../ServerManip/ServerManip.hpp"
+#include "../Utils/Utils.hpp"
 
 void *task1(void *);
 
@@ -100,13 +100,13 @@ int main(int argc, char **argv) {
 
 	// NOTE Create only one server
 	Server *irc_serv = NULL;
-	string servername  = "IRC_SERV";
+	string servername = "IRC_SERV";
 	try {
 		irc_serv = new Server(servername, argv[2], listenFd);
 	} catch (exception &e) {
 		logError(string("Server creation"), servername, e.what());
 	}
-    cout << GREEN + string("Server initialized, now waiting for connections on port ") + argv[1] + DEFAULT << endl;
+	cout << GREEN + string("Server initialized, now waiting for connections on port ") + argv[1] + DEFAULT << endl;
 	log(GREEN + string("Server initialized, now waiting for connections on port ") + argv[1] + DEFAULT);
-    irc_serv->start();
+	irc_serv->start();
 }

@@ -9,7 +9,7 @@ Message::Message(string content, string sender, ssize_t id) {
 }
 
 // ? Compare <time> with <this> creation time
-bool	Message::compareTime(timeval time) {
+bool Message::compareTime(timeval time) {
 	if (time.tv_sec < _time.tv_sec) {
 		return true;
 	} else if (time.tv_sec == _time.tv_sec && time.tv_usec < _time.tv_usec) {
@@ -19,16 +19,16 @@ bool	Message::compareTime(timeval time) {
 }
 
 // ? Get UID of <this>
-ssize_t	Message::getUid(void) {
+ssize_t Message::getUid(void) {
 	return _uid;
 }
 
 // ? Get time of creation of <this>
-timeval	Message::getTime(void) {
+timeval Message::getTime(void) {
 	return _time;
 }
 
 // ? Get <this> content
-string	Message::getContent(void) {
+string Message::getContent(void) {
 	return _sender + ": " + _msg;
 }

@@ -9,9 +9,9 @@ UidPool::UidPool(string name) {
 }
 
 // ? Generate a new UID
-ssize_t	UidPool::generate() {
+ssize_t UidPool::generate() {
 	if (_count >= SSIZE_MAX) {
-		throw (PoolFull());
+		throw(PoolFull());
 		return (-1);
 	}
 	ssize_t ret = _count;

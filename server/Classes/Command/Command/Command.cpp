@@ -1,14 +1,14 @@
 #include "../Command/Command.hpp"
 
 Command::Command(void) {
-	return ;
+	return;
 }
 
 Command::~Command() {
-	return ;
+	return;
 }
 
-void	Command::parse(string smessage) {
+void Command::parse(string smessage) {
 	if (smessage.empty() == true) {
 		throw(EmptyCommand());
 	}
@@ -31,8 +31,7 @@ void	Command::parse(string smessage) {
 			_args_v.push_back(cmd.substr(0, pos));
 			cmd.erase(0, pos + 1);
 		}
-	}
-	else {
+	} else {
 		// ? No arg
 	}
 	// ? Fill commands
@@ -56,15 +55,14 @@ void	Command::parse(string smessage) {
 	_commands_v.push_back("WELCOME");
 }
 
-void	Command::welcome(User* user) {
+void Command::welcome(User* user) {
 	_exec.welcome(user);
 }
 
-void	Command::select(string smessage, User* user) {
+void Command::select(string smessage, User* user) {
 	try {
 		parse(smessage);
-	}
-	catch (EmptyCommand& e) {
+	} catch (EmptyCommand& e) {
 		// TODO send empty command, maybe we should not pass here
 		logError("Received command", smessage, "Empty command");
 		throw EmptyCommand();
@@ -74,8 +72,7 @@ void	Command::select(string smessage, User* user) {
 		vector<string>::iterator it = find(_commands_v.begin(), _commands_v.end(), _command);
 		if (it != _commands_v.end()) {
 			index = it - _commands_v.begin();
-		}
-		else {
+		} else {
 			// TODO send unknown command
 			logError("Received command", smessage, "Unknown command");
 			throw UnknownCommand();
@@ -85,56 +82,55 @@ void	Command::select(string smessage, User* user) {
 			case CMD_JOIN:
 				_exec.join(user, _args_v);
 				break;
-			// case PART: {
-			// 	string msg;
-			// 	parse_Part(message, &channel_s, &msg);
-			// 	exec_Part(params, channel_s, msg);
-			// 	break;
-			// }
-			// case QUIT:
-			// 	send(params->client_socket, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
-			// 	exit(EXIT_SUCCESS);
-			// case NICK:
-			// 	exec_Nick(params, channel_s);
-			// 	break;
-			// case USER:
-			// 	exec_User(params, channel_s);
-			// 	break;
-			// case PONG: {
-			// 	// TODO handle it + send PING every minute
-			// 	break;
-			// }
-			// case PRIVMSG: {
-			// 	string msg;
-			// 	parse_Privmsg(message, &channel_s, &msg);
-			// 	exec_PrivateMessage(params, channel_s, msg);
-			// 	break;
-			// }
-			// case TOPIC: {
-			// 	string topic;
-			// 	parse_Topic(message, &channel_s, &topic);
-			// 	exec_Topic(params, channel_s, topic);
-			// 	break;
-			// }
-			// case OPER: {
-			// 	exec_Oper(message, params);
-			// 	break;
-			// }
-			// case KICK: {
-			// 	exec_Kick(message, params);
-			// 	break;
-			// }
-			// case MODE: {
-			// 	cerr << "MODE" << endl;
-			// 	exec_Mode(message, params);
-			// 	break;
-			// }
-			// default: {
-			// 	throw(InvalidCommand());
-			// }
+				// case PART: {
+				// 	string msg;
+				// 	parse_Part(message, &channel_s, &msg);
+				// 	exec_Part(params, channel_s, msg);
+				// 	break;
+				// }
+				// case QUIT:
+				// 	send(params->client_socket, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
+				// 	exit(EXIT_SUCCESS);
+				// case NICK:
+				// 	exec_Nick(params, channel_s);
+				// 	break;
+				// case USER:
+				// 	exec_User(params, channel_s);
+				// 	break;
+				// case PONG: {
+				// 	// TODO handle it + send PING every minute
+				// 	break;
+				// }
+				// case PRIVMSG: {
+				// 	string msg;
+				// 	parse_Privmsg(message, &channel_s, &msg);
+				// 	exec_PrivateMessage(params, channel_s, msg);
+				// 	break;
+				// }
+				// case TOPIC: {
+				// 	string topic;
+				// 	parse_Topic(message, &channel_s, &topic);
+				// 	exec_Topic(params, channel_s, topic);
+				// 	break;
+				// }
+				// case OPER: {
+				// 	exec_Oper(message, params);
+				// 	break;
+				// }
+				// case KICK: {
+				// 	exec_Kick(message, params);
+				// 	break;
+				// }
+				// case MODE: {
+				// 	cerr << "MODE" << endl;
+				// 	exec_Mode(message, params);
+				// 	break;
+				// }
+				// default: {
+				// 	throw(InvalidCommand());
+				// }
 		}
-	}
-	catch (exception& e) {
+	} catch (exception& e) {
 		// FIXME catch errors and send specific replies
 		logError("Received command", smessage, e.what());
 		throw InvalidCommand();

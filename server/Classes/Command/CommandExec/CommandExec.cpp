@@ -1,55 +1,47 @@
 #include "../Command/Command.hpp"
 
 CommandExec::CommandExec(void) {
-	return ;
+	return;
 }
 
 CommandExec::~CommandExec() {
-	return ;
+	return;
 }
 
-void CommandExec::join(User* user, vector<string> args)
-{
+void CommandExec::join(User* user, vector<string> args) {
 	if (args.size() == 0) {
 		// TODO send ERR_NEEDMOREPARAMS
 		logError("Join command", "Empty argument", "No channel specified");
-		return ;
+		return;
 	}
 	while (args.empty() == false) {
-		string	chan = *args.begin();
-		string	uid = itos(user->getUid());
+		string chan = *args.begin();
+		string uid = itos(user->getUid());
 		try {
 			user->getServer()->userDB->search(user->getUid())->tryJoinChannel(chan, "", "", user->getServer());
-		}
-		catch (NoSuchUser& e) {
+		} catch (NoSuchUser& e) {
 			logError("Join command", "No such user", e.what());
-			return ;
-		}
-		catch (NotLoggedGlobal& e) {
-			logError("Join channel " + chan, uid, e.what());
-			return ;
-		}
-		catch (AlreadyLogged& e) {
-			logError("Join channel " + chan, uid, e.what());
-			return ;
-		}
-		catch (BadPasswd& e) {
+			return;
+		} catch (NotLoggedGlobal& e) {
 			logError("Join channel " + chan, uid, e.what());
 			return;
-		}
-		catch (ChanAddFail& e) {
+		} catch (AlreadyLogged& e) {
 			logError("Join channel " + chan, uid, e.what());
 			return;
-		}
-		catch (exception& e) {
+		} catch (BadPasswd& e) {
+			logError("Join channel " + chan, uid, e.what());
+			return;
+		} catch (ChanAddFail& e) {
+			logError("Join channel " + chan, uid, e.what());
+			return;
+		} catch (exception& e) {
 			logError("Join command", "Unknown error", e.what());
-			return ;
+			return;
 		}
 		reply(user->getServer(), user->getUid(), JOIN, chan);
 		if (user->getServer()->chanDB->search(chan)->getTopic().empty() == true) {
 			reply(user->getServer(), user->getUid(), RPL_NOTOPIC, chan);
-		}
-		else {
+		} else {
 			reply(user->getServer(), user->getUid(), RPL_TOPIC, chan);
 		}
 		reply(user->getServer(), user->getUid(), RPL_NAMEREPLY, chan);
@@ -58,8 +50,7 @@ void CommandExec::join(User* user, vector<string> args)
 	}
 }
 
-void CommandExec::welcome(User* user)
-{
+void CommandExec::welcome(User* user) {
 	reply(user->getServer(), user->getUid(), RPL_WELCOME, "");
 	reply(user->getServer(), user->getUid(), RPL_YOURHOST, "");
 	reply(user->getServer(), user->getUid(), RPL_CREATED, "");

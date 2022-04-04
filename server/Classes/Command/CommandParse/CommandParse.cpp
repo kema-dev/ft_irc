@@ -1,18 +1,17 @@
 #include "../Command/Command.hpp"
 
 CommandParse::CommandParse(void) {
-	return ;
+	return;
 }
 
 CommandParse::~CommandParse() {
-	return ;
+	return;
 }
 
 void CommandParse::parse_Join(void) {
-	
 }
 
-void CommandParse::parse_Part(string message, string *channel_s, string *msg) {
+void CommandParse::parse_Part(string message, string* channel_s, string* msg) {
 	string cmd;
 	size_t pos;
 
@@ -34,7 +33,7 @@ void CommandParse::parse_Part(string message, string *channel_s, string *msg) {
 		*msg = cmd.substr(0, cmd.length());
 }
 
-void CommandParse::parse_Topic(string message, string *channel_s, string *topic) {
+void CommandParse::parse_Topic(string message, string* channel_s, string* topic) {
 	string cmd;
 	size_t pos;
 
@@ -56,7 +55,7 @@ void CommandParse::parse_Topic(string message, string *channel_s, string *topic)
 		*topic = cmd.substr(0, cmd.length());
 }
 
-void CommandParse::parse_Privmsg(string message, string *channel_s, string *msg) {
+void CommandParse::parse_Privmsg(string message, string* channel_s, string* msg) {
 	string cmd;
 	size_t pos;
 
@@ -82,7 +81,7 @@ void CommandParse::parse_Oper(string message, string* password) {
 void CommandParse::parse_Kick(string message, string* chan, string* user, string* kickMsg, Server* serv) {
 	istringstream iss(message);
 	string s;
-	getline(iss, s, ' '); // ? Skip "KICK"
+	getline(iss, s, ' ');  // ? Skip "KICK"
 	getline(iss, s, ' ');
 	*chan = s;
 	if (chan->empty()) {
@@ -98,8 +97,7 @@ void CommandParse::parse_Kick(string message, string* chan, string* user, string
 		s = &s[1];
 	try {
 		serv->userDB->search(s);
-	}
-	catch (exception& e) {
+	} catch (exception& e) {
 		if (!s.empty()) {
 			*kickMsg = s;
 		}
@@ -110,7 +108,7 @@ void CommandParse::parse_Mode(string message, string* user, int* req_op, int* re
 	istringstream iss(message);
 	string s;
 	int i;
-	getline(iss, s, ' '); // ? Skip "MODE"
+	getline(iss, s, ' ');  // ? Skip "MODE"
 	getline(iss, s, ' ');
 	*user = s;
 	if (user->empty()) {
@@ -125,8 +123,7 @@ void CommandParse::parse_Mode(string message, string* user, int* req_op, int* re
 	if (s[0] == '+') {
 		i = ACTION_ADD;
 		s.erase(0, 1);
-	}
-	else if (s[0] == '-') {
+	} else if (s[0] == '-') {
 		i = ACTION_REMOVE;
 		s.erase(0, 1);
 	}

@@ -3,58 +3,58 @@
 using namespace std;
 
 // ? Add a <usr> to database
-ssize_t	UserDB::add(User& usr) {
+ssize_t UserDB::add(User& usr) {
 	_db.push_back(pair<User&, bool>(usr, USER));
 	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been added to ") + string(LIGHT_MAGENTA) + string("userDB ") + string(GREEN) + string(this->_name) + string(DEFAULT));
 	return usr.getUid();
 }
 
 // ? Search <usr> in database (from reference)
-User*	UserDB::search(User& usr) {
-    vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
-    ssize_t	id = usr.getUid();
-    while (it != end) {
-        if (it->first.getUid() == id) {
-            return &(it->first);
-        }
-        it++;
-    }
-    throw NoSuchUser();
+User* UserDB::search(User& usr) {
+	vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
+	ssize_t id = usr.getUid();
+	while (it != end) {
+		if (it->first.getUid() == id) {
+			return &(it->first);
+		}
+		it++;
+	}
+	throw NoSuchUser();
 	return NULL;
 }
 
 // ? Search user in database from ID <id>
-User*	UserDB::search(ssize_t id) {
-    vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
-    while (it != end) {
-        if (it->first.getUid() == id) {
-            return &(it->first);
-        }
-        it++;
-    }
-    throw NoSuchUser();
+User* UserDB::search(ssize_t id) {
+	vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
+	while (it != end) {
+		if (it->first.getUid() == id) {
+			return &(it->first);
+		}
+		it++;
+	}
+	throw NoSuchUser();
 	return NULL;
 }
 
 // ? Search user in database from NickName <nickname>
-User*	UserDB::search(string nickname) {
-    vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
-    while (it != end) {
-        if (it->first.getNickName() == nickname) {
-            return &(it->first);
-        }
-        it++;
-    }
-    throw NoSuchUser();
+User* UserDB::search(string nickname) {
+	vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
+	while (it != end) {
+		if (it->first.getNickName() == nickname) {
+			return &(it->first);
+		}
+		it++;
+	}
+	throw NoSuchUser();
 	return NULL;
 }
 
 // ? Return User database
 vector<pair<User&, bool> > UserDB::getDB() {
-    return _db;
+	return _db;
 }
 
-void	UserDB::chkNickDuplicate(string nickname) {
+void UserDB::chkNickDuplicate(string nickname) {
 	try {
 		vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
 		while (it != end) {
@@ -63,15 +63,14 @@ void	UserDB::chkNickDuplicate(string nickname) {
 			}
 			it++;
 		}
-	}
-	catch (exception& e) {
+	} catch (exception& e) {
 		logError(string("Checking nickname duplicate"), nickname, e.what());
 		throw UserDuplicate();
 	}
 }
 
 // ? Check if <username>, <fullname> and <nickname> are uniques
-void	UserDB::chkDuplicate(string username, string fullname) {
+void UserDB::chkDuplicate(string username, string fullname) {
 	try {
 		vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
 		while (it != end) {
@@ -86,8 +85,7 @@ void	UserDB::chkDuplicate(string username, string fullname) {
 			// }
 			it++;
 		}
-	}
-	catch (exception& e) {
+	} catch (exception& e) {
 		logError(string("Checking user duplicate"), username, e.what());
 		throw UserDuplicate();
 	}
@@ -113,8 +111,8 @@ void	UserDB::chkDuplicate(string username, string fullname) {
 // }
 
 // ? Check if <usr> has operator permissions for server <this>
-bool	UserDB::isOper(string nickname) {
-	vector<pair<User&, bool> >::iterator	it, end;
+bool UserDB::isOper(string nickname) {
+	vector<pair<User&, bool> >::iterator it, end;
 	it = _db.begin();
 	end = _db.end();
 	// ssize_t	id = usr.getUid();
@@ -130,7 +128,7 @@ bool	UserDB::isOper(string nickname) {
 	return false;
 }
 // ? Check if <pass> matches server <this> operator password
-bool	UserDB::checkOperPasswd(string pass) {
+bool UserDB::checkOperPasswd(string pass) {
 	if (sha256(pass) == _oper) {
 		return true;
 	}
@@ -138,21 +136,21 @@ bool	UserDB::checkOperPasswd(string pass) {
 }
 
 // ? Set server <this> operator password
-bool	UserDB::setOperPasswd(string oper_pass) {
+bool UserDB::setOperPasswd(string oper_pass) {
 	_oper = sha256(oper_pass);
 	return true;
 }
 
 // ? Set <usr> role as operator for server <this>
-bool	UserDB::addOper(User& usr) {
+bool UserDB::addOper(User& usr) {
 	if (usr.getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return false;
 	}
-	vector<pair<User&, bool> >::iterator	it, end;
+	vector<pair<User&, bool> >::iterator it, end;
 	it = _db.begin();
 	end = _db.end();
-	ssize_t	id = usr.getUid();
+	ssize_t id = usr.getUid();
 	while (it != end) {
 		if (it->first.getUid() == id) {
 			it->second = OPERATOR;
@@ -165,15 +163,15 @@ bool	UserDB::addOper(User& usr) {
 }
 
 // ? Set <usr> role as user for server <this>
-bool	UserDB::removeOper(User& usr) {
+bool UserDB::removeOper(User& usr) {
 	if (usr.getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return false;
 	}
-	vector<pair<User&, bool> >::iterator	it, end;
+	vector<pair<User&, bool> >::iterator it, end;
 	it = _db.begin();
 	end = _db.end();
-	ssize_t	id = usr.getUid();
+	ssize_t id = usr.getUid();
 	while (it != end) {
 		if (it->first.getUid() == id) {
 			it->second = USER;

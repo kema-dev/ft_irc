@@ -4,7 +4,7 @@
 // {
 // 	int nb = atoi(nb_str.c_str());
 //     std::string error;
-// 	error = ft_id_type2(client, nb_str); 
+// 	error = ft_id_type2(client, nb_str);
 
 //     switch (nb)
 //     {
@@ -25,12 +25,12 @@
 //         }
 // 		case 405: //ERR_TOOMANYCHANNELS
 // 		{
-// 			error += (channel->getName() + " :You have joined too many channels\r\n"); 
+// 			error += (channel->getName() + " :You have joined too many channels\r\n");
 // 			break;
-// 		}	
+// 		}
 // 		case 407: //ERR_TOOMANYTARGETS
 // 		{
-// 			error += (arg + " :Too many targets\r\n"); 
+// 			error += (arg + " :Too many targets\r\n");
 // 			break;
 // 		}
 //         case 411: // ERR_NORECIPIENT
@@ -110,7 +110,7 @@
 //         }
 // 		case 476: // ERR_BADCHANMASK
 //         {
-//             error += (arg + " :Bad Channel Mask\r\n"); 
+//             error += (arg + " :Bad Channel Mask\r\n");
 //             break;
 //         }
 // 		case 481: //ERR_NOPRIVILEGES
