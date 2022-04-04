@@ -136,6 +136,7 @@ class User {
 	~User() {};
 	
     bool    getConnectStatus(void);
+	Server*	getServer(void);
 	string	getNickName(void);
 	string	getUserName(void);
 	string	getFullName(void);

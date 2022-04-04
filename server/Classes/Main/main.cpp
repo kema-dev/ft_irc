@@ -8,7 +8,9 @@
 #include <sstream>
 #include <string>
 
-#include "../CommandHandler/CommandHandler.hpp"
+// #include "../CommandHandler/CommandHandler.hpp"
+#include "../Command/Command/Command.hpp"
+#include "../Utils/Utils.hpp"
 #include "../Error/Error.hpp"
 #include "../Server/Server.hpp"
 #include "../ServerManip/ServerManip.hpp"
@@ -131,74 +133,78 @@ int main(int argc, char **argv) {
 // 	return (ret);
 // }
 
-// void ratio(t_KDescriptor desc, int socket) {
-// 	t_params *params = reinterpret_cast<t_params *>(dummyPt);
-// 	string nickname;
-// 	string input;
-// 	ssize_t id;
-// 	size_t nbPass = 0;
-// 	int security = 0;
-// 	int nbError = 0;
-// 	bool loop = false;
+void *task1(void *dummyPt) {
+	t_params *params = reinterpret_cast<t_params *>(dummyPt);
+	string nickname;
+	string input;
+	ssize_t id;
+	size_t nbPass = 0;
+	int security = 0;
+	int nbError = 0;
+	bool loop = false;
 
-// 	// ANCHOR xchat check
-// 	// if (input_s.find("CAP") != string::npos)
-// 	//     input_s.erase(0, strlen("CAP LS\n\r"));
+	// ANCHOR xchat check
+	// if (input_s.find("CAP") != string::npos)
+	//     input_s.erase(0, strlen("CAP LS\n\r"));
 
-// 	cout << "-----------------" << endl;
-// 	while (!loop) {
-// 		while ((input = read_socket(params->client_socket)).empty() == true) {
-// 			;
-// 		}
-// 		cout << DARK_GRAY <<  "Input = '" << input << "'" << DEFAULT << endl;
-// 		// TODO add try/catch
-//         cout << "nbPass:" << nbPass << endl;
-// 		if (nbPass == 0) {
-// 			if (check_password(input, params->irc_serv, params->client_socket) == 0)
-// 				nbPass++;
-// 			continue;
-// 		}
-// 		if (nbPass == 1 && input.find("NICK") != string::npos) {
-//             nickname = parseNickname(input);
-//             nbPass++;
-// 		}
-//         if (nbPass == 2 && input.find("USER") != string::npos)
-//         {
-//             id = createUser(input, params, nickname);
-//             if (id < 0)
-//             {
-//                 nbPass--;
-//                 continue;
-//             }
-//             params->user_id = id;
-//             try {
-//                 params->irc_serv->userDB->search(id)->logIn(*params->irc_serv);
-//             } catch (exception &e) {
-//                 string str = static_cast<ostringstream *>(&(ostringstream() << params->user_id))->str();
-//                 logError(string("Logging in server"), str, e.what());
-//             }
-//             nbPass++;
-//         }
-// 		if (nbPass == 3) {
-// 			welcome_client(params, "");
-// 			nbPass++;
-// 			continue;
-// 		}
-// 		if (nbPass > 3) {
-// 			try {
-// 				security = command_check(input, params);
-// 				if (security == CLIENT_DISCONNECTED)
-// 					nbError++;
-// 				if (nbError >= 5)
-// 					throw(ClientDisconnected());
-// 			} catch (const ClientDisconnected e) {
-// 				cerr << e.what() << endl;
-// 				close(params->client_socket);
-// 				exit(CLIENT_DISCONNECTED);
-// 			}
-// 		}
-// 	}
-// 	cout << "\nClosing thread and connection." << endl;
-// 	close(params->client_socket);
-// 	return (NULL);
-// }
+	cout << "-----------------" << endl;
+	while (!loop) {
+		while ((input = read_socket(params->client_socket)).empty() == true) {
+			;
+		}
+		cout << DARK_GRAY <<  "Input = '" << input << "'" << DEFAULT << endl;
+		// TODO add try/catch
+        // cout << "nbPass:" << nbPass << endl;
+		if (nbPass == 0) {
+			if (check_password(input, params->irc_serv, params->client_socket) == 0)
+				nbPass++;
+			continue;
+		}
+		if (nbPass == 1 && input.find("NICK") != string::npos) {
+            nickname = parseNickname(input);
+            nbPass++;
+		}
+        if (nbPass == 2 && input.find("USER") != string::npos)
+        {
+            id = createUser(input, params, nickname);
+            if (id < 0)
+            {
+                nbPass--;
+                continue;
+            }
+            params->user_id = id;
+            try {
+                params->irc_serv->userDB->search(id)->logIn(*params->irc_serv);
+            } catch (exception &e) {
+                string str = static_cast<ostringstream *>(&(ostringstream() << params->user_id))->str();
+                logError(string("Logging in server"), str, e.what());
+            }
+            nbPass++;
+        }
+		if (nbPass == 3) {
+			// FIXME welcome_client(params, "");
+			Command cmd = Command();
+			cmd.welcome(params->irc_serv->userDB->search(params->user_id));
+			nbPass++;
+			continue;
+		}
+		if (nbPass > 3) {
+			try {
+				Command cmd = Command();
+				cmd.select(input, params->irc_serv->userDB->search(params->user_id));
+				// security = command_check(input, params);
+				// if (security == CLIENT_DISCONNECTED)
+				// 	nbError++;
+				// if (nbError >= 5)
+				// 	throw(ClientDisconnected());
+			} catch (const ClientDisconnected e) { // ! FIXME I don't throw this exception
+				cerr << e.what() << endl;
+				close(params->client_socket);
+				exit(CLIENT_DISCONNECTED);
+			}
+		}
+	}
+	cout << "\nClosing thread and connection." << endl;
+	close(params->client_socket);
+	return (NULL);
+}
