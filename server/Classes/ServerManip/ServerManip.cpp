@@ -2,30 +2,29 @@
 
 using namespace std;
 
-void init_kqueue(int socket, int &kq)
+ServerManip::ServerManip()
 {
-    (void)socket;
-    struct kevent event_list[1];
-    try {
-        if ((kq = kqueue()) == -1)
-            throw(ErrKQueue());
-    }
-    catch(const ErrKQueue e) {
-        std::cerr << e.what() << '\n';
-        exit(KQUEUE_ERR);
-    }
-    EV_SET(&event_list[0], socket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
-    try {
-        if (kevent(kq, event_list, 1, NULL, 0, NULL) == -1)
-            throw(ErrKEvent());
-    }
-    catch (const ErrKEvent e){
-        std::cerr << e.what() << std::endl;
-        exit(KEVENT_ERR);
-    }
+}
+ 
+ServerManip::~ServerManip()
+{
 }
 
-size_t ft_find(string input)
+void    ServerManip::setInput(string input){
+    _input = input;
+}
+void    ServerManip::setBuf(string buf){
+    _buf = buf;
+}
+
+string  ServerManip::getInput(void){
+    return _input;
+}
+string  ServerManip::getBuf(void){
+    return _buf;
+}
+
+size_t ServerManip::ft_find(string input)
 {
     size_t pos_r = input.find("\r");
     size_t pos_n = input.find("\n");
@@ -43,7 +42,7 @@ size_t ft_find(string input)
     }
 }
 
-int check_password(string input, Server *irc_serv, int socket)
+int ServerManip::check_password(string input, Server *irc_serv, int socket)
 {
     string hash;
     if (input.find("PASS") != std::string::npos)
@@ -72,7 +71,7 @@ int check_password(string input, Server *irc_serv, int socket)
     return (0);
 }
 
-string parseNickname(string input)
+string ServerManip::parseNickname(string input)
 {
     string nickname;
 
@@ -85,7 +84,7 @@ string parseNickname(string input)
     return (nickname);
 }
 
-ssize_t createUser(string input, t_params *params, string nickname)
+ssize_t ServerManip::createUser(string input, t_params *params, string nickname, t_KDescriptor *desc)
 {
     ssize_t id;
     string fullname;
@@ -105,7 +104,7 @@ ssize_t createUser(string input, t_params *params, string nickname)
         return (-1);
     fullname = cmd.substr(0, cmd.length() - 2);
     try {
-		id = params->irc_serv->addUser(username, fullname, nickname, hostname, servername, params->irc_serv, params->client_socket);
+		id = params->irc_serv->addUser(desc, username, fullname, nickname, hostname, servername);
         // cout << "User created!" << endl;
 	}
 	catch (exception& e) {
@@ -113,4 +112,13 @@ ssize_t createUser(string input, t_params *params, string nickname)
         return (-1);
 	}
     return (id);
+}
+
+string  ServerManip::parseInput(string input)
+{
+    string ret;
+
+    //TODO 
+    
+    return ret; 
 }

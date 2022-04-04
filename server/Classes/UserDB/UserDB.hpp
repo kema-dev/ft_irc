@@ -4,6 +4,7 @@
 class UserDB;
 
 #include "../User/User.hpp"
+#include "../Crypto/Crypto.hpp"
 
 #include <sys/types.h>
 #include <iostream>
@@ -70,6 +71,7 @@ class   UserDB {
 	bool	setOperPasswd(string oper_pass);
 	bool	addOper(User& usr);
 	bool	removeOper(User& usr);
+    vector<pair<User&, bool> > getDB();
 
 };
 
