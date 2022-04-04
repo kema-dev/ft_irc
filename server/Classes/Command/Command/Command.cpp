@@ -63,7 +63,7 @@ void Command::select(string smessage, User* user) {
 	try {
 		parse(smessage);
 	} catch (EmptyCommand& e) {
-		// TODO send empty command, maybe we should not pass here
+		// TODO send ERR_empty_command, maybe we should not pass here
 		logError("Received command", smessage, "Empty command");
 		throw EmptyCommand();
 	}
@@ -77,62 +77,63 @@ void Command::select(string smessage, User* user) {
 			logError("Received command", smessage, "Unknown command");
 			throw UnknownCommand();
 		}
-		_user = user;
 		switch (index) {
-			case CMD_JOIN:
+			case CMD_JOIN: {
 				_exec.join(user, _args_v);
 				break;
-				// case PART: {
-				// 	string msg;
-				// 	parse_Part(message, &channel_s, &msg);
-				// 	exec_Part(params, channel_s, msg);
-				// 	break;
-				// }
-				// case QUIT:
-				// 	send(params->client_socket, "QUIT", strlen("QUIT"), MSG_DONTWAIT);
-				// 	exit(EXIT_SUCCESS);
-				// case NICK:
-				// 	exec_Nick(params, channel_s);
-				// 	break;
-				// case USER:
-				// 	exec_User(params, channel_s);
-				// 	break;
-				// case PONG: {
-				// 	// TODO handle it + send PING every minute
-				// 	break;
-				// }
-				// case PRIVMSG: {
-				// 	string msg;
-				// 	parse_Privmsg(message, &channel_s, &msg);
-				// 	exec_PrivateMessage(params, channel_s, msg);
-				// 	break;
-				// }
-				// case TOPIC: {
-				// 	string topic;
-				// 	parse_Topic(message, &channel_s, &topic);
-				// 	exec_Topic(params, channel_s, topic);
-				// 	break;
-				// }
-				// case OPER: {
-				// 	exec_Oper(message, params);
-				// 	break;
-				// }
-				// case KICK: {
-				// 	exec_Kick(message, params);
-				// 	break;
-				// }
-				// case MODE: {
-				// 	cerr << "MODE" << endl;
-				// 	exec_Mode(message, params);
-				// 	break;
-				// }
-				// default: {
-				// 	throw(InvalidCommand());
-				// }
+			}
+			case CMD_PART: {
+				_exec.part(user, _args_v);
+				break;
+			}
+			case CMD_QUIT: {
+				_exec.quit(user, _args_v);
+				break;
+			}
+			case CMD_NICK: {
+				_exec.nick(user, _args_v);
+				break;
+			}
+			// case CMD_USER: {
+			// 	_parse.User();
+			// 	_exec.User(params, channel_s);
+			// 	break;
+			// }
+			// case CMD_PONG: {
+			// 	// TODO handle it + send PING every minute
+			// 	break;
+			// }
+			// case CMD_PRIVMSG: {
+			// 	_parse.Privmsg();
+			// 	_exec.PrivateMessage(params, channel_s, msg);
+			// 	break;
+			// }
+			// case CMD_TOPIC: {
+			// 	string topic;
+			// 	_parse.Topic(_args_v, &channel_s, &topic);
+			// 	_exec.Topic(params, channel_s, topic);
+			// 	break;
+			// }
+			// case CMD_OPER: {
+			// 	_exec.Oper(_args_v, params);
+			// 	break;
+			// }
+			// case CMD_KICK: {
+			// 	_exec.Kick(_args_v, params);
+			// 	break;
+			// }
+			// case CMD_MODE: {
+			// 	cerr << "MODE" << endl;
+			// 	_exec.Mode(_args_v, params);
+			// 	break;
+			// }
+			default: {
+				throw(InvalidCommand());
+			}
 		}
 	} catch (exception& e) {
 		// FIXME catch errors and send specific replies
 		logError("Received command", smessage, e.what());
-		throw InvalidCommand();
+		// throw InvalidCommand();
 	}
 }

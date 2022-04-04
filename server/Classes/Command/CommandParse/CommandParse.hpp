@@ -15,13 +15,13 @@ class CommandParse {
 		CommandParse(void);
 		~CommandParse(void);
 
-		void	parse_Join(void);
-		void	parse_Part(string message, string *channel_s, string *msg);
-		void	parse_Topic(string message, string *channel_s, string *topic);
-		void	parse_Privmsg(string message, string *channel_s, string *msg);
-		void	parse_Oper(string message, string* password);
-		void	parse_Kick(string message, string* chan, string* user, string* kickMsg, Server* serv);
-		void	parse_Mode(string message, string* user, int* req_op, int* req_away);
+		void	Join(void);
+		void	Part(string message, string *channel_s, string *msg);
+		void	Topic(string message, string *channel_s, string *topic);
+		void	Privmsg(string message, string *channel_s, string *msg);
+		void	Oper(string message, string* password);
+		void	Kick(string message, string* chan, string* user, string* kickMsg, Server* serv);
+		void	Mode(string message, string* user, int* req_op, int* req_away);
 };
 
 #endif

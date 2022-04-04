@@ -142,7 +142,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 			command->welcome(desc->user);
 			desc->user->setActiveStatus(CONNECTED);
 		}
-		if (desc->user->getActiveStatus() == CONNECTED) {
+		else if (desc->user->getActiveStatus() == CONNECTED) {
 			command->select((*it), desc->user);
 		}
 		it++;

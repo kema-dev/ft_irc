@@ -8,10 +8,10 @@ CommandParse::~CommandParse() {
 	return;
 }
 
-void CommandParse::parse_Join(void) {
+void CommandParse::Join(void) {
 }
 
-void CommandParse::parse_Part(string message, string* channel_s, string* msg) {
+void CommandParse::Part(string message, string* channel_s, string* msg) {
 	string cmd;
 	size_t pos;
 
@@ -33,7 +33,7 @@ void CommandParse::parse_Part(string message, string* channel_s, string* msg) {
 		*msg = cmd.substr(0, cmd.length());
 }
 
-void CommandParse::parse_Topic(string message, string* channel_s, string* topic) {
+void CommandParse::Topic(string message, string* channel_s, string* topic) {
 	string cmd;
 	size_t pos;
 
@@ -55,7 +55,7 @@ void CommandParse::parse_Topic(string message, string* channel_s, string* topic)
 		*topic = cmd.substr(0, cmd.length());
 }
 
-void CommandParse::parse_Privmsg(string message, string* channel_s, string* msg) {
+void CommandParse::Privmsg(string message, string* channel_s, string* msg) {
 	string cmd;
 	size_t pos;
 
@@ -68,7 +68,7 @@ void CommandParse::parse_Privmsg(string message, string* channel_s, string* msg)
 	*msg = cmd.substr(0, cmd.length());
 }
 
-void CommandParse::parse_Oper(string message, string* password) {
+void CommandParse::Oper(string message, string* password) {
 	string cmd;
 	size_t pos;
 
@@ -78,7 +78,7 @@ void CommandParse::parse_Oper(string message, string* password) {
 	*password = string(cmd);
 }
 
-void CommandParse::parse_Kick(string message, string* chan, string* user, string* kickMsg, Server* serv) {
+void CommandParse::Kick(string message, string* chan, string* user, string* kickMsg, Server* serv) {
 	istringstream iss(message);
 	string s;
 	getline(iss, s, ' ');  // ? Skip "KICK"
@@ -104,7 +104,7 @@ void CommandParse::parse_Kick(string message, string* chan, string* user, string
 	}
 }
 
-void CommandParse::parse_Mode(string message, string* user, int* req_op, int* req_away) {
+void CommandParse::Mode(string message, string* user, int* req_op, int* req_away) {
 	istringstream iss(message);
 	string s;
 	int i;

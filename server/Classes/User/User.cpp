@@ -181,12 +181,12 @@ void User::logIn(Server& server) {
 }
 
 // ? Log out from <server>
-void User::logOut(Server& server) {
+void User::logOut(Server& server, string msg) {
 	if ((server.userDB->search(*this) == NULL) || (server.userDB->search(*this)->getActiveStatus() != CONNECTED)) {
 		throw NotLoggedGlobal();
 	}
-	this->setActiveStatus(false);
-	log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" logged out from ") + string(RED) + string(LIGHT_MAGENTA) + string("server ") + string(DEFAULT));
+	this->setActiveStatus(NOT_CONNECTED);
+	log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" logged out from ") + string(RED) + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + server.name + string(LIGHT_BLUE) + string(" with message: ") + string(RED) + string(msg) + string(DEFAULT));
 }
 
 // ? Send <content> to <chan>

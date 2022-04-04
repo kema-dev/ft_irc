@@ -110,6 +110,15 @@ class BadPasswd : public exception
 		}
 };
 
+class NickExists : public exception
+{
+	public:
+		virtual const char*	what() const throw()
+		{
+			return ("Nickname already in use");
+		}
+};
+
 #define NOT_CONNECTED	0
 #define CONNECTED		1
 #define WELCOME         2
@@ -163,11 +172,10 @@ class User {
     void    setConnectStatus(bool connected);
 
 	void	logIn(Server& server);
-	void	logOut(Server& server);
+	void	logOut(Server& server, string msg);
 	void	sendMessage(string content, Channel& chan);
 	void	joinChannel(Channel& chan, string pass);
 	void	tryJoinChannel(string name, string pass, string topic, Server* server);
-	// void	tryJoinChannel(string name, string pass, string topic, string oper_pass, Server* server);
 	void	ban(User& usr, Channel& chan);
 	void	getBanned(Channel& chan, User& banner);
 	void	setPasswd(Server& serv, string pass);

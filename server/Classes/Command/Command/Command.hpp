@@ -76,7 +76,6 @@ class ChanOpeNeeded : public exception
 class Command {
 	private:
 		string			_command;
-		User*			_user;
 		vector<string>	_args_v;
 		vector<string>	_commands_v;
 		CommandParse	_parse;
