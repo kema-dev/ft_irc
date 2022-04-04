@@ -56,6 +56,7 @@ void CommandExec::join(User* user, vector<string> args) {
 		reply(user->getServer(), user->getUid(), RPL_ENDOFNAMES, chan);
 		args.erase(args.begin());
 	}
+	// TODO send JOIN to all channels
 }
 
 void CommandExec::part(User* user, vector<string> args) {
@@ -87,6 +88,7 @@ void CommandExec::part(User* user, vector<string> args) {
 		}
 		args.erase(args.begin());
 	}
+	// TODO send PART to all channels
 }
 
 void CommandExec::quit(User* user, vector<string> args) {
@@ -99,6 +101,8 @@ void CommandExec::quit(User* user, vector<string> args) {
 		args.erase(args.begin());
 	}
 	user->getServer()->userDB->search(user->getUid())->logOut(*(user->getServer()), msg);
+	// ! TODO remove user from all channels + delete it
+	// TODO send QUIT to all channels
 }
 
 void CommandExec::nick(User* user, vector<string> args) {
@@ -124,4 +128,5 @@ void CommandExec::nick(User* user, vector<string> args) {
 			return;
 		}
 	}
+	// TODO send NICK to all channels
 }
