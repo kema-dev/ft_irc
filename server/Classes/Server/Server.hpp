@@ -15,13 +15,6 @@
 class ChannelDB;
 class Server;
 
-typedef struct s_params
-{
-    int     client_socket;
-    Server  *irc_serv;
-    ssize_t user_id;
-}   t_params;
-
 #include "../Command/Command/Command.hpp"
 #include "../UidPool/UidPool.hpp"
 #include "../ChannelDB/ChannelDB.hpp"
@@ -110,7 +103,7 @@ class Server {
     string  getHash();
     void    acceptConnection(t_KDescriptor *desc,int socket);
 	void	addChan(string name, string pass, string topic);
-    void    handleConnection(t_KDescriptor *desc, time_t *tm);
+    void    handleConnection(t_KDescriptor *desc);
     string  readSocket(int socket);
 	// void	addChan(string name, string pass, string topic, string oper_pass);
     void    addVoidUser( User* user );

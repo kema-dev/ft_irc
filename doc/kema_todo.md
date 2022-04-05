@@ -11,13 +11,13 @@
 - [x] QUIT
 - [x] NICK
 - [x] USER ***Removed***
-- [x] PONG
+- [x] PONG ***Removed***
 - [ ] PRIVMSG (+ Send to all users of current channel) -> dOD
-- [x] TOPIC
+- [ ] TOPIC
 - [x] OPER
 - [x] KICK
-- [x] MODE
-- [ ] AWAY
+- [x] MODE ***Removed***
+- [x] AWAY
 - [ ] NAMES
 - [ ] LIST -> dOD
 - [ ] NOTICE -> dOD

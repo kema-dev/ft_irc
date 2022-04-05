@@ -13,6 +13,7 @@ User::User() {
 	_nb_msg = -1;
 	_active_status = NOT_CONNECTED;
 	_connected = false;
+	_away_msg = "";
 }
 
 // ? Create a user
@@ -112,6 +113,10 @@ bool User::getConnectStatus(void) {
 	return (_connected);
 }
 
+string User::getAwayMessage(void) {
+	return _away_msg;
+}
+
 // ostream &operator<<(ostream &stream, User &rhs)
 // {
 // 	stream << "User infos:" << endl << "name: " << rhs.getFullName() << endl << "nb_msg: " << rhs.getNbMsg() << endl << "ban_status: " << rhs.getBanStatus() << endl << "active_status: " << rhs.getActiveStatus() << endl << "uid: " << rhs.getUid() << endl << "hash: " << rhs.getHash();
@@ -169,6 +174,10 @@ void User::setSocket(int socket) {
 
 void User::setConnectStatus(bool connected) {
 	_connected = connected;
+}
+
+void User::setAwayMessage(string msg) {
+	_away_msg = msg;
 }
 
 // ? Log in to <server>
@@ -247,7 +256,7 @@ void User::tryJoinChannel(string name, string pass, string topic, Server* server
 }
 
 // ? Ban <usr> form <chan>
-void User::ban(User& usr, Channel& chan) {
+void User::kick(User& usr, Channel& chan, string msg) {
 	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return;
@@ -255,17 +264,20 @@ void User::ban(User& usr, Channel& chan) {
 	if (chan.isLog(usr) != true) {
 		throw NotLogged();
 	}
-	usr.getBanned(chan, *this);
+	if (usr.getServer()->userDB->isOper(usr.getNickName()) != true) {
+		throw BadRole();
+	}
+	usr.getKicked(chan, *this, msg);
 	return;
 }
 
 // ? Get banned from <chan> by <banner>
-void User::getBanned(Channel& chan, User& banner) {
+void User::getKicked(Channel& chan, User& banner, string msg) {
 	if (chan.isLog(banner) != true) {
 		throw NotLogged();
 		return;
 	}
-	chan.userBan(*this, banner);
+	chan.userKick(*this, banner, msg);
 	// TODO Send ban info to *this
 }
 

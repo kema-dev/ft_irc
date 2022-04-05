@@ -192,7 +192,7 @@ vector<string>	Channel::getNickLst(void) {
 }
 
 // ? Ban <usr> from channel <this> by <banner>
-bool	Channel::userBan(User& usr, User& banner) {
+bool	Channel::userKick(User& usr, User& banner, string msg) {
 	if (usr.getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return false;
@@ -204,7 +204,7 @@ bool	Channel::userBan(User& usr, User& banner) {
 	while (it != end) {
 		if (it->first.getUid() == id) {
 			it->second = BANNED;
-			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been banned from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT) + string(" by ") + string(RED) + string(banner.getNickName()) + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been kicked from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(LIGHT_BLUE) + string(" by ") + string(RED) + string(banner.getNickName()) + string(LIGHT_BLUE) + string(" with message ") + string(RED) + msg + string(DEFAULT));
 			return true;
 		}
 		it++;

@@ -139,11 +139,13 @@ class User {
 	ssize_t		_uid;
     int         _socket;
     bool        _connected;
+	string		_away_msg;
 
 	public:
 	User(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket);
     User();
 	~User() {};
+
 	
 	Server*	getServer(void);
     bool    getConnectStatus(void);
@@ -158,6 +160,7 @@ class User {
 	ssize_t	getUid(void);
 	string	getHash(void);
     int     getSocket(void);
+	string	getAwayMessage(void);
 
     void    setServer(Server *server);
 	void	setUserName(string new_username);
@@ -170,14 +173,15 @@ class User {
 	void	setUid(ssize_t new_uid);
     void    setSocket(int socket);
     void    setConnectStatus(bool connected);
+	void	setAwayMessage(string msg);
 
 	void	logIn(Server& server);
 	void	logOut(Server& server, string msg);
 	void	sendMessage(string content, Channel& chan);
 	void	joinChannel(Channel& chan, string pass);
 	void	tryJoinChannel(string name, string pass, string topic, Server* server);
-	void	ban(User& usr, Channel& chan);
-	void	getBanned(Channel& chan, User& banner);
+	void	kick(User& usr, Channel& chan, string msg);
+	void	getKicked(Channel& chan, User& banner, string msg);
 	void	setPasswd(Server& serv, string pass);
 	void	setOperPasswd(Server& serv, string pass);
 	void	becomeOper(Server& serv, string pass);
