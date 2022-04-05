@@ -94,20 +94,14 @@ void Command::select(string smessage, User* user) {
 				_exec.nick(user, _args_v);
 				break;
 			}
-			// case CMD_USER: {
-			// 	_parse.User();
-			// 	_exec.User(params, channel_s);
-			// 	break;
-			// }
 			// case CMD_PONG: {
 			// 	// TODO handle it + send PING every minute
 			// 	break;
 			// }
-			// case CMD_PRIVMSG: {
-			// 	_parse.Privmsg();
-			// 	_exec.PrivateMessage(params, channel_s, msg);
-			// 	break;
-			// }
+			case CMD_PRIVMSG: {
+				_exec.privmsg(user, _args_v);
+				break;
+			}
 			// case CMD_TOPIC: {
 			// 	string topic;
 			// 	_parse.Topic(_args_v, &channel_s, &topic);

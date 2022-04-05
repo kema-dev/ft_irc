@@ -9,8 +9,8 @@
 - [x] JOIN
 - [x] PART
 - [x] QUIT
-- [ ] NICK
-- [x] USER ***To be removed***
+- [x] NICK
+- [x] USER ***Removed***
 - [x] PONG
 - [ ] PRIVMSG (+ Send to all users of current channel) -> dOD
 - [x] TOPIC

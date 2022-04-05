@@ -19,6 +19,7 @@ class CommandExec {
 		void	part(User* user, vector<string> args);
 		void	quit(User* user, vector<string> args);
 		void	nick(User* user, vector<string> args);
+		void	privmsg(User* user, vector<string> args);
 		void	welcome(User* user);
 		void	topic(t_params *params, string args, string topic);
 		void	privateMessage(t_params *params, string args, string message);

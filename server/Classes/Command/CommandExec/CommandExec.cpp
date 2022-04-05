@@ -130,3 +130,53 @@ void CommandExec::nick(User* user, vector<string> args) {
 	}
 	// TODO send NICK to all channels
 }
+
+void CommandExec::privmsg(User* user, vector<string> args) {
+	if (args.size() < 1) {
+		// TODO send ERR_NORECIPIENT
+		logError("Join command", "Not enough arguments", itos(args.size()));
+		return;
+	} else if (args.size() < 2) {
+		// TODO send ERR_NOTEXTTOSEND
+		logError("Join command", "Not enough arguments", itos(args.size()));
+		return;
+	} else {
+		string msg = args.back();
+		args.pop_back();
+		while (args.empty() == false) {
+			string receiver = *args.begin();
+			string uid = itos(user->getUid());
+			if (receiver.find(':', 0) == 0) {
+				// ? Remaining args are message splices
+				receiver.erase(0, 1);
+				msg = receiver + " " + msg;
+				cerr << endl;
+				args.erase(args.begin());
+				while (args.empty() == false) {
+					msg = *args.begin() + msg;
+					args.erase(args.begin());
+				}
+				continue;
+			}
+			try {
+				user->getServer()->chanDB->search(receiver);
+			} catch (NoSuchChan& e) {
+				// ? Is not a channel
+				try {
+					user->getServer()->userDB->search(receiver);
+				} catch (NoSuchUser& e) {
+					// TODO send ERR_NOSUCHNICK
+					logError("Privmsg to " + receiver, uid, e.what());
+				}
+				// TODO send PRIVMSG <receiver> and mind if <reciever> is away
+				args.erase(args.begin());
+				continue;
+			}
+			vector<string> lst = user->getServer()->chanDB->search(receiver)->getNickLst();
+			for (vector<string>::iterator it = lst.begin(); it != lst.end(); ++it) {
+				args.push_back(*it);
+			}
+			args.erase(args.begin());
+		}
+	}
+}

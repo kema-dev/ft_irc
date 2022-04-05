@@ -93,6 +93,7 @@ class Server {
 
 	public:
     vector<t_KDescriptor*> _descriptors;
+	time_t		_last_ping;
     bool        _running;
 	string		name;
 	UidPool*	pool;
@@ -109,7 +110,7 @@ class Server {
     string  getHash();
     void    acceptConnection(t_KDescriptor *desc,int socket);
 	void	addChan(string name, string pass, string topic);
-    void    handleConnection(t_KDescriptor *desc);
+    void    handleConnection(t_KDescriptor *desc, time_t *tm);
     string  readSocket(int socket);
 	// void	addChan(string name, string pass, string topic, string oper_pass);
     void    addVoidUser( User* user );
