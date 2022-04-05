@@ -282,6 +282,9 @@ void CommandExec::away(User* user, vector<string> args) {
 void CommandExec::names(User* user, vector<string> args) {
 	if (args.size() == 0) {
 		// TODO send ERR_NEEDMOREPARAMS
+		string str = "461 NAMES :Not enough parameters\r\n";
+		send(user->getSocket(), str.c_str(), str.size(), MSG_DONTWAIT);
+		// "<command> :Not enough parameters"
 		logError("Names command", "Empty argument", "No channel specified");
 		return;
 	}
@@ -294,6 +297,7 @@ void CommandExec::names(User* user, vector<string> args) {
 		} catch (NoSuchChan& e) {
 			// TODO send ERR_NOSUCHCHANNEL
 			logError("Part from channel " + chan, "No such channel", e.what());
+			args.erase(args.begin());
 			continue;
 		}
 		for (vector<string>::iterator it = lst.begin(); it != lst.end(); ++it) {

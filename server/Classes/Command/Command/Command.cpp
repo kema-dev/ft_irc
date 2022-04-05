@@ -135,8 +135,6 @@ void Command::select(string smessage, User* user) {
 			}
 		}
 	} catch (exception& e) {
-		// FIXME catch errors and send specific replies
 		logError("Received command", smessage, e.what());
-		// throw InvalidCommand();
 	}
 }
