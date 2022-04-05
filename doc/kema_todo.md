@@ -13,12 +13,12 @@
 - [x] USER ***Removed***
 - [x] PONG ***Removed***
 - [ ] PRIVMSG (+ Send to all users of current channel) -> dOD
-- [ ] TOPIC
+- [ ] TOPIC -> dOD
 - [x] OPER
 - [x] KICK
 - [x] MODE ***Removed***
 - [x] AWAY
-- [ ] NAMES
+- [x] NAMES
 - [ ] LIST -> dOD
 - [ ] NOTICE -> dOD
 

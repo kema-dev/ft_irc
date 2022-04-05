@@ -296,7 +296,10 @@ void CommandExec::names(User* user, vector<string> args) {
 			logError("Part from channel " + chan, "No such channel", e.what());
 			continue;
 		}
-		// TODO send NAMES to all channels
+		for (vector<string>::iterator it = lst.begin(); it != lst.end(); ++it) {
+			// TODO send RPL_NAMREPLY of <arg> channel
+		}
 		args.erase(args.begin());
 	}
+	// TODO send RPL_ENDOFNAMES
 }
