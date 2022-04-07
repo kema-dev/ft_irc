@@ -92,11 +92,11 @@ void reply(Server* serv, ssize_t uid, int rplyNb, string args) {
 			reply += " : " + serv->userDB->search(uid)->getHostName() + " version [42.42]. Available user MODE: none. Avalaible channel MODE : none.\r\n";
 			break;
 		case RPL_NOTOPIC_REPLY:
-			reply = header_1(serv, uid, RPL_TOPIC);
+			// reply = header_1(serv, uid, RPL_TOPIC);
 			reply += serv->chanDB->search(args)->getName() + " :No topic is set\r\n";
 			break;
 		case RPL_TOPIC_REPLY:
-			reply = header_1(serv, uid, RPL_TOPIC);
+			// reply = header_1(serv, uid, RPL_TOPIC);
 			reply += serv->chanDB->search(args)->getName() + " :" + serv->chanDB->search(args)->getTopic() + "\r\n";
 			break;
 		case RPL_NAMEREPLY_REPLY: {
@@ -146,4 +146,18 @@ void reply(Server* serv, ssize_t uid, int rplyNb, string args) {
 	// else
 	send((serv->userDB->search(uid))->getSocket(), reply.c_str(), strlen(reply.c_str()), MSG_DONTWAIT);
 	return;
+}
+
+
+
+string	gen_reply(char* format, ...) {
+	char* msg = NULL;
+	va_list args;
+	va_start(args, format);
+	if (asprintf(&msg, format, args) < 0) {
+		logError("Oper command", "asprintf failed", "asprintf");
+		return "";
+	}
+	va_end(args);
+	return string(msg);
 }

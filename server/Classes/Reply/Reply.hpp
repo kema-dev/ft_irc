@@ -51,7 +51,7 @@ void reply(Server* serv, ssize_t uid, int rplyNb, string args);
 #define RPL_CUSTOMHELP      	"4244"
 #define RPL_CUSTOMMOTD	     	"4245"
 
-// Erros
+// Errors
 #define ERR_NOSUCHNICK			"401"
 #define ERR_NOSUCHCHANNEL		"403"
 #define ERR_CANNOTSENDTOCHAN	"404"

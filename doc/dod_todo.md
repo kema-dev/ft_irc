@@ -32,3 +32,7 @@ Commands:
 PASS password
 NICK jej
 USER jjourdan 0 * :Jeremy Jourdan
+
+PASS password
+NICK dOD
+USER dOD 0 * :dOD Lecon

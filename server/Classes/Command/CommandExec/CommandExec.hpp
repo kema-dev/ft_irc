@@ -176,6 +176,8 @@ using namespace std;
 #define SEND_RPL_ENDOFUSERS "394 :End of users\r\n"
 // ? "395 :Nobody logged in"
 #define SEND_RPL_NOUSERS "395 :Nobody logged in\r\n"
+
+
 // ? "401 <nickname> :No such nick/channel"
 #define SEND_ERR_NOSUCHNICK "401 %s :No such nick/channel\r\n"
 // ? "402 <server name> :No such server"
@@ -301,7 +303,6 @@ class CommandExec {
 		void	nick(User* user, vector<string> args);
 		void	topic(User *user, vector<string> args);
 		void	privmsg(User* user, vector<string> args);
-		void	welcome(User* user);
 		void	oper(User* user, vector<string> args);
 		void	kick(User* user, vector<string> args);
 		void	away(User* user, vector<string> args);

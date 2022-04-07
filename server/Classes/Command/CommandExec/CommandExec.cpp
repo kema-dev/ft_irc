@@ -21,9 +21,11 @@ void CommandExec::join(User* user, vector<string> args) {
 		logError("Join command", "Empty argument", "No channel specified");
 		return;
 	}
+	// FIXME : Check args size : need to match chan : password
 	while (args.empty() == false) {
 		string chan = *args.begin();
 		string uid = itos(user->getUid());
+		// FIXME : Check channel password (split args in two lists (i + args.size() / 2))
 		try {
 			user->tryJoinChannel(chan, "", "", user->getServer());
 		} catch (NotLoggedGlobal& e) {
@@ -225,10 +227,16 @@ void CommandExec::topic(User* user, vector<string> args) {
 			logError("Changing topic of " + *args.begin(), "" ,e.what());
 		}
 		reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, *args.begin());
+	}
 }
+
+// ? "3 This server was created <date>"
+#define SEND_RPL_CREATED "3 This server was created %s\r\n"
+
 void CommandExec::oper(User* user, vector<string> args) {
 	if (args.size() != 2) {
 		// TODO send ERR_NEEDMOREPARAMS
+		reply(user->getServer(), user->getUid(), ERR_NEEDMOREPARAMS_REPLY, "OPER");
 		logError("Oper command", "Wrong number of arguments (need 2)", itos(args.size()));
 		return;
 	}
