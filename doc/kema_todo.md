@@ -13,7 +13,7 @@
 - [x] USER ***Removed***
 - [x] PONG
 - [ ] PRIVMSG (+ Send to all users of current channel) -> dOD
-- [x] TOPIC
+- [ ] TOPIC
 - [x] OPER
 - [x] KICK
 - [x] MODE

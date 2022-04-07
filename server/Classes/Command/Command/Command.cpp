@@ -102,12 +102,10 @@ void Command::select(string smessage, User* user) {
 				_exec.privmsg(user, _args_v);
 				break;
 			}
-			// case CMD_TOPIC: {
-			// 	string topic;
-			// 	_parse.Topic(_args_v, &channel_s, &topic);
-			// 	_exec.Topic(params, channel_s, topic);
-			// 	break;
-			// }
+			case CMD_TOPIC: {
+				_exec.topic(user, _args_v);
+				break;
+			}
 			// case CMD_OPER: {
 			// 	_exec.Oper(_args_v, params);
 			// 	break;

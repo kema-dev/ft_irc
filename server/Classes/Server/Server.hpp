@@ -15,13 +15,6 @@
 class ChannelDB;
 class Server;
 
-typedef struct s_params
-{
-    int     client_socket;
-    Server  *irc_serv;
-    ssize_t user_id;
-}   t_params;
-
 #include "../Command/Command/Command.hpp"
 #include "../UidPool/UidPool.hpp"
 #include "../ChannelDB/ChannelDB.hpp"
