@@ -65,7 +65,8 @@ void Command::select(string smessage, User* user) {
 	} catch (EmptyCommand& e) {
 		// TODO send ERR_empty_command, maybe we should not pass here
 		logError("Received command", smessage, "Empty command");
-		throw EmptyCommand();
+		// throw EmptyCommand();
+		return;
 	}
 	try {
 		int index;

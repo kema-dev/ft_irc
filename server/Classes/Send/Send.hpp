@@ -20,9 +20,9 @@ class   Send {
 	Send() {};
 	~Send() {};
 
-	char*	gen_reply(char* format, ...);
-	void	reply(User* usr, int code, int header, string format, ...);
-	void	send_to_client(string header, int socket, char *msg);
+	// char*	gen_reply(char* format, va_list args);
+	void	reply(User* sender, User* receiver, int code, int header, string format, ...);
+	void	send_to_client(string header, int socket, const char *msg);
 };
 
 #endif

@@ -11,14 +11,10 @@ CommandExec::~CommandExec() {
 }
 
 void CommandExec::welcome(User* user) {
-	send_op->reply(user, RPL_WELCOME, HEADER_SERVER, ":Welcome to the Internet Relay Network %s", user->getHostName().c_str());
-	send_op->reply(user, RPL_YOURHOST, HEADER_SERVER, ":Your host is %s, running version %s", user->getHostName().c_str(), "0.0.ratio");
-	// send_op->reply(user, RPL_CREATED, HEADER_SERVER, ":This server was created %s", getTime().c_str());
-	// send_op->reply(user, RPL_MYINFO, HEADER_SERVER, "%s %s %s %s", user->getHostName().c_str(), "0.0.ratio", "none", "none");
-	// reply(user->getServer(), user->getUid(), RPL_WELCOME_REPLY, "");
-	// reply(user->getServer(), user->getUid(), RPL_YOURHOST_REPLY, "");
-	// reply(user->getServer(), user->getUid(), RPL_CREATED_REPLY, "");
-	// reply(user->getServer(), user->getUid(), RPL_MYINFO_REPLY, "");
+	send_op->reply(user, user, RPL_WELCOME, HEADER_SERVER, ":Welcome to the Internet Relay Network %s\r\n", user->getHostName().c_str());
+	send_op->reply(user, user, RPL_YOURHOST, HEADER_SERVER, ":Your host is %s, running version %s\r\n", user->getHostName().c_str(), "0.0.ratio");
+	send_op->reply(user, user, RPL_CREATED, HEADER_SERVER, ":This server was created %s\r\n", getTime().c_str());
+	send_op->reply(user, user, RPL_MYINFO, HEADER_SERVER, ":%s version[%s]. Available user MODE: %s Avalaible channel MODE : %s\r\n", user->getHostName().c_str(), "0.0.ratio", "none", "none");
 }
 
 void CommandExec::join(User* user, vector<string> args) {
@@ -55,23 +51,25 @@ void CommandExec::join(User* user, vector<string> args) {
 			return;
 		}
 		// reply(user->getServer(), user->getUid(), JOIN_REPLY, chan);
-		send_op->reply(user, RPL_CUSTOM, HEADER_CUSTOM, "%s %s", "JOIN", chan.c_str());
+		send_op->reply(user, user, RPL_CUSTOM, HEADER_CUSTOM, "%s %s", "JOIN", chan.c_str());
 		// if (user->getServer()->chanDB->search(chan)->getTopic().empty() == true) {
 		// 	reply(user->getServer(), user->getUid(), RPL_NOTOPIC_REPLY, chan);
 		// } else {
 		// 	reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, chan);
 		// 	send_op->reply(user, RPL_CUSTOM, HEADER_CUSTOM, "%s %s", " ", chan.c_str());
 		// }
-		send_op->reply(user, RPL_CUSTOM, HEADER_CUSTOM, "%s :%s", chan.c_str(), user->getServer()->chanDB->search(chan)->getTopic().c_str());
+		send_op->reply(user, user, RPL_CUSTOM, HEADER_CUSTOM, "%s :%s", chan.c_str(), user->getServer()->chanDB->search(chan)->getTopic().c_str());
 		// reply(user->getServer(), user->getUid(), RPL_NAMEREPLY_REPLY, chan);
 		string users = "";
-		for (vector<string>::iterator it = user->getServer()->chanDB->search(chan)->getNickLst().begin(); it != user->getServer()->chanDB->search(chan)->getNickLst().end(); ++it) {
-			users += *it;
+		vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
+		for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
+			users += *it + " ";
 		}
-		send_op->reply(user, RPL_CUSTOM, HEADER_CLIENT, "%s", users.c_str());
-		send_op->reply(user, RPL_ENDOFNAMES, HEADER_CUSTOM, RPL_ENDOFNAMES_FORMAT, chan.c_str());
+		send_op->reply(user, user, RPL_CUSTOM, HEADER_CLIENT, "%s", users.c_str());
+		send_op->reply(user, user, RPL_ENDOFNAMES, HEADER_CUSTOM, RPL_ENDOFNAMES_FORMAT, chan.c_str());
 		// reply(user->getServer(), user->getUid(), RPL_ENDOFNAMES_REPLY, chan);
 		args.erase(args.begin());
+		// log("Join channel", itos(user->getUid()), "Join channel " + args[0]);
 	}
 	// TODO send JOIN to all channels
 }
@@ -149,54 +147,67 @@ void CommandExec::nick(User* user, vector<string> args) {
 }
 
 void CommandExec::privmsg(User* user, vector<string> args) {
-	(void)user;
-	(void)args;
-	// if (args.size() < 1) {
-	// 	// TODO send ERR_NORECIPIENT
-	// 	logError("Join command", "Not enough arguments", itos(args.size()));
-	// 	return;
-	// } else if (args.size() < 2) {
-	// 	// TODO send ERR_NOTEXTTOSEND
-	// 	logError("Join command", "Not enough arguments", itos(args.size()));
-	// 	return;
-	// } else {
-	// 	string msg = args.back();
-	// 	args.pop_back();
-	// 	while (args.empty() == false) {
-	// 		string receiver = *args.begin();
-	// 		string uid = itos(user->getUid());
-	// 		if (receiver.find(':', 0) == 0) {
-	// 			// ? Remaining args are message splices
-	// 			receiver.erase(0, 1);
-	// 			msg = receiver + " " + msg;
-	// 			cerr << endl;
-	// 			args.erase(args.begin());
-	// 			while (args.empty() == false) {
-	// 				msg = *args.begin() + msg;
-	// 				args.erase(args.begin());
-	// 			}
-	// 			continue;
-	// 		}
-	// 		try {
-	// 			user->getServer()->chanDB->search(receiver);
-	// 		} catch (NoSuchChan& e) {
-	// 			// ? Is not a channel
-	// 			try {
-	// 				user->getServer()->userDB->search(receiver);
-	// 			} catch (NoSuchUser& e) {
-	// 				// TODO send ERR_NOSUCHNICK
-	// 				logError("Privmsg to " + receiver, uid, e.what());
-	// 			}
-	// 			// TODO send PRIVMSG <receiver> and mind if <reciever> is away
-	// 			reply_2(user->getServer(), user->getUid(), PRVMSG_U_REPLY, user->getNickName(), msg);
-	// 			args.erase(args.begin());
-	// 			continue;
-	// 		}
-	// 		reply_2(user->getServer(), user->getUid(), PRVMSG_C_REPLY, receiver, msg);
-
-	// 		args.erase(args.begin());
-	// 	}
-	// }
+	if (args.size() < 1) {
+		// TODO send ERR_NORECIPIENT
+		send_op->reply(user, user, ERR_NORECIPIENT, HEADER_CLIENT, ERR_NORECIPIENT_FORMAT, "PRIVMSG");
+		logError("Join command", "Not enough arguments", itos(args.size()));
+		return;
+	} else if (args.size() < 2) {
+		// TODO send ERR_NOTEXTTOSEND
+		send_op->reply(user, user, ERR_NOTEXTTOSEND, HEADER_CLIENT, ERR_NOTEXTTOSEND_FORMAT);
+		logError("Join command", "Not enough arguments", itos(args.size()));
+		return;
+	} else {
+		string msg = args.back();
+		args.pop_back();
+		while (args.empty() == false) {
+			string receiver = *args.begin();
+			string uid = itos(user->getUid());
+			if (receiver.find(':', 0) == 0) {
+				// ? Remaining args are message splices
+				receiver.erase(0, 1);
+				msg = receiver + " " + msg;
+				cerr << endl;
+				args.erase(args.begin());
+				while (args.empty() == false) {
+					msg = *args.begin() + msg;
+					args.erase(args.begin());
+				}
+				continue;
+			}
+			try {
+				user->getServer()->chanDB->search(receiver);
+			} catch (NoSuchChan& e) {
+				// ? Is not a channel
+				try {
+					user->getServer()->userDB->search(receiver);
+				} catch (NoSuchUser& e) {
+					// TODO send ERR_NOSUCHNICK
+					send_op->reply(user, user, ERR_NOSUCHNICK, HEADER_CLIENT, ERR_NOSUCHNICK_FORMAT, receiver.c_str());
+					logError("Privmsg to " + receiver, uid, e.what());
+				}
+				// TODO send PRIVMSG <receiver> and mind if <reciever> is away
+				send_op->reply(user, user->getServer()->userDB->search(receiver), RPL_CUSTOM, HEADER_CLIENT, "PRIVMSG %s :%s\r\n", user->getNickName().c_str(), msg.c_str());
+				// reply_2(user->getServer(), user->getUid(), STR_PRVMSG_U_REPLY, user->getNickName(), msg);
+				args.erase(args.begin());
+				continue;
+			}
+			// ? Is a channel
+			// reply_2(user->getServer(), user->getUid(), STR_PRVMSG_C_REPLY, receiver, msg);
+			vector<string> users_v = user->getServer()->chanDB->search(receiver)->getNickLst();
+			for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
+				try {
+					send_op->reply(user, user->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "PRIVMSG %s %s\r\n", receiver.c_str(), msg.c_str());
+				}
+				catch (NoSuchUser& e) {
+					send_op->reply(user, user, ERR_NOSUCHNICK, HEADER_CLIENT, ERR_NOSUCHNICK_FORMAT, receiver.c_str());
+					logError("Privmsg to " + receiver, uid, e.what());
+				}
+			}
+			args.erase(args.begin());
+		}
+	}
+	// FIXME msg skips the first args
 }
 
 void CommandExec::topic(User* user, vector<string> args) {

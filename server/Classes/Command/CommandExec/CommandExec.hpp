@@ -5,6 +5,7 @@ class Send;
 #include "../Command/Command.hpp"
 #include "../../Send/Send.hpp"
 #include "../../User/User.hpp"
+#include "../../Reply/Reply.hpp"
 #include <sys/types.h>
 #include <iostream>
 

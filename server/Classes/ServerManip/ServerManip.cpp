@@ -77,15 +77,16 @@ string ServerManip::parseNickname(string input) {
 ssize_t ServerManip::createUser(string input, t_KDescriptor* desc) {
 	ssize_t id;
 	string fullname;
-	char username[25];
-	char hostname[25];
-	char servername[25];
+	char username[26];
+	char hostname[26];
+	char servername[26];
 	string cmd;
 
 	if (input.empty() || desc->user->getNickName().empty())
 		return (-1);
 	cmd = input;
 	cmd.erase(0, strlen("USER "));
+	// ! FIXME this is dangerous
 	sscanf(cmd.c_str(), "%25s %25s %25s", username, hostname, servername);
 	cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
 	if (cmd.find(' ') == string::npos)

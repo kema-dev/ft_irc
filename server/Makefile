@@ -109,19 +109,10 @@ template:
 		cat Classes/Log/Log.template.hpp | sed 's!@PATHTOLOGFILE!$(LOGFILE)!g' > Classes/Log/Log.hpp; \
 	fi
 
-kema: directories $(KEMAOBJECTS)
-	@printf "\ec"
-	@$(CC) $(KEMAOBJECTS) Classes/Main/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
-	@./$(TARGETDIR)/$(KEMAOUT)
-
-kema2: directories $(KEMAOBJECTS2)
-	@printf "\ec"
-	@$(CC) $(KEMAOBJECTS2) Classes/Main/kema.cpp -o $(TARGETDIR)/$(KEMAOUT)
-	@./$(TARGETDIR)/$(KEMAOUT)
-
-kema3: directories $(DODBJECTS)
+kema: directories $(DODBJECTS)
 	@printf "\ec"
 	$(CC) $(DEBUGFLAG) $(DODBJECTS) Classes/Main/main.cpp -o $(TARGETDIR)/$(KEMAOUT)
+	./$(TARGETDIR)/$(KEMAOUT) $(ARG)
 
 dod: directories $(DODBJECTS)
 	@printf "\ec"
