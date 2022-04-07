@@ -41,24 +41,22 @@ size_t ServerManip::ft_find(string input) {
 
 int ServerManip::check_password(string input, Server* irc_serv, int socket) {
 	string hash;
+	(void)socket;
 	if (input.find("PASS") != std::string::npos) {
 		std::string password = input.substr(strlen("PASS "), input.length() - strlen("PASS "));
 		try {
 			hash = sha256(password);
 		} catch (exception& e) {
-			logError(string("Password does not match."), NULL, e.what());
-			throw ServerFail();
-			return (-1);
+			logError(string("Invalid password"), "", e.what());
+			throw BadPasswd();
 		}
 		if (hash != irc_serv->getHash()) {
-			send(socket, "Unable to log into the server: password incorrect\r\n", strlen("Unable to connect to the server: password incorrect\r\n"), 0);
-			std::cerr << "PasswordIncorrect" << std::endl;
-			return (-1);
+			logError(string("Invalid password"), "", "Bad password");
+			throw BadPasswd();
 		}
 	} else {
-		return (-1);
+		throw BadPasswd();
 	}
-	// cerr << "Password valid" << endl;
 	return (0);
 }
 

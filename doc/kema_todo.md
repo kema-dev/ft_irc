@@ -39,6 +39,6 @@
 
 PASS password
 NICK dOD
-USER dOD 0 * :dOD Lecon
-JOIN #ratio
-PRIVMSG #ratio message to ratio
+USER dod 0 * :dod Lecon
+
+PRIVMSG #ratio tg mec je te
