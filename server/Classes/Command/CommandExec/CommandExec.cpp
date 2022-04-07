@@ -1,18 +1,24 @@
 #include "../Command/Command.hpp"
 
 CommandExec::CommandExec(void) {
+	send_op = new Send();
 	return;
 }
 
 CommandExec::~CommandExec() {
+	delete send_op;
 	return;
 }
 
 void CommandExec::welcome(User* user) {
-	reply(user->getServer(), user->getUid(), RPL_WELCOME_REPLY, "");
-	reply(user->getServer(), user->getUid(), RPL_YOURHOST_REPLY, "");
-	reply(user->getServer(), user->getUid(), RPL_CREATED_REPLY, "");
-	reply(user->getServer(), user->getUid(), RPL_MYINFO_REPLY, "");
+	send_op->reply(user, RPL_WELCOME, HEADER_SERVER, ":Welcome to the Internet Relay Network %s", user->getHostName().c_str());
+	send_op->reply(user, RPL_YOURHOST, HEADER_SERVER, ":Your host is %s, running version %s", user->getHostName().c_str(), "0.0.ratio");
+	// send_op->reply(user, RPL_CREATED, HEADER_SERVER, ":This server was created %s", getTime().c_str());
+	// send_op->reply(user, RPL_MYINFO, HEADER_SERVER, "%s %s %s %s", user->getHostName().c_str(), "0.0.ratio", "none", "none");
+	// reply(user->getServer(), user->getUid(), RPL_WELCOME_REPLY, "");
+	// reply(user->getServer(), user->getUid(), RPL_YOURHOST_REPLY, "");
+	// reply(user->getServer(), user->getUid(), RPL_CREATED_REPLY, "");
+	// reply(user->getServer(), user->getUid(), RPL_MYINFO_REPLY, "");
 }
 
 void CommandExec::join(User* user, vector<string> args) {
@@ -48,14 +54,23 @@ void CommandExec::join(User* user, vector<string> args) {
 			logError("Join command", "Unknown error", e.what());
 			return;
 		}
-		reply(user->getServer(), user->getUid(), JOIN_REPLY, chan);
-		if (user->getServer()->chanDB->search(chan)->getTopic().empty() == true) {
-			reply(user->getServer(), user->getUid(), RPL_NOTOPIC_REPLY, chan);
-		} else {
-			reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, chan);
+		// reply(user->getServer(), user->getUid(), JOIN_REPLY, chan);
+		send_op->reply(user, RPL_CUSTOM, HEADER_CUSTOM, "%s %s", "JOIN", chan.c_str());
+		// if (user->getServer()->chanDB->search(chan)->getTopic().empty() == true) {
+		// 	reply(user->getServer(), user->getUid(), RPL_NOTOPIC_REPLY, chan);
+		// } else {
+		// 	reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, chan);
+		// 	send_op->reply(user, RPL_CUSTOM, HEADER_CUSTOM, "%s %s", " ", chan.c_str());
+		// }
+		send_op->reply(user, RPL_CUSTOM, HEADER_CUSTOM, "%s :%s", chan.c_str(), user->getServer()->chanDB->search(chan)->getTopic().c_str());
+		// reply(user->getServer(), user->getUid(), RPL_NAMEREPLY_REPLY, chan);
+		string users = "";
+		for (vector<string>::iterator it = user->getServer()->chanDB->search(chan)->getNickLst().begin(); it != user->getServer()->chanDB->search(chan)->getNickLst().end(); ++it) {
+			users += *it;
 		}
-		reply(user->getServer(), user->getUid(), RPL_NAMEREPLY_REPLY, chan);
-		reply(user->getServer(), user->getUid(), RPL_ENDOFNAMES_REPLY, chan);
+		send_op->reply(user, RPL_CUSTOM, HEADER_CLIENT, "%s", users.c_str());
+		send_op->reply(user, RPL_ENDOFNAMES, HEADER_CUSTOM, RPL_ENDOFNAMES_FORMAT, chan.c_str());
+		// reply(user->getServer(), user->getUid(), RPL_ENDOFNAMES_REPLY, chan);
 		args.erase(args.begin());
 	}
 	// TODO send JOIN to all channels
@@ -134,127 +149,133 @@ void CommandExec::nick(User* user, vector<string> args) {
 }
 
 void CommandExec::privmsg(User* user, vector<string> args) {
-	if (args.size() < 1) {
-		// TODO send ERR_NORECIPIENT
-		logError("Join command", "Not enough arguments", itos(args.size()));
-		return;
-	} else if (args.size() < 2) {
-		// TODO send ERR_NOTEXTTOSEND
-		logError("Join command", "Not enough arguments", itos(args.size()));
-		return;
-	} else {
-		string msg = args.back();
-		args.pop_back();
-		while (args.empty() == false) {
-			string receiver = *args.begin();
-			string uid = itos(user->getUid());
-			if (receiver.find(':', 0) == 0) {
-				// ? Remaining args are message splices
-				receiver.erase(0, 1);
-				msg = receiver + " " + msg;
-				cerr << endl;
-				args.erase(args.begin());
-				while (args.empty() == false) {
-					msg = *args.begin() + msg;
-					args.erase(args.begin());
-				}
-				continue;
-			}
-			try {
-				user->getServer()->chanDB->search(receiver);
-			} catch (NoSuchChan& e) {
-				// ? Is not a channel
-				try {
-					user->getServer()->userDB->search(receiver);
-				} catch (NoSuchUser& e) {
-					// TODO send ERR_NOSUCHNICK
-					logError("Privmsg to " + receiver, uid, e.what());
-				}
-				// TODO send PRIVMSG <receiver> and mind if <reciever> is away
-				reply_2(user->getServer(), user->getUid(), PRVMSG_U_REPLY, user->getNickName(), msg);
-				args.erase(args.begin());
-				continue;
-			}
-			reply_2(user->getServer(), user->getUid(), PRVMSG_C_REPLY, receiver, msg);
+	(void)user;
+	(void)args;
+	// if (args.size() < 1) {
+	// 	// TODO send ERR_NORECIPIENT
+	// 	logError("Join command", "Not enough arguments", itos(args.size()));
+	// 	return;
+	// } else if (args.size() < 2) {
+	// 	// TODO send ERR_NOTEXTTOSEND
+	// 	logError("Join command", "Not enough arguments", itos(args.size()));
+	// 	return;
+	// } else {
+	// 	string msg = args.back();
+	// 	args.pop_back();
+	// 	while (args.empty() == false) {
+	// 		string receiver = *args.begin();
+	// 		string uid = itos(user->getUid());
+	// 		if (receiver.find(':', 0) == 0) {
+	// 			// ? Remaining args are message splices
+	// 			receiver.erase(0, 1);
+	// 			msg = receiver + " " + msg;
+	// 			cerr << endl;
+	// 			args.erase(args.begin());
+	// 			while (args.empty() == false) {
+	// 				msg = *args.begin() + msg;
+	// 				args.erase(args.begin());
+	// 			}
+	// 			continue;
+	// 		}
+	// 		try {
+	// 			user->getServer()->chanDB->search(receiver);
+	// 		} catch (NoSuchChan& e) {
+	// 			// ? Is not a channel
+	// 			try {
+	// 				user->getServer()->userDB->search(receiver);
+	// 			} catch (NoSuchUser& e) {
+	// 				// TODO send ERR_NOSUCHNICK
+	// 				logError("Privmsg to " + receiver, uid, e.what());
+	// 			}
+	// 			// TODO send PRIVMSG <receiver> and mind if <reciever> is away
+	// 			reply_2(user->getServer(), user->getUid(), PRVMSG_U_REPLY, user->getNickName(), msg);
+	// 			args.erase(args.begin());
+	// 			continue;
+	// 		}
+	// 		reply_2(user->getServer(), user->getUid(), PRVMSG_C_REPLY, receiver, msg);
 
-			args.erase(args.begin());
-		}
-	}
+	// 		args.erase(args.begin());
+	// 	}
+	// }
 }
 
 void CommandExec::topic(User* user, vector<string> args) {
-	string topic;
+	(void)user;
+	(void)args;
+	// string topic;
 
-	if (args.size() < 1) {
-		// TODO send ERR_NEEDMOREPARAMS
-	}
-	else if(args.size() == 1) {
-		// ? Only return the topic of the cannel
-		try {
-			user->getServer()->chanDB->search(*args.begin());
-		}
-		catch (NoSuchChan& e) {
-			logError("Changing topic of " + *args.begin(), "" ,e.what());
-		}
-		if (user->getServer()->chanDB->search(*args.begin())->getTopic().empty())
-			reply(user->getServer(), user->getUid(), RPL_NOTOPIC_REPLY, *args.begin());
-		else
-			reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, *args.begin());
-	}
-	else if(args.size() == 2) {
-		// ? Set the topic
-		if (user->getServer()->userDB->isOper(user->getNickName()) == true)
-		{
+	// if (args.size() < 1) {
+	// 	// TODO send ERR_NEEDMOREPARAMS
+	// }
+	// else if(args.size() == 1) {
+	// 	// ? Only return the topic of the cannel
+	// 	try {
+	// 		user->getServer()->chanDB->search(*args.begin());
+	// 	}
+	// 	catch (NoSuchChan& e) {
+	// 		logError("Changing topic of " + *args.begin(), "" ,e.what());
+	// 	}
+	// 	if (user->getServer()->chanDB->search(*args.begin())->getTopic().empty())
+	// 		reply(user->getServer(), user->getUid(), RPL_NOTOPIC_REPLY, *args.begin());
+	// 	else
+	// 		reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, *args.begin());
+	// }
+	// else if(args.size() == 2) {
+	// 	// ? Set the topic
+	// 	if (user->getServer()->userDB->isOper(user->getNickName()) == true)
+	// 	{
 			
-			if (args.back().find(':') != string::npos)
-			{
-				args.back().erase(0, 1);
-				while (args.empty() == false) {
-					topic = *args.begin() + topic;
-					args.erase(args.begin());
-				}
-			}
-			user->getServer()->chanDB->search(*args.begin())->setTopic(topic);
-		}
-		else
-		{
-			// TODO send ERR_CHANOPRIVSNEEDED
-		}
-		try {
-			user->getServer()->chanDB->search(*args.begin());
-		}
-		catch (NoSuchChan& e) {
-			logError("Changing topic of " + *args.begin(), "" ,e.what());
-		}
-		reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, *args.begin());
-	}
+	// 		if (args.back().find(':') != string::npos)
+	// 		{
+	// 			args.back().erase(0, 1);
+	// 			while (args.empty() == false) {
+	// 				topic = *args.begin() + topic;
+	// 				args.erase(args.begin());
+	// 			}
+	// 		}
+	// 		user->getServer()->chanDB->search(*args.begin())->setTopic(topic);
+	// 	}
+	// 	else
+	// 	{
+	// 		// TODO send ERR_CHANOPRIVSNEEDED
+	// 	}
+	// 	try {
+	// 		user->getServer()->chanDB->search(*args.begin());
+	// 	}
+	// 	catch (NoSuchChan& e) {
+	// 		logError("Changing topic of " + *args.begin(), "" ,e.what());
+	// 	}
+	// 	reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, *args.begin());
+	// }
 }
 
 // ? "3 This server was created <date>"
 #define SEND_RPL_CREATED "3 This server was created %s\r\n"
 
 void CommandExec::oper(User* user, vector<string> args) {
-	if (args.size() != 2) {
-		// TODO send ERR_NEEDMOREPARAMS
-		reply(user->getServer(), user->getUid(), ERR_NEEDMOREPARAMS_REPLY, "OPER");
-		logError("Oper command", "Wrong number of arguments (need 2)", itos(args.size()));
-		return;
-	}
-	string nick = *args.begin();
-	string pass = *(++args.begin());
-	string uid = itos(user->getUid());
-	try {
-		user->getServer()->userDB->search(nick)->becomeOper(*(user->getServer()), pass);
-	} catch (BadPasswd& e) {
-		// TODO send ERR_PASSWDMISMATCH
-		logError("Oper command " + nick, uid, e.what());
-		return;
-	} catch (exception& e) {
-		// * Maybe we should not pass here
-		logError("Oper command " + nick, "Unknown error", e.what());
-		return;
-	}
-	// TODO RPL_YOUREOPER to <user>
+	(void)user;
+	(void)args;
+	// if (args.size() != 2) {
+	// 	// TODO send ERR_NEEDMOREPARAMS
+	// 	reply(user->getServer(), user->getUid(), ERR_NEEDMOREPARAMS_REPLY, "OPER");
+	// 	logError("Oper command", "Wrong number of arguments (need 2)", itos(args.size()));
+	// 	return;
+	// }
+	// string nick = *args.begin();
+	// string pass = *(++args.begin());
+	// string uid = itos(user->getUid());
+	// try {
+	// 	user->getServer()->userDB->search(nick)->becomeOper(*(user->getServer()), pass);
+	// } catch (BadPasswd& e) {
+	// 	// TODO send ERR_PASSWDMISMATCH
+	// 	logError("Oper command " + nick, uid, e.what());
+	// 	return;
+	// } catch (exception& e) {
+	// 	// * Maybe we should not pass here
+	// 	logError("Oper command " + nick, "Unknown error", e.what());
+	// 	return;
+	// }
+	// // TODO RPL_YOUREOPER to <user>
 }
 
 void CommandExec::kick(User* user, vector<string> args) {
