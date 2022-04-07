@@ -299,7 +299,9 @@ class CommandExec {
 		void	part(User* user, vector<string> args);
 		void	quit(User* user, vector<string> args);
 		void	nick(User* user, vector<string> args);
+		void	topic(User *user, vector<string> args);
 		void	privmsg(User* user, vector<string> args);
+		void	welcome(User* user);
 		void	oper(User* user, vector<string> args);
 		void	kick(User* user, vector<string> args);
 		void	away(User* user, vector<string> args);

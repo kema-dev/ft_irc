@@ -106,8 +106,16 @@ void Command::select(string smessage, User* user) {
 				_exec.privmsg(user, _args_v);
 				break;
 			}
-			// case CMD_TOPIC: {
-			// 	_exec.topic(users, _args_v);
+			case CMD_TOPIC: {
+				_exec.topic(user, _args_v);
+				break;
+			}
+			// case CMD_OPER: {
+			// 	_exec.Oper(_args_v, params);
+			// 	break;
+			// }
+			// case CMD_KICK: {
+			// 	_exec.Kick(_args_v, params);
 			// 	break;
 			// }
 			case CMD_OPER: {

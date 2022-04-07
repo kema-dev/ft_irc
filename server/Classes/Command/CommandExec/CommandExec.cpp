@@ -9,10 +9,10 @@ CommandExec::~CommandExec() {
 }
 
 void CommandExec::welcome(User* user) {
-	reply(user->getServer(), user->getUid(), RPL_WELCOME, "");
-	reply(user->getServer(), user->getUid(), RPL_YOURHOST, "");
-	reply(user->getServer(), user->getUid(), RPL_CREATED, "");
-	reply(user->getServer(), user->getUid(), RPL_MYINFO, "");
+	reply(user->getServer(), user->getUid(), RPL_WELCOME_REPLY, "");
+	reply(user->getServer(), user->getUid(), RPL_YOURHOST_REPLY, "");
+	reply(user->getServer(), user->getUid(), RPL_CREATED_REPLY, "");
+	reply(user->getServer(), user->getUid(), RPL_MYINFO_REPLY, "");
 }
 
 void CommandExec::join(User* user, vector<string> args) {
@@ -46,14 +46,14 @@ void CommandExec::join(User* user, vector<string> args) {
 			logError("Join command", "Unknown error", e.what());
 			return;
 		}
-		reply(user->getServer(), user->getUid(), JOIN, chan);
+		reply(user->getServer(), user->getUid(), JOIN_REPLY, chan);
 		if (user->getServer()->chanDB->search(chan)->getTopic().empty() == true) {
-			reply(user->getServer(), user->getUid(), RPL_NOTOPIC, chan);
+			reply(user->getServer(), user->getUid(), RPL_NOTOPIC_REPLY, chan);
 		} else {
-			reply(user->getServer(), user->getUid(), RPL_TOPIC, chan);
+			reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, chan);
 		}
-		reply(user->getServer(), user->getUid(), RPL_NAMEREPLY, chan);
-		reply(user->getServer(), user->getUid(), RPL_ENDOFNAMES, chan);
+		reply(user->getServer(), user->getUid(), RPL_NAMEREPLY_REPLY, chan);
+		reply(user->getServer(), user->getUid(), RPL_ENDOFNAMES_REPLY, chan);
 		args.erase(args.begin());
 	}
 	// TODO send JOIN to all channels
@@ -169,18 +169,63 @@ void CommandExec::privmsg(User* user, vector<string> args) {
 					logError("Privmsg to " + receiver, uid, e.what());
 				}
 				// TODO send PRIVMSG <receiver> and mind if <reciever> is away
+				reply_2(user->getServer(), user->getUid(), PRVMSG_U_REPLY, user->getNickName(), msg);
 				args.erase(args.begin());
 				continue;
 			}
-			vector<string> lst = user->getServer()->chanDB->search(receiver)->getNickLst();
-			for (vector<string>::iterator it = lst.begin(); it != lst.end(); ++it) {
-				args.push_back(*it);
-			}
+			reply_2(user->getServer(), user->getUid(), PRVMSG_C_REPLY, receiver, msg);
+
 			args.erase(args.begin());
 		}
 	}
 }
 
+void CommandExec::topic(User* user, vector<string> args) {
+	string topic;
+
+	if (args.size() < 1) {
+		// TODO send ERR_NEEDMOREPARAMS
+	}
+	else if(args.size() == 1) {
+		// ? Only return the topic of the cannel
+		try {
+			user->getServer()->chanDB->search(*args.begin());
+		}
+		catch (NoSuchChan& e) {
+			logError("Changing topic of " + *args.begin(), "" ,e.what());
+		}
+		if (user->getServer()->chanDB->search(*args.begin())->getTopic().empty())
+			reply(user->getServer(), user->getUid(), RPL_NOTOPIC_REPLY, *args.begin());
+		else
+			reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, *args.begin());
+	}
+	else if(args.size() == 2) {
+		// ? Set the topic
+		if (user->getServer()->userDB->isOper(user->getNickName()) == true)
+		{
+			
+			if (args.back().find(':') != string::npos)
+			{
+				args.back().erase(0, 1);
+				while (args.empty() == false) {
+					topic = *args.begin() + topic;
+					args.erase(args.begin());
+				}
+			}
+			user->getServer()->chanDB->search(*args.begin())->setTopic(topic);
+		}
+		else
+		{
+			// TODO send ERR_CHANOPRIVSNEEDED
+		}
+		try {
+			user->getServer()->chanDB->search(*args.begin());
+		}
+		catch (NoSuchChan& e) {
+			logError("Changing topic of " + *args.begin(), "" ,e.what());
+		}
+		reply(user->getServer(), user->getUid(), RPL_TOPIC_REPLY, *args.begin());
+}
 void CommandExec::oper(User* user, vector<string> args) {
 	if (args.size() != 2) {
 		// TODO send ERR_NEEDMOREPARAMS
