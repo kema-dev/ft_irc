@@ -71,7 +71,7 @@ class Channel {
 	int		isLog(User& usr);
 	// string	getMsgHist(User& usr);
 	vector<string>	getNickLst(void);
-	bool	userBan(User& usr, User& banner);
+	bool	userKick(User& usr, User& banner, string msg);
 	// bool	isOper(string nickname);
 	bool	setPasswd(string pass);
 	// bool	checkOperPasswd(string pass);

@@ -94,6 +94,10 @@ void Command::select(string smessage, User* user) {
 				_exec.nick(user, _args_v);
 				break;
 			}
+			// case CMD_USER: {
+			// 	_exec.user(user, _args_v);
+			// 	break;
+			// }
 			// case CMD_PONG: {
 			// 	// TODO handle it + send PING every minute
 			// 	break;
@@ -114,18 +118,31 @@ void Command::select(string smessage, User* user) {
 			// 	_exec.Kick(_args_v, params);
 			// 	break;
 			// }
+			case CMD_OPER: {
+				_exec.oper(user, _args_v);
+				break;
+			}
+			case CMD_KICK: {
+				_exec.kick(user, _args_v);
+				break;
+			}
 			// case CMD_MODE: {
-			// 	cerr << "MODE" << endl;
-			// 	_exec.Mode(_args_v, params);
+			// 	_exec.mode(user, _args_v);
 			// 	break;
 			// }
+			case CMD_AWAY: {
+				_exec.away(user, _args_v);
+				break;
+			}
+			case CMD_NAMES: {
+				_exec.names(user, _args_v);
+				break;
+			}
 			default: {
 				throw(InvalidCommand());
 			}
 		}
 	} catch (exception& e) {
-		// FIXME catch errors and send specific replies
 		logError("Received command", smessage, e.what());
-		// throw InvalidCommand();
 	}
 }

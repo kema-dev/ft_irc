@@ -11,14 +11,14 @@
 - [x] QUIT
 - [x] NICK
 - [x] USER ***Removed***
-- [x] PONG
+- [x] PONG ***Removed***
 - [ ] PRIVMSG (+ Send to all users of current channel) -> dOD
-- [ ] TOPIC
+- [ ] TOPIC -> dOD
 - [x] OPER
 - [x] KICK
-- [x] MODE
-- [ ] AWAY
-- [ ] NAMES
+- [x] MODE ***Removed***
+- [x] AWAY
+- [x] NAMES
 - [ ] LIST -> dOD
 - [ ] NOTICE -> dOD
 
@@ -36,3 +36,6 @@
 - [ ] free params
 - [ ] test irc client + nc (multi client connections)
 - [ ] join channel = update status of all users connected to the channel
+
+
+

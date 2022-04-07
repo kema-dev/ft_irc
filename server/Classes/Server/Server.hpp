@@ -103,7 +103,7 @@ class Server {
     string  getHash();
     void    acceptConnection(t_KDescriptor *desc,int socket);
 	void	addChan(string name, string pass, string topic);
-    void    handleConnection(t_KDescriptor *desc, time_t *tm);
+    void    handleConnection(t_KDescriptor *desc);
     string  readSocket(int socket);
 	// void	addChan(string name, string pass, string topic, string oper_pass);
     void    addVoidUser( User* user );

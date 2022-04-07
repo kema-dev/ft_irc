@@ -13,23 +13,7 @@ void Server::start(void) {
 
 	struct timespec tmout = {5, 0};
 
-	// time_t	*tm = localtime(&t);
-	// if (tm == NULL) {
-	// 	log("Failed to get local time !");
-	// 	return;
-	// }
-
 	while (_running) {
-		// time_t	*td = localtime(&t);
-		// *td = localtime(&t);
-		// if (td == NULL) {
-		// 	log("Failed to get local time !");
-		// }
-		// if (td->tm_hour >= tm->tm_hour || td->tm_min > tm->tm_min + 1) {
-		// 	log("It's time to ping every user(s) !");
-		// 	sendPing();
-		// 	tm = td;
-		// }
 
 		int eventSize = userDB->getDB().size() + 1;
 		struct kevent mEvents[eventSize];
@@ -75,8 +59,7 @@ void Server::start(void) {
 					if (desc->user->getConnectStatus() == false) {
 						desc->server->acceptConnection(desc, static_cast<int>(tEvents[i].ident));
 					} else {
-						// desc->server->handleConnection(desc, tm);
-						desc->server->handleConnection(desc, NULL);
+						desc->server->handleConnection(desc);
 					}
 				}
 				if (!_running)
@@ -105,8 +88,7 @@ string Server::readSocket(int socket) {
 }
 
 // ? Handle connection
-void Server::handleConnection(t_KDescriptor* desc, time_t *tm) {
-	(void)tm;
+void Server::handleConnection(t_KDescriptor* desc) {
 	string nickname;
 	string input;
 	ssize_t id;
@@ -160,7 +142,7 @@ void Server::handleConnection(t_KDescriptor* desc, time_t *tm) {
 			command->welcome(desc->user);
 			desc->user->setActiveStatus(CONNECTED);
 		}
-		else if (desc->user->getActiveStatus() == CONNECTED) {
+		else if ((desc->user->getActiveStatus() == CONNECTED) || (desc->user->getActiveStatus() == AWAY)) {
 			command->select((*it), desc->user);
 		}
 		it++;
