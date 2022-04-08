@@ -41,24 +41,22 @@ size_t ServerManip::ft_find(string input) {
 
 int ServerManip::check_password(string input, Server* irc_serv, int socket) {
 	string hash;
+	(void)socket;
 	if (input.find("PASS") != std::string::npos) {
 		std::string password = input.substr(strlen("PASS "), input.length() - strlen("PASS "));
 		try {
 			hash = sha256(password);
 		} catch (exception& e) {
-			logError(string("Password does not match."), NULL, e.what());
-			throw ServerFail();
-			return (-1);
+			logError(string("Invalid password"), "", e.what());
+			throw BadPasswd();
 		}
 		if (hash != irc_serv->getHash()) {
-			send(socket, "Unable to log into the server: password incorrect\r\n", strlen("Unable to connect to the server: password incorrect\r\n"), 0);
-			std::cerr << "PasswordIncorrect" << std::endl;
-			return (-1);
+			logError(string("Invalid password"), "", "Bad password");
+			throw BadPasswd();
 		}
 	} else {
-		return (-1);
+		throw BadPasswd();
 	}
-	// cerr << "Password valid" << endl;
 	return (0);
 }
 
@@ -77,15 +75,16 @@ string ServerManip::parseNickname(string input) {
 ssize_t ServerManip::createUser(string input, t_KDescriptor* desc) {
 	ssize_t id;
 	string fullname;
-	char username[25];
-	char hostname[25];
-	char servername[25];
+	char username[26];
+	char hostname[26];
+	char servername[26];
 	string cmd;
 
 	if (input.empty() || desc->user->getNickName().empty())
 		return (-1);
 	cmd = input;
 	cmd.erase(0, strlen("USER "));
+	// ! FIXME this is dangerous
 	sscanf(cmd.c_str(), "%25s %25s %25s", username, hostname, servername);
 	cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
 	if (cmd.find(' ') == string::npos)

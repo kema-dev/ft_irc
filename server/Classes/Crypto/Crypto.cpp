@@ -2,14 +2,13 @@
 
 // ? Hash <str> using SHA256
 string	sha256(string str) {
+	if (str.empty())
+		return "";
 	for (size_t i = 0; str[i]; i++) {
 		if (!(isalnum(str[i]))) {
-			cerr << str[i] << endl;
 			throw (NotAlnum());
 		}
 	}
-	if (str.length() < 1)
-		return "";
 	FILE *fpipe;
 	char *command = new char[string(str).length() + 36]();
 	sprintf(command, "echo %s | shasum -a 256 | tr -d ' -\n'", str.c_str());

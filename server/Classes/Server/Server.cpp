@@ -105,8 +105,17 @@ void Server::handleConnection(t_KDescriptor* desc) {
 			cout << DARK_GRAY << "Input = '" << (*it) << "'" << DEFAULT << endl;
 		}
 		if ((*it).find("PASS") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED) {
-			if (manip->check_password((*it), desc->server, desc->user->getSocket()) != 0) {
-				logError(string("Logging in server"), *it, "Bad password");
+			try {
+				manip->check_password((*it), desc->server, desc->user->getSocket());
+			}
+			catch (exception& e) {
+				Send send;
+				send.reply(desc->user, desc->user, ERR_PASSWDMISMATCH, HEADER_SERVER, ERR_PASSWDMISMATCH_FORMAT);
+				desc->user->setConnectStatus(false);
+				close(desc->user->getSocket());
+				// TODO remove user from userDB and delete user
+				// TODO delete desc
+				// TODO aka close user properly
 				return;
 			}
 		} else if ((*it).find("NICK") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED) {
