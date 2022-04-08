@@ -182,3 +182,18 @@ bool UserDB::removeOper(User& usr) {
 	throw NotLogged();
 	return false;
 }
+
+void	UserDB::removeUser(User& usr)
+{
+	vector<pair<User&, bool> >::iterator it, end;
+	it = _db.begin();
+	end = _db.end();
+	while (it != end) {
+		if (it->first.getNickName() == usr.getNickName()) {
+			_db.erase(it);
+			break;
+		}
+		it++;
+	}
+	delete &usr;
+}

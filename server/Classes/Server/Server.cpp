@@ -47,13 +47,15 @@ void Server::start(void) {
 				t_KDescriptor* desc = reinterpret_cast<t_KDescriptor*>(tEvents[i].udata);
 				if (tEvents[i].flags & EV_EOF) {
 					if (desc->user->getConnectStatus() == true) {
-						close(desc->user->getSocket());
 						desc->user->setConnectStatus(false);
+						close(desc->user->getSocket());
+						this->userDB->removeUser(*desc->user);
 					}
 				} else if (tEvents[i].flags & EV_ERROR) {
 					if (desc->user->getConnectStatus() == true) {
 						close(desc->user->getSocket());
 						desc->user->setConnectStatus(false);
+						this->userDB->removeUser(*desc->user);
 					}
 				} else {
 					if (desc->user->getConnectStatus() == false) {
@@ -73,16 +75,26 @@ void Server::start(void) {
 	}
 }
 
+bool Server::testConnection(s_KDescriptor *desc)
+{
+	char input[256];
+
+	bzero(input, 256);
+	if (recv(desc->user->getSocket(), input, 255, MSG_DONTWAIT) == EAGAIN)
+		return false;
+	return true;
+}
+
 string Server::readSocket(int socket) {
 	char input[256];
 
 	bzero(input, 256);
-	int n = recv(socket, input, 255, MSG_DONTWAIT);
+	int n = recv(socket, input, 255, 0);
 	try {
 		if (n < 0)
 			throw(ReadImpossible());
 	} catch (const ReadImpossible e) {
-		// TODO ERROR RECV
+		logError("Read Socket", itos(socket), e.what());
 	}
 	return (input);
 }
@@ -173,7 +185,7 @@ void Server::acceptConnection(t_KDescriptor* desc, int socket) {
 	desc->user->setSocket(connFd);
 	desc->user->setConnectStatus(true);
 	addVoidUser(desc->user);
-
+	send(desc->user->getSocket(), "Connection established", strlen("Connection established"), 0);
 	cout << "Connection established." << endl;
 }
 
