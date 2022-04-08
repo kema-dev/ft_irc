@@ -19,17 +19,22 @@ void CommandExec::welcome(User* user) {
 
 void CommandExec::join(User* user, vector<string> args) {
 	if (args.size() < 1) {
-		// TODO send ERR_NEEDMOREPARAMS
+		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "JOIN");
 		logError("Join command", "Empty argument", "No channel specified");
 		return;
 	}
 	if (args.size() > 2) {
-		// TODO send ERR_NEEDMOREPARAMS
+		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "JOIN");
 		logError("Join command", "Too much argument", itos(args.size()));
 		return;
 	}
-	string uid = itos(user->getUid());
 	string chan = *args.begin();
+	if (chan.length() < 2 || chan[0] != '#') {
+		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_CLIENT, ERR_NOSUCHCHANNEL_FORMAT, chan.c_str());
+		logError("Join command", "Wrong channel name", chan);
+		return;
+	}
+	string uid = itos(user->getUid());
 	args.erase(args.begin());
 	string pass = "";
 	if (args.empty() == false) {
@@ -46,7 +51,7 @@ void CommandExec::join(User* user, vector<string> args) {
 		logError("Join channel " + chan, uid, e.what());
 		return;
 	} catch (BadPasswd& e) {
-		// TODO send ERR_BADCHANNELKEY
+		send_op->reply(user, user, ERR_PASSWDMISMATCH, HEADER_CLIENT, ERR_PASSWDMISMATCH_FORMAT);
 		logError("Join channel " + chan, uid, e.what());
 		return;
 	} catch (ChanAddFail& e) {
@@ -73,7 +78,6 @@ void CommandExec::join(User* user, vector<string> args) {
 		}
 		users += *it + " ";
 	}
-	// ? "353 ( = / * / @ ) <channel> :[ @ / + ] <nick> *(   [ @ / + ] <nick> )"
 	send_op->reply(user, user, RPL_NAMREPLY, HEADER_SERVER, RPL_NAMREPLY_FORMAT, chan.c_str(), users.c_str());
 	send_op->reply(user, user, RPL_ENDOFNAMES, HEADER_SERVER, RPL_ENDOFNAMES_FORMAT, chan.c_str());
 	// TODO send JOIN to all channels
@@ -153,12 +157,10 @@ void CommandExec::nick(User* user, vector<string> args) {
 
 void CommandExec::privmsg(User* user, vector<string> args) {
 	if (args.size() < 1) {
-		// TODO send ERR_NORECIPIENT
 		send_op->reply(user, user, ERR_NORECIPIENT, HEADER_CLIENT, ERR_NORECIPIENT_FORMAT, "PRIVMSG");
 		logError("Join command", "Not enough arguments", itos(args.size()));
 		return;
 	} else if (args.size() < 2) {
-		// TODO send ERR_NOTEXTTOSEND
 		send_op->reply(user, user, ERR_NOTEXTTOSEND, HEADER_CLIENT, ERR_NOTEXTTOSEND_FORMAT);
 		logError("Join command", "Not enough arguments", itos(args.size()));
 		return;
@@ -182,16 +184,23 @@ void CommandExec::privmsg(User* user, vector<string> args) {
 			try {
 				user->getServer()->userDB->search(receiver);
 			} catch (NoSuchUser& e) {
-				// TODO send ERR_NOSUCHNICK
 				send_op->reply(user, user, ERR_NOSUCHNICK, HEADER_CLIENT, ERR_NOSUCHNICK_FORMAT, receiver.c_str());
 				logError("Privmsg to " + receiver, uid, e.what());
 			}
 			// TODO send PRIVMSG <receiver> and mind if <reciever> is away
+			if (user->getServer()->userDB->search(receiver)->getConnectStatus() == AWAY) {
+				send_op->reply(user, user, RPL_AWAY, HEADER_SERVER, RPL_AWAY_FORMAT, receiver.c_str(), user->getServer()->userDB->search(receiver)->getAwayMessage().c_str());
+			}
 			send_op->reply(user, user->getServer()->userDB->search(receiver), RPL_CUSTOM, HEADER_CLIENT, "PRIVMSG %s :%s\r\n", user->getServer()->userDB->search(receiver)->getNickName().c_str(), msg.c_str());
 			log(string(LIGHT_MAGENTA) + "User " + string(GREEN) + user->getNickName() + string(LIGHT_BLUE) + " sent PRIVMSG to " + string(GREEN) + receiver + string(LIGHT_MAGENTA) + ": " + string(LIGHT_BLUE) + msg + DEFAULT);
 			return;
 		}
 		// ? Is a channel
+		if (user->getServer()->chanDB->search(receiver)->isLog(*user) == UNKNOWN) {
+			send_op->reply(user, user, ERR_NOTONCHANNEL, HEADER_CLIENT, ERR_NOTONCHANNEL_FORMAT, receiver.c_str());
+			logError("Privmsg to " + receiver, uid, "User is not in channel");
+			return;
+		}
 		vector<string> users_v = user->getServer()->chanDB->search(receiver)->getNickLst();
 		for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
 			if (*it == user->getNickName()) {
@@ -365,29 +374,33 @@ void CommandExec::away(User* user, vector<string> args) {
 
 void CommandExec::names(User* user, vector<string> args) {
 	if (args.size() == 0) {
-		// TODO send ERR_NEEDMOREPARAMS
-		string str = "461 NAMES :Not enough parameters\r\n";
-		send(user->getSocket(), str.c_str(), str.size(), MSG_DONTWAIT);
-		// "<command> :Not enough parameters"
+		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "NAMES");
 		logError("Names command", "Empty argument", "No channel specified");
 		return;
 	}
-	while (args.empty() == false) {
-		string chan = *args.begin();
-		string uid = itos(user->getUid());
-		vector<string> lst;
-		try {
-			lst = user->getServer()->chanDB->search(chan)->getNickLst();
-		} catch (NoSuchChan& e) {
-			// TODO send ERR_NOSUCHCHANNEL
-			logError("Part from channel " + chan, "No such channel", e.what());
-			args.erase(args.begin());
-			continue;
-		}
-		for (vector<string>::iterator it = lst.begin(); it != lst.end(); ++it) {
-			// TODO send RPL_NAMREPLY of <arg> channel
-		}
-		args.erase(args.begin());
+	else if (args.size() > 1) {
+		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "NAMES");
+		logError("Names command", "Too much arguments", itos(args.size()));
+		return;
 	}
-	// TODO send RPL_ENDOFNAMES
+	string chan = *args.begin();
+	string uid = itos(user->getUid());
+	vector<string> lst;
+	try {
+		lst = user->getServer()->chanDB->search(chan)->getNickLst();
+	} catch (NoSuchChan& e) {
+		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_CLIENT, ERR_NOSUCHCHANNEL_FORMAT, chan.c_str());
+		logError("Names from channel " + chan, "No such channel", e.what());
+		return;
+	}
+	string users = "";
+	vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
+	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
+		if (user->getServer()->userDB->isOper(user->getServer()->userDB->search(*it)->getNickName()) == true) {
+			users += "@";
+		}
+		users += *it + " ";
+	}
+	send_op->reply(user, user, RPL_NAMREPLY, HEADER_SERVER, RPL_NAMREPLY_FORMAT, chan.c_str(), users.c_str());
+	send_op->reply(user, user, RPL_ENDOFNAMES, HEADER_SERVER, RPL_ENDOFNAMES_FORMAT, chan.c_str());
 }

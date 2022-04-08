@@ -38,7 +38,7 @@
 - [ ] join channel = update status of all users connected to the channel
 
 PASS password
-NICK dOD
+NICK dod
 USER dod 0 * :dod Lecon
 
 PRIVMSG #ratio tg mec je te
