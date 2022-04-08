@@ -72,6 +72,7 @@ class   UserDB {
 	bool	setOperPasswd(string oper_pass);
 	bool	addOper(User& usr);
 	bool	removeOper(User& usr);
+	void	removeUser(User& usr);
     vector<pair<User&, bool> > getDB();
 
 };

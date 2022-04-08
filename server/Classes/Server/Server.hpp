@@ -105,6 +105,7 @@ class Server {
 	void	addChan(string name, string pass, string topic);
     void    handleConnection(t_KDescriptor *desc);
     string  readSocket(int socket);
+	bool	testConnection(s_KDescriptor *desc);
 	// void	addChan(string name, string pass, string topic, string oper_pass);
     void    addVoidUser( User* user );
 	ssize_t	addUser(t_KDescriptor *desc, string username, string fullname, string hostname, string servername);
