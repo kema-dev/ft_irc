@@ -32,3 +32,4 @@ Commands:
 PASS password
 NICK jej
 USER jjourdan 0 * :Jeremy Jourdan
+JOIN #test

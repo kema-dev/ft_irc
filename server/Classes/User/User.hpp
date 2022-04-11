@@ -144,6 +144,7 @@ class User {
 	public:
 	User(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket);
     User();
+	User(User &user);
 	~User() {};
 
 	
@@ -180,6 +181,7 @@ class User {
 	void	sendMessage(string content, Channel& chan);
 	void	joinChannel(Channel& chan, string pass);
 	void	tryJoinChannel(string name, string pass, string topic, Server* server);
+	void	tryPartChannel(string name, string chan, Server* server);
 	void	kick(User& usr, Channel& chan, string msg);
 	void	getKicked(Channel& chan, User& banner, string msg);
 	void	setPasswd(Server& serv, string pass);

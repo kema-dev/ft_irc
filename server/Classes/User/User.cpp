@@ -16,6 +16,22 @@ User::User() {
 	_away_msg = "";
 }
 
+User::User(User &user)
+{
+	_server = user.getServer();
+	_username = user.getUserName();
+	_fullname = user.getFullName();
+	_nickname = user.getNickName();
+	_hostname = user.getHostName();
+	_servername = user.getServerName();
+	_socket = user.getSocket();
+	_uid = user.getUid();
+	_nb_msg = user.getNbMsg();
+	_active_status = user.getActiveStatus();
+	_connected = user.getConnectStatus();
+	_away_msg = user.getAwayMessage();
+}
+
 // ? Create a user
 User::User(string username, string fullname, string nickname, string hostname, string servername, Server* server, int socket) {
 	if (username == "") {
@@ -252,6 +268,30 @@ void User::tryJoinChannel(string name, string pass, string topic, Server* server
 		return;
 	}
 	throw BadPasswd();
+	return;
+}
+
+void	User::tryPartChannel(string name, string chan, Server* server)
+{
+	if (this->getActiveStatus() != CONNECTED) {
+		throw NotLoggedGlobal();
+		return;
+	}
+	try {
+		server->chanDB->search(chan);
+	} catch (NoSuchChan& e) {
+		logError("Channel part", chan, e.what());
+		throw NoSuchChan();
+		return;
+	}
+	try{
+		if (server->chanDB->search(chan)->userLeave(*server->userDB->search(name)) == false)
+			throw NotInChan();
+	}
+	catch (exception &e){
+		throw NotInChan();
+		return;
+	}
 	return;
 }
 

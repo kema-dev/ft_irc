@@ -63,7 +63,10 @@ void CommandExec::join(User* user, vector<string> args) {
 		logError("Join command", "Unknown error", e.what());
 		return;
 	}
-	send_op->reply(user, user, RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "JOIN", chan.c_str());
+	vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
+	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
+		send_op->reply(user, user->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "JOIN", chan.c_str());
+	}
 	if (user->getServer()->chanDB->search(chan)->getTopic().empty() == true) {
 		send_op->reply(user, user, RPL_TOPIC, HEADER_SERVER, RPL_NOTOPIC_FORMAT, chan.c_str());
 	}
@@ -71,7 +74,7 @@ void CommandExec::join(User* user, vector<string> args) {
 		send_op->reply(user, user, RPL_TOPIC, HEADER_SERVER, RPL_TOPIC_FORMAT, chan.c_str(), user->getServer()->chanDB->search(chan)->getTopic().c_str());
 	}
 	string users = "";
-	vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
+	// vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
 	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
 		if (user->getServer()->userDB->isOper(user->getServer()->userDB->search(*it)->getNickName()) == true) {
 			users += "@";
@@ -80,39 +83,54 @@ void CommandExec::join(User* user, vector<string> args) {
 	}
 	send_op->reply(user, user, RPL_NAMREPLY, HEADER_SERVER, RPL_NAMREPLY_FORMAT, chan.c_str(), users.c_str());
 	send_op->reply(user, user, RPL_ENDOFNAMES, HEADER_SERVER, RPL_ENDOFNAMES_FORMAT, chan.c_str());
-	// TODO send JOIN to all channels
 }
 
 void CommandExec::part(User* user, vector<string> args) {
-	if (args.size() == 0) {
-		// TODO send ERR_NEEDMOREPARAMS
-		logError("Join command", "Empty argument", "No channel specified");
+	if (args.size() < 1) {
+		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "PART");
+		logError("Part command", "Empty argument", "No channel specified");
 		return;
 	}
-	while (args.empty() == false) {
-		string chan = *args.begin();
-		string uid = itos(user->getUid());
-		try {
-			user->getServer()->chanDB->search(chan)->userLeave(*user);
-		} catch (NoSuchChan& e) {
-			// TODO send ERR_NOSUCHCHANNEL
-			logError("Part from channel " + chan, "No such channel", e.what());
-			continue;
-		} catch (NotLoggedGlobal& e) {
-			// * Maybe we should not pass here
-			logError("Part from channel " + chan, uid, e.what());
-			return;
-		} catch (NotInChan& e) {
-			// TODO send ERR_NOTONCHANNEL
-			logError("Part from channel " + chan, uid, e.what());
-			return;
-		} catch (exception& e) {
-			logError("Part from channel " + chan, "Unknown error", e.what());
-			return;
-		}
-		args.erase(args.begin());
+	if (args.size() > 2) {
+		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "PART");
+		logError("Part command", "Too much argument", itos(args.size()));
+		return;
 	}
-	// TODO send PART to all channels
+	string chan = *args.begin();
+	if (chan.length() < 2 || chan[0] != '#') {
+		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_CLIENT, ERR_NOSUCHCHANNEL_FORMAT, chan.c_str());
+		logError("Part command", "Wrong channel name", chan);
+		return;
+	}
+	string uid = itos(user->getUid());
+	User *userCpy = new User(*user);
+	try {
+		user->tryPartChannel(user->getNickName(), chan, user->getServer());
+	} catch (NotLoggedGlobal& e) {
+		// * Maybe we should not pass here
+		logError("Part channel " + chan, uid, e.what());
+		return;
+	} catch (NoSuchChan& e) {
+		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_CLIENT, ERR_NOSUCHCHANNEL_FORMAT);
+		logError("Part channel " + chan, uid, e.what());
+		return;
+	} catch (NotInChan& e) {
+		send_op->reply(user, user, ERR_NOTONCHANNEL, HEADER_CLIENT, ERR_NOTONCHANNEL_FORMAT);
+		logError("Part channel " + chan, uid, e.what());
+		return;
+	} catch (exception& e) {
+		// * Maybe we should not pass here
+		logError("Part command", "Unknown error", e.what());
+		return;
+	}
+	send_op->reply(userCpy, userCpy, RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "PART", chan.c_str());
+
+	vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
+	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
+		if (user->getServer()->userDB->search(*it)->getSocket() != userCpy->getSocket())
+			send_op->reply(userCpy, user->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "PART", chan.c_str());
+	}
+	delete userCpy;
 }
 
 void CommandExec::quit(User* user, vector<string> args) {
@@ -224,7 +242,8 @@ void CommandExec::topic(User* user, vector<string> args) {
 	string topic;
 
 	if (args.size() < 1) {
-		// TODO send ERR_NEEDMOREPARAMS
+		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "PART");
+		logError("Part command", "Empty argument", "No channel specified");
 	}
 	else if(args.size() == 1) {
 		// ? Only return the topic of the cannel
