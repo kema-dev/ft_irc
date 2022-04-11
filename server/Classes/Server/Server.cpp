@@ -185,7 +185,7 @@ void Server::acceptConnection(t_KDescriptor* desc, int socket) {
 	desc->user->setSocket(connFd);
 	desc->user->setConnectStatus(true);
 	addVoidUser(desc->user);
-	send(desc->user->getSocket(), "Connection established", strlen("Connection established"), 0);
+	// send(desc->user->getSocket(), "Connection established", strlen("Connection established"), 0);
 	cout << "Connection established." << endl;
 }
 

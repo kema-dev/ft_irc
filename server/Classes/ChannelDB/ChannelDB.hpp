@@ -62,7 +62,6 @@ class ChannelDB {
 	Channel*	search(Channel& chan);
 	Channel*	search(string name);
 	void		chkDuplicate(string name);
-	void		logOut(User& usr);
 };
 
 #endif

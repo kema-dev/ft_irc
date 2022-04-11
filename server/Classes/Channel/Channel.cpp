@@ -94,11 +94,10 @@ bool	Channel::userLeave(User& usr) {
 	vector<pair<User&, int> >::iterator	it, end;
 	it = _log.begin();
 	end = _log.end();
-	ssize_t	id = usr.getUid();
 	while (it != end) {
-		if (it->first.getUid() == id) {
-			_log.erase(it);
+		if (it->first.getNickName() == usr.getNickName()) {
 			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
+			_log.erase(it);
 			return true;
 		}
 		it++;

@@ -18,7 +18,7 @@ using namespace std;
 // ? "3 This server was created <date>"
 #define RPL_CREATED_FORMAT "This server was created on %s\r\n"
 // ? "4 <servername> <version> <available user modes> <available channel modes>"
-#define RPL_MYINFO_FORMAT "Host:%s Version:%s User modes:%s Channel modes:%s\r\n"
+#define RPL_MYINFO_FORMAT "Host: %s; Version: %s; User modes: %s; Channel modes: %s;\r\n"
 // ? "5 Try server <server name>, port <port number>"
 #define RPL_BOUNCE_FORMAT "Try server %s, port %s\r\n"
 // ? "200 Link <version & debug level> <destination> <next server> V<protocol version> <link uptime in seconds> <backstream sendq> <upstream sendq>"
