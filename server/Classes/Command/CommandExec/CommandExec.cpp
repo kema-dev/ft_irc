@@ -237,13 +237,11 @@ void CommandExec::privmsg(User* user, vector<string> args) {
 }
 
 void CommandExec::topic(User* user, vector<string> args) {
-	(void)user;
-	(void)args;
 	string topic;
-
+	string chan;
 	if (args.size() < 1) {
 		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "PART");
-		logError("Part command", "Empty argument", "No channel specified");
+		logError("Topic command", "Empty argument", "No channel specified");
 	}
 	else if(args.size() == 1) {
 		// ? Only return the topic of the cannel
@@ -253,37 +251,53 @@ void CommandExec::topic(User* user, vector<string> args) {
 		catch (NoSuchChan& e) {
 			logError("Changing topic of " + *args.begin(), "" ,e.what());
 		}
-		if (user->getServer()->chanDB->search(*args.begin())->getTopic().empty())
-			reply(user->getServer(), user->getUid(), STR_RPL_NOTOPIC_REPLY, *args.begin());
+		if (user->getServer()->chanDB->search(*args.begin())->getTopic().empty() == false)
+			send_op->reply(user, user, RPL_TOPIC, HEADER_SERVER, RPL_TOPIC_FORMAT, (*args.begin()).c_str(), user->getServer()->chanDB->search(*args.begin())->getTopic().c_str());
 		else
-			reply(user->getServer(), user->getUid(), STR_RPL_TOPIC_REPLY, *args.begin());
+			send_op->reply(user, user, RPL_TOPIC, HEADER_SERVER, RPL_NOTOPIC_FORMAT, (*args.begin()).c_str());
 	}
-	else if(args.size() == 2) {
+	else if(args.size() >= 2) {
 		// ? Set the topic
-		if (user->getServer()->userDB->isOper(user->getNickName()) == true)
-		{
-			
-			if (args.back().find(':') != string::npos)
-			{
-				args.back().erase(0, 1);
-				while (args.empty() == false) {
-					topic = *args.begin() + topic;
-					args.erase(args.begin());
-				}
-			}
-			user->getServer()->chanDB->search(*args.begin())->setTopic(topic);
-		}
-		else
-		{
-			// TODO send ERR_CHANOPRIVSNEEDED
-		}
 		try {
 			user->getServer()->chanDB->search(*args.begin());
 		}
 		catch (NoSuchChan& e) {
 			logError("Changing topic of " + *args.begin(), "" ,e.what());
+			return;
 		}
-		reply(user->getServer(), user->getUid(), STR_RPL_TOPIC_REPLY, *args.begin());
+		try {
+			if (user->getServer()->chanDB->search(*args.begin())->isLog(*user) != CONNECTED)
+				throw NotInChan();
+		}
+		catch (NotInChan& e) {
+			send_op->reply(user, user, ERR_NOTONCHANNEL, HEADER_CLIENT, ERR_NOTONCHANNEL_FORMAT, "PART");
+			logError("Topic command", "Is Logged to channel", e.what());
+			return;
+		}
+		if (user->getServer()->userDB->isOper(user->getNickName()) == true) {
+			chan = *args.begin();
+			args.erase(args.begin());
+			size_t i = 0;	
+			if (args[0].find(':') != string::npos) {
+				args.begin()->erase(0, 1);
+				while (i <= (args.size() - 1)) {
+					topic += args[i] + " ";
+					i++;
+				}
+			}
+			else
+				topic = args[0];
+			user->getServer()->chanDB->search(chan)->setTopic(topic);
+		}
+		else {
+			send_op->reply(user, user, ERR_CHANOPRIVSNEEDED, HEADER_CLIENT, ERR_CHANOPRIVSNEEDED_FORMAT, "TOPIC");
+			logError("Topic command", "Op required", "User don't have op rights");
+			return;
+		}
+		vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
+		for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
+			send_op->reply(user, user->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "TOPIC %s :%s\r\n", chan.c_str(), topic.c_str());
+		}
 	}
 }
 
