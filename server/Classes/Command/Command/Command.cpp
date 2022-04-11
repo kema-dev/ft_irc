@@ -87,7 +87,7 @@ void Command::select(string smessage, User* user) {
 				_exec.part(user, _args_v);
 				break;
 			}
-			case CMD_QUIT: {
+			case CMD_QUIT: { // TODO
 				_exec.quit(user, _args_v);
 				break;
 			}
@@ -99,10 +99,9 @@ void Command::select(string smessage, User* user) {
 			// 	_exec.user(user, _args_v);
 			// 	break;
 			// }
-			// case CMD_PONG: {
-			// 	// TODO handle it + send PING every minute
-			// 	break;
-			// }
+			case CMD_PONG: {
+				break;
+			}
 			case CMD_PRIVMSG: {
 				_exec.privmsg(user, _args_v);
 				break;
@@ -119,23 +118,22 @@ void Command::select(string smessage, User* user) {
 			// 	_exec.Kick(_args_v, params);
 			// 	break;
 			// }
-			case CMD_OPER: {
+			case CMD_OPER: { // TODO
 				_exec.oper(user, _args_v);
 				break;
 			}
-			case CMD_KICK: {
+			case CMD_KICK: { // TODO
 				_exec.kick(user, _args_v);
 				break;
 			}
-			// case CMD_MODE: {
-			// 	_exec.mode(user, _args_v);
-			// 	break;
-			// }
-			case CMD_AWAY: {
+			case CMD_MODE: {
+				break;
+			}
+			case CMD_AWAY: { // TODO
 				_exec.away(user, _args_v);
 				break;
 			}
-			case CMD_NAMES: {
+			case CMD_NAMES: { // TODO
 				_exec.names(user, _args_v);
 				break;
 			}
