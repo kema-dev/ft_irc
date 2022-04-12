@@ -10,15 +10,12 @@
 - [x] PART
 - [x] QUIT
 - [x] NICK
-- [x] USER ***Removed***
-- [x] PONG ***Removed***
-- [ ] PRIVMSG (+ Send to all users of current channel) -> dOD
-- [ ] TOPIC -> dOD
+- [x] PRIVMSG
+- [x] TOPIC
 - [x] OPER
 - [x] KICK
-- [x] MODE ***Removed***
-- [x] AWAY
-- [x] NAMES
+- [ ] AWAY -> jej
+- [ ] NAMES -> jej
 - [ ] LIST -> dOD
 - [ ] NOTICE -> dOD
 
@@ -38,7 +35,6 @@
 - [ ] join channel = update status of all users connected to the channel
 
 PASS password
-NICK dod
-USER dod 0 * :dod Lecon
-
-PRIVMSG #ratio tg mec je te
+NICK jej
+USER jjourdan 0 * : Jeremy Jourdan
+JOIN #test

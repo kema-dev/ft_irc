@@ -303,9 +303,11 @@ void User::kick(User& usr, Channel& chan, string msg) {
 	}
 	if (chan.isLog(usr) != true) {
 		throw NotLogged();
+		return;
 	}
-	if (usr.getServer()->userDB->isOper(usr.getNickName()) != true) {
+	if (usr.getServer()->userDB->isOper(_nickname) != true) {
 		throw BadRole();
+		return;
 	}
 	usr.getKicked(chan, *this, msg);
 	return;

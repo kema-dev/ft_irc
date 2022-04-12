@@ -115,6 +115,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 		if ((*it).empty() == false) {
 			cout << "-----------------" << endl;
 			cout << DARK_GRAY << "Input = '" << (*it) << "'" << DEFAULT << endl;
+			// cout << desc->user->getActiveStatus() << endl;
 		}
 		if ((*it).find("PASS") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED) {
 			try {
@@ -165,6 +166,10 @@ void Server::handleConnection(t_KDescriptor* desc) {
 		}
 		else if ((desc->user->getActiveStatus() == CONNECTED) || (desc->user->getActiveStatus() == AWAY)) {
 			command->select((*it), desc->user);
+		}
+		else if (desc->user->getActiveStatus() == BANNED)
+		{
+			cout << desc->user->getNickName() << " is banned." << endl;
 		}
 		it++;
 	}

@@ -95,10 +95,6 @@ void Command::select(string smessage, User* user) {
 				_exec.nick(user, _args_v);
 				break;
 			}
-			// case CMD_USER: {
-			// 	_exec.user(user, _args_v);
-			// 	break;
-			// }
 			case CMD_PONG: {
 				break;
 			}
@@ -110,14 +106,6 @@ void Command::select(string smessage, User* user) {
 				_exec.topic(user, _args_v);
 				break;
 			}
-			// case CMD_OPER: {
-			// 	_exec.Oper(_args_v, params);
-			// 	break;
-			// }
-			// case CMD_KICK: {
-			// 	_exec.Kick(_args_v, params);
-			// 	break;
-			// }
 			case CMD_OPER: { // TODO
 				_exec.oper(user, _args_v);
 				break;

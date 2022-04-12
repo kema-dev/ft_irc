@@ -74,7 +74,6 @@ void CommandExec::join(User* user, vector<string> args) {
 		send_op->reply(user, user, RPL_TOPIC, HEADER_SERVER, RPL_TOPIC_FORMAT, chan.c_str(), user->getServer()->chanDB->search(chan)->getTopic().c_str());
 	}
 	string users = "";
-	// vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
 	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
 		if (user->getServer()->userDB->isOper(user->getServer()->userDB->search(*it)->getNickName()) == true) {
 			users += "@";
@@ -217,7 +216,7 @@ void CommandExec::privmsg(User* user, vector<string> args) {
 				send_op->reply(user, user, ERR_NOSUCHNICK, HEADER_CLIENT, ERR_NOSUCHNICK_FORMAT, receiver.c_str());
 				logError("Privmsg to " + receiver, uid, e.what());
 			}
-			// TODO send PRIVMSG <receiver> and mind if <reciever> is away
+			// TODO send PRIVMSG <receiver> and mind if <receiver> is away
 			if (user->getServer()->userDB->search(receiver)->getConnectStatus() == AWAY) {
 				send_op->reply(user, user, RPL_AWAY, HEADER_SERVER, RPL_AWAY_FORMAT, receiver.c_str(), user->getServer()->userDB->search(receiver)->getAwayMessage().c_str());
 			}
@@ -302,7 +301,7 @@ void CommandExec::topic(User* user, vector<string> args) {
 			user->getServer()->chanDB->search(chan)->setTopic(topic);
 		}
 		else {
-			send_op->reply(user, user, ERR_CHANOPRIVSNEEDED, HEADER_CLIENT, ERR_CHANOPRIVSNEEDED_FORMAT, "TOPIC");
+			send_op->reply(user, user, ERR_CHANOPRIVSNEEDED, HEADER_CLIENT, ERR_CHANOPRIVSNEEDED_FORMAT, chan.c_str());
 			logError("Topic command", "Op required", "User don't have op rights");
 			return;
 		}
@@ -310,6 +309,7 @@ void CommandExec::topic(User* user, vector<string> args) {
 		for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
 			send_op->reply(user, user->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "TOPIC %s :%s\r\n", chan.c_str(), topic.c_str());
 		}
+
 	}
 }
 
@@ -317,34 +317,32 @@ void CommandExec::topic(User* user, vector<string> args) {
 #define SEND_RPL_CREATED "3 This server was created %s\r\n"
 
 void CommandExec::oper(User* user, vector<string> args) {
-	(void)user;
-	(void)args;
-	// if (args.size() != 2) {
-	// 	// TODO send ERR_NEEDMOREPARAMS
-	// 	reply(user->getServer(), user->getUid(), ERR_NEEDMOREPARAMS_REPLY, "OPER");
-	// 	logError("Oper command", "Wrong number of arguments (need 2)", itos(args.size()));
-	// 	return;
-	// }
-	// string nick = *args.begin();
-	// string pass = *(++args.begin());
-	// string uid = itos(user->getUid());
-	// try {
-	// 	user->getServer()->userDB->search(nick)->becomeOper(*(user->getServer()), pass);
-	// } catch (BadPasswd& e) {
-	// 	// TODO send ERR_PASSWDMISMATCH
-	// 	logError("Oper command " + nick, uid, e.what());
-	// 	return;
-	// } catch (exception& e) {
-	// 	// * Maybe we should not pass here
-	// 	logError("Oper command " + nick, "Unknown error", e.what());
-	// 	return;
-	// }
-	// // TODO RPL_YOUREOPER to <user>
+	if (args.size() != 2) {
+		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_SERVER, ERR_NEEDMOREPARAMS_FORMAT);
+		logError("Oper command", "Wrong number of arguments (need 2)", itos(args.size()));
+		return;
+	}
+	string nick = *args.begin();
+	string pass = *(++args.begin());
+	string uid = itos(user->getUid());
+	try {
+		user->getServer()->userDB->search(nick)->becomeOper(*(user->getServer()), pass);
+	} catch (BadPasswd& e) {
+		send_op->reply(user, user, ERR_PASSWDMISMATCH, HEADER_SERVER, ERR_PASSWDMISMATCH_FORMAT);
+		logError("Oper command " + nick, uid, e.what());
+		return;
+	} catch (exception& e) {
+		// * Maybe we should not pass here
+		logError("Oper command " + nick, "Unknown error", e.what());
+		return;
+	}
+	//TODO send to all the server
+	send_op->reply(user, user, RPL_YOUREOPER, HEADER_SERVER, RPL_YOUREOPER_FORMAT);
 }
 
 void CommandExec::kick(User* user, vector<string> args) {
 	if (args.size() < 2) {
-		// TODO send ERR_NEEDMOREPARAMS
+		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_SERVER, ERR_NEEDMOREPARAMS_FORMAT, "KICK");
 		logError("Oper command", "Not enough arguments", itos(args.size()));
 		return;
 	}
@@ -354,26 +352,28 @@ void CommandExec::kick(User* user, vector<string> args) {
 	args.erase(args.begin());
 	string msg = "";
 	while (args.empty() == false) {
-		msg += *args.begin();
+		msg += *args.begin() + " ";
 		args.erase(args.begin());
 	}
+	User *userCpy = new User(*user->getServer()->userDB->search(target));
 	string uid = itos(user->getUid());
 	try {
 		user->getServer()->userDB->search(user->getNickName())->kick(*(user->getServer()->userDB->search(target)), *(user->getServer()->chanDB->search(chan)), msg);
+		// user->getServer()->chanDB->search(chan)->userLeave(*user->getServer()->userDB->search(target));
 	} catch (NoSuchChan& e) {
-		// TODO send ERR_NOSUCHCHANNEL
+		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_SERVER, ERR_NOSUCHCHANNEL_FORMAT, chan.c_str());
 		logError("Kick command " + chan, uid, e.what());
 		return;
 	} catch (NoSuchUser& e) {
-		// TODO send ERR_NOSUCHNICK
+		send_op->reply(user, user, ERR_NOSUCHNICK, HEADER_SERVER, ERR_NOSUCHNICK_FORMAT, user->getNickName().c_str());
 		logError("Kick command " + target, uid, e.what());
 		return;
 	} catch (BadRole& e) {
-		// TODO send ERR_CHANOPRIVSNEEDED
+		send_op->reply(user, user, ERR_CHANOPRIVSNEEDED, HEADER_SERVER, ERR_CHANOPRIVSNEEDED_FORMAT, chan.c_str());
 		logError("Kick command " + target, uid, e.what());
 		return;
 	} catch (NotLogged& e) {
-		// TODO send ERR_NOTONCHANNEL
+		send_op->reply(user, user, ERR_NOTONCHANNEL, HEADER_SERVER, ERR_NOTONCHANNEL_FORMAT, chan.c_str());
 		logError("Kick command " + target, uid, e.what());
 		return;
 	} catch (exception& e) {
@@ -381,7 +381,12 @@ void CommandExec::kick(User* user, vector<string> args) {
 		logError("Kick command " + target, "Unknown error", e.what());
 		return;
 	}
-	// TODO send KICK to <user>
+	send_op->reply(user, userCpy, RPL_CUSTOM, HEADER_CLIENT, "%s %s %s %s\r\n", "KICK", chan.c_str(), target.c_str(), msg.c_str());
+	vector<string> users_v = userCpy->getServer()->chanDB->search(chan)->getNickLst();
+	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
+		send_op->reply(user, userCpy->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "%s %s %s %s\r\n", "KICK", chan.c_str(), target.c_str(), msg.c_str());
+	}
+	delete userCpy;
 }
 
 void CommandExec::away(User* user, vector<string> args) {

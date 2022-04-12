@@ -73,7 +73,7 @@ void	Channel::setTopic(string topic) {
 
 // ? Make <usr> log to channel <this> using password <pass>
 bool	Channel::userJoin(User& usr, string pass) {
-	if (usr.getActiveStatus() != true) {
+	if (usr.getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return false;
 	}
@@ -87,7 +87,7 @@ bool	Channel::userJoin(User& usr, string pass) {
 
 // ? Make <usr> leave channel channel <this>
 bool	Channel::userLeave(User& usr) {
-	if (usr.getActiveStatus() != true) {
+	if (usr.getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return false;
 	}
@@ -182,8 +182,11 @@ vector<string>	Channel::getNickLst(void) {
 	it = _log.begin();
 	end = _log.end();
 	while (it != end) {
-		if (it->second != CONNECTED)
+		if (it->first.getActiveStatus() != CONNECTED)
+		{	
+			it++;
 			continue;
+		}
 		vec.push_back(it->first.getNickName());
 		it++;
 	}
@@ -202,7 +205,8 @@ bool	Channel::userKick(User& usr, User& banner, string msg) {
 	ssize_t	id = usr.getUid();
 	while (it != end) {
 		if (it->first.getUid() == id) {
-			it->second = BANNED;
+			it->first.setActiveStatus(BANNED);
+			_log.erase(it);
 			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been kicked from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(LIGHT_BLUE) + string(" by ") + string(RED) + string(banner.getNickName()) + string(LIGHT_BLUE) + string(" with message ") + string(RED) + msg + string(DEFAULT));
 			return true;
 		}
@@ -210,6 +214,14 @@ bool	Channel::userKick(User& usr, User& banner, string msg) {
 	}
 	return false;
 }
+
+// ? Set channel <this> password
+bool	Channel::setPasswd(string pass) {
+	_hash = sha256(pass);
+	return true;
+}
+
+// ANCHOR Channel opers KEKW
 
 // // ? Check if <usr> has operator permissions for channel <this>
 // bool	Channel::isOper(string nickname) {
@@ -228,12 +240,6 @@ bool	Channel::userKick(User& usr, User& banner, string msg) {
 // 	}
 // 	return false;
 // }
-
-// ? Set channel <this> password
-bool	Channel::setPasswd(string pass) {
-	_hash = sha256(pass);
-	return true;
-}
 
 // // ? Check if <pass> matches channel <this> operator password
 // bool	Channel::checkOperPasswd(string pass) {
