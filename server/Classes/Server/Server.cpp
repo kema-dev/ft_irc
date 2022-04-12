@@ -126,9 +126,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 				send.reply(desc->user, desc->user, ERR_PASSWDMISMATCH, HEADER_SERVER, ERR_PASSWDMISMATCH_FORMAT);
 				desc->user->setConnectStatus(false);
 				close(desc->user->getSocket());
-				// TODO remove user from userDB and delete user
-				// TODO delete desc
-				// TODO aka close user properly
+				this->userDB->removeUser(*desc->user);
 				return;
 			}
 		} else if ((*it).find("NICK") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED) {
@@ -141,6 +139,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 				userDB->chkNickDuplicate(nickname);
 			} catch (exception& e) {
 				logError(string("Creating user"), nickname, e.what());
+				//TODO send proper errors ERR_NONICKNAMEGIVEN, ERR_ERRONEUSNICKNAME, ERR_NICKNAMEINUSE and ERR_NICKCOLLISION
 				// throw UserAddFail();
 				return;
 			}
@@ -156,6 +155,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 				desc->server->userDB->search(id)->logIn(*desc->server);
 			} catch (exception& e) {
 				string str = static_cast<ostringstream*>(&(ostringstream() << desc->user->getUid()))->str();
+				//TODO send proper errors ERR_NEEDMOREPARAMS and ERR_ALREADYREGISTRED
 				logError(string("Logging in server"), str, e.what());
 				return;
 			}
