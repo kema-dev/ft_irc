@@ -122,8 +122,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 				manip->check_password((*it), desc->server, desc->user->getSocket());
 			}
 			catch (exception& e) {
-				Send send;
-				send.reply(desc->user, desc->user, ERR_PASSWDMISMATCH, HEADER_SERVER, ERR_PASSWDMISMATCH_FORMAT);
+				send(desc->user->getSocket(), ":0 464 0 :Password incorrect\r\n", strlen(":0 464 0 :Password incorrect\r\n"), 0);
 				desc->user->setConnectStatus(false);
 				close(desc->user->getSocket());
 				this->userDB->removeUser(*desc->user);
