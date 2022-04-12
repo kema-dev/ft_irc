@@ -62,6 +62,8 @@ class ChannelDB {
 	Channel*	search(Channel& chan);
 	Channel*	search(string name);
 	void		chkDuplicate(string name);
+
+	vector<Channel>	getDB(void);
 };
 
 #endif

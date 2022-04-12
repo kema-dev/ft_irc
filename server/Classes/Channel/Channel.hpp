@@ -78,6 +78,8 @@ class Channel {
 	// bool	setOperPasswd(string oper_pass);
 	// bool	addOper(User& usr);
 	// bool	removeOper(User& usr);
+
+	void	removeUser(User& user);
 };
 
 #endif

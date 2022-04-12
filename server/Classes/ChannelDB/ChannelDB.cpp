@@ -70,3 +70,8 @@ void	ChannelDB::chkDuplicate(string name) {
 		throw ChanDuplicate();
 	}
 }
+
+vector<Channel> ChannelDB::getDB(void)
+{
+	return (_db);
+}

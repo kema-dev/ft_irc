@@ -96,8 +96,8 @@ bool	Channel::userLeave(User& usr) {
 	end = _log.end();
 	while (it != end) {
 		if (it->first.getNickName() == usr.getNickName()) {
-			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
 			_log.erase(it);
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
 			return true;
 		}
 		it++;

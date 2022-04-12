@@ -104,8 +104,8 @@ void CommandExec::part(User* user, vector<string> args) {
 	}
 	string uid = itos(user->getUid());
 	User *userCpy = new User(*user);
-	try {
-		user->tryPartChannel(user->getNickName(), chan, user->getServer());
+	try {	
+		userCpy->tryPartChannel(userCpy->getNickName(), chan, userCpy->getServer());
 	} catch (NotLoggedGlobal& e) {
 		// * Maybe we should not pass here
 		logError("Part channel " + chan, uid, e.what());
@@ -124,7 +124,6 @@ void CommandExec::part(User* user, vector<string> args) {
 		return;
 	}
 	send_op->reply(userCpy, userCpy, RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "PART", chan.c_str());
-
 	vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
 	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
 		if (user->getServer()->userDB->search(*it)->getSocket() != userCpy->getSocket())
@@ -142,9 +141,22 @@ void CommandExec::quit(User* user, vector<string> args) {
 		msg += *args.begin();
 		args.erase(args.begin());
 	}
-	user->getServer()->userDB->search(user->getUid())->logOut(*(user->getServer()), msg);
-	// ! TODO remove user from all channels + delete it
-	// TODO send QUIT to all channels
+	User *userCpy = new User(*user);
+	vector<Channel> chans = user->getServer()->chanDB->getDB();
+	for (vector<Channel>::iterator it = chans.begin(); it != chans.end(); ++it) {
+		try{
+			if (user->getServer()->chanDB->search(*it)->userLeave(*userCpy) == true)
+				continue;
+		}
+		catch(exception &e){
+		}
+	}
+	send_op->reply(userCpy, userCpy, RPL_CUSTOM, HEADER_CLIENT, "%s :%s\r\n", "QUIT", msg.c_str());
+	userCpy->setActiveStatus(NOT_CONNECTED);
+	userCpy->setConnectStatus(NOT_CONNECTED);
+	close(userCpy->getSocket());
+	userCpy->getServer()->userDB->removeUser(*user);
+	delete userCpy;
 }
 
 void CommandExec::nick(User* user, vector<string> args) {
