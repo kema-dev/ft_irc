@@ -449,9 +449,7 @@ class CommandExec {
 		void	kick(User* user, vector<string> args);
 		void	away(User* user, vector<string> args);
 		void	names(User* user, vector<string> args);
-		
-		
-		
+		void	list(User* user, vector<string> args);
 };
 
 #endif

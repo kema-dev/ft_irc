@@ -501,3 +501,10 @@ void CommandExec::names(User* user, vector<string> args) {
 	send_op->reply(user, user, RPL_NAMREPLY, HEADER_SERVER, RPL_NAMREPLY_FORMAT, chan.c_str(), users.c_str());
 	send_op->reply(user, user, RPL_ENDOFNAMES, HEADER_SERVER, RPL_ENDOFNAMES_FORMAT, chan.c_str());
 }
+
+void	CommandExec::list(User* user, vector<string> args)
+{
+	//TODO
+	(void)user;
+	(void)args;
+}

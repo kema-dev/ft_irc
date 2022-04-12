@@ -40,7 +40,6 @@ void Command::parse(string smessage) {
 	_commands_v.push_back("PART");
 	_commands_v.push_back("QUIT");
 	_commands_v.push_back("NICK");
-	_commands_v.push_back("USER");
 	_commands_v.push_back("PONG");
 	_commands_v.push_back("PRIVMSG");
 	_commands_v.push_back("TOPIC");
@@ -51,8 +50,6 @@ void Command::parse(string smessage) {
 	_commands_v.push_back("NAMES");
 	_commands_v.push_back("LIST");
 	_commands_v.push_back("NOTICE");
-	_commands_v.push_back("PASS");
-	_commands_v.push_back("WELCOME");
 }
 
 void Command::welcome(User* user) {
@@ -87,7 +84,7 @@ void Command::select(string smessage, User* user) {
 				_exec.part(user, _args_v);
 				break;
 			}
-			case CMD_QUIT: { // TODO
+			case CMD_QUIT: {
 				_exec.quit(user, _args_v);
 				break;
 			}
@@ -110,11 +107,11 @@ void Command::select(string smessage, User* user) {
 				_exec.topic(user, _args_v);
 				break;
 			}
-			case CMD_OPER: { // TODO
+			case CMD_OPER: {
 				_exec.oper(user, _args_v);
 				break;
 			}
-			case CMD_KICK: { // TODO
+			case CMD_KICK: {
 				_exec.kick(user, _args_v);
 				break;
 			}
@@ -127,6 +124,10 @@ void Command::select(string smessage, User* user) {
 			}
 			case CMD_NAMES: { // TODO
 				_exec.names(user, _args_v);
+				break;
+			}
+			case CMD_LIST: { // TODO
+				_exec.list(user, _args_v);
 				break;
 			}
 			default: {
