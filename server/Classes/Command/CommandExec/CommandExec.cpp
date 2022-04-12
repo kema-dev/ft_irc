@@ -187,11 +187,11 @@ void CommandExec::nick(User* user, vector<string> args) {
 void CommandExec::privmsg(User* user, vector<string> args) {
 	if (args.size() < 1) {
 		send_op->reply(user, user, ERR_NORECIPIENT, HEADER_CLIENT, ERR_NORECIPIENT_FORMAT, "PRIVMSG");
-		logError("Join command", "Not enough arguments", itos(args.size()));
+		logError("Privmsg command", "Not enough arguments", itos(args.size()));
 		return;
 	} else if (args.size() < 2) {
 		send_op->reply(user, user, ERR_NOTEXTTOSEND, HEADER_CLIENT, ERR_NOTEXTTOSEND_FORMAT);
-		logError("Join command", "Not enough arguments", itos(args.size()));
+		logError("Privmsg command", "Not enough arguments", itos(args.size()));
 		return;
 	} else {
 		string uid = itos(user->getUid());
@@ -387,6 +387,53 @@ void CommandExec::kick(User* user, vector<string> args) {
 		send_op->reply(user, userCpy->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "%s %s %s %s\r\n", "KICK", chan.c_str(), target.c_str(), msg.c_str());
 	}
 	delete userCpy;
+}
+
+void CommandExec::notice(User *user, vector<string> args){
+	if (args.size() > 2) {
+		string uid = itos(user->getUid());
+		string receiver = *args.begin();
+		args.erase(args.begin());
+		if (args.begin()->find(":") == 0) {
+			args.begin()->erase(0, 1);
+		}
+		string msg = "";
+		while (args.empty() == false) {
+			msg += *args.begin() + " ";
+			args.erase(args.begin());
+		}
+		msg.erase(msg.end() - 1);
+		try {
+			user->getServer()->chanDB->search(receiver);
+		} catch (NoSuchChan& e) {
+			// ? Is not a channel
+			try {
+				user->getServer()->userDB->search(receiver);
+			} catch (NoSuchUser& e) {}
+			// TODO send PRIVMSG <receiver> and mind if <receiver> is away
+			if (user->getServer()->userDB->search(receiver)->getConnectStatus() == AWAY) {
+				send_op->reply(user, user, RPL_AWAY, HEADER_SERVER, RPL_AWAY_FORMAT, receiver.c_str(), user->getServer()->userDB->search(receiver)->getAwayMessage().c_str());
+			}
+			send_op->reply(user, user->getServer()->userDB->search(receiver), RPL_CUSTOM, HEADER_CLIENT, "NOTICE %s :%s\r\n", user->getServer()->userDB->search(receiver)->getNickName().c_str(), msg.c_str());
+			log(string(LIGHT_MAGENTA) + "User " + string(GREEN) + user->getNickName() + string(LIGHT_BLUE) + " sent NOTICE to " + string(GREEN) + receiver + string(LIGHT_MAGENTA) + ": " + string(LIGHT_BLUE) + msg + DEFAULT);
+			return;
+		}
+		// ? Is a channel
+		if (user->getServer()->chanDB->search(receiver)->isLog(*user) == UNKNOWN) {
+			return;
+		}
+		vector<string> users_v = user->getServer()->chanDB->search(receiver)->getNickLst();
+		for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
+			if (*it == user->getNickName()) {
+				continue;
+			}
+			try {
+				send_op->reply(user, user->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "NOTICE %s :%s\r\n", receiver.c_str(), msg.c_str());
+			}
+			catch (NoSuchUser& e) {}
+		}
+		log(string(LIGHT_MAGENTA) + "User " + string(GREEN) + user->getNickName() + string(LIGHT_BLUE) + " sent NOTICE to " + string(GREEN) + receiver + string(LIGHT_MAGENTA) + ": " + string(LIGHT_BLUE) + msg + DEFAULT);
+	}
 }
 
 void CommandExec::away(User* user, vector<string> args) {

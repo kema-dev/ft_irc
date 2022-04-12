@@ -102,6 +102,10 @@ void Command::select(string smessage, User* user) {
 				_exec.privmsg(user, _args_v);
 				break;
 			}
+			case CMD_NOTICE: {
+				_exec.notice(user, _args_v);
+				break;
+			}
 			case CMD_TOPIC: {
 				_exec.topic(user, _args_v);
 				break;

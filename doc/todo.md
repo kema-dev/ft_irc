@@ -11,13 +11,13 @@
 - [x] QUIT
 - [x] NICK
 - [x] PRIVMSG
+- [x] NOTICE
 - [x] TOPIC
 - [x] OPER
 - [x] KICK
 - [ ] AWAY -> jej
 - [ ] NAMES -> jej
-- [ ] LIST -> dOD
-- [ ] NOTICE -> dOD
+- [ ] LIST -> dOD ??
 
 ## Check
 
@@ -36,5 +36,5 @@
 
 PASS password
 NICK jej
-USER jjourdan 0 * : Jeremy Jourdan
+USER jjourdan 0 * :Jeremy Jourdan
 JOIN #test
