@@ -221,8 +221,6 @@ bool	Channel::setPasswd(string pass) {
 	return true;
 }
 
-// ANCHOR Channel opers KEKW
-
 // // ? Check if <usr> has operator permissions for channel <this>
 // bool	Channel::isOper(string nickname) {
 // 	vector<pair<User*, bool> >::iterator	it, end;

@@ -176,6 +176,8 @@ void CommandExec::nick(User* user, vector<string> args) {
 			logError("Nick command " + nick, "Unknown error", e.what());
 			return;
 		}
+		user->setNickName(nick);
+		send_op->reply(user, user, RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "NICK", nick.c_str());
 	}
 }
 
@@ -375,7 +377,7 @@ void CommandExec::kick(User* user, vector<string> args) {
 }
 
 void CommandExec::notice(User *user, vector<string> args){
-	if (args.size() > 2) {
+	if (args.size() >= 2) {
 		string uid = itos(user->getUid());
 		string receiver = *args.begin();
 		args.erase(args.begin());

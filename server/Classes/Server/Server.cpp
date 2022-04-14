@@ -162,7 +162,8 @@ void Server::handleConnection(t_KDescriptor* desc) {
 				desc->server->userDB->search(id)->logIn(*desc->server);
 			} catch (exception& e) {
 				string str = static_cast<ostringstream*>(&(ostringstream() << desc->user->getUid()))->str();
-				//TODO send proper errors ERR_NEEDMOREPARAMS and ERR_ALREADYREGISTRED
+				Send sender = Send();
+				sender.reply(desc->user, desc->user, ERR_ALREADYREGISTRED, HEADER_SERVER, ERR_ALREADYREGISTRED_FORMAT);
 				logError(string("Logging in server"), str, e.what());
 				return;
 			}
@@ -177,6 +178,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 		else if (desc->user->getActiveStatus() == BANNED)
 		{
 			cout << desc->user->getNickName() << " is banned." << endl;
+			logError(string("Logging in server"), *it, "User is banned");
 		}
 		it++;
 	}
