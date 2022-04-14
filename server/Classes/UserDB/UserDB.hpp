@@ -57,7 +57,7 @@ class   UserDB {
 	string			_name;
 
 	public:
-	UserDB(string name) {_name = name; _oper = sha256(OPER_PASS);};
+	UserDB(string name);
 	~UserDB() {};
 
 	ssize_t	add(User& usr);

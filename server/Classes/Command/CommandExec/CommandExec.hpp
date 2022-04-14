@@ -5,7 +5,6 @@ class Send;
 #include "../Command/Command.hpp"
 #include "../../Send/Send.hpp"
 #include "../../User/User.hpp"
-#include "../../Reply/Reply.hpp"
 #include <sys/types.h>
 #include <iostream>
 
@@ -447,9 +446,9 @@ class CommandExec {
 		void	notice(User* user, vector<string> args);
 		void	oper(User* user, vector<string> args);
 		void	kick(User* user, vector<string> args);
-		void	away(User* user, vector<string> args);
-		void	names(User* user, vector<string> args);
-		void	list(User* user, vector<string> args);
+		// void	away(User* user, vector<string> args);
+		// void	names(User* user, vector<string> args);
+		// void	list(User* user, vector<string> args);
 };
 
 #endif

@@ -25,12 +25,6 @@ void error(const char *msg) {
 	exit(1);
 }
 
-// // ! SEND ONLY "<< overloaded" type !
-// template<typename T>
-// string	itos(T nb) {
-// 	return static_cast<ostringstream*>(&(ostringstream() << nb))->str();
-// }
-
 int check_params(int argc, char **argv) {
 	log("-------------------------------------------------------------------------------------");
 	try {
@@ -55,7 +49,7 @@ int check_params(int argc, char **argv) {
 }
 
 int create_socket(void) {
-	int listenFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	int listenFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	try {
 		if (listenFd < 0)
 			throw(ErrorInSocketCreation());
@@ -109,4 +103,5 @@ int main(int argc, char **argv) {
 	cout << GREEN + string("Server initialized, now waiting for connections on port ") + argv[1] + DEFAULT << endl;
 	log(GREEN + string("Server initialized, now waiting for connections on port ") + argv[1] + DEFAULT);
 	irc_serv->start();
+	delete irc_serv;
 }

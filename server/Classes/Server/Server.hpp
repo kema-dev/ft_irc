@@ -8,6 +8,10 @@
 #include <sys/event.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <stdio.h>
+
 
 #include <sstream>
 #include <string>
@@ -30,9 +34,7 @@ typedef struct s_KDescriptor
 
 #include "../ServerManip/ServerManip.hpp"
 
-
 using namespace std;
-
 
 class ServerFail : public exception
 {
@@ -83,6 +85,7 @@ class Server {
 	private:
 	string		_hash;
     int         _socket;
+	// static Server* _server;
 
 	public:
     vector<t_KDescriptor*> _descriptors;
@@ -94,10 +97,12 @@ class Server {
 	UserDB*		userDB;
 
 	public:
+	Server();
 	Server(string dname, string pass, int socket);
 	~Server();
 
     void    start( void );
+	// static void	closeServer(const int signal);
     int     getSocket( void );
     void    setSocket( int socket );
     string  getHash();
@@ -114,6 +119,7 @@ class Server {
 	// bool	setOperPasswd(string oper_pass);
 	// bool	addOper(User& usr);
 	// bool	removeOper(User& usr);
+
 };
 
 #endif

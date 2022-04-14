@@ -1,6 +1,8 @@
 #include "Server.hpp"
-// ? Start a server
 
+Server::Server(){}
+
+// ? Start a server
 void Server::start(void) {
 	_running = true;
 	std::cout.setf(std::ios::unitbuf);
@@ -12,14 +14,19 @@ void Server::start(void) {
 	}
 
 	struct timespec tmout = {5, 0};
+	// _server = this;
+
 
 	while (_running) {
+
+		// signal(SIGINT, Server::closeServer);
 
 		int eventSize = userDB->getDB().size() + 1;
 		struct kevent mEvents[eventSize];
 		struct kevent tEvents[eventSize];
 
 		int k = 0;
+
 		t_KDescriptor* desc = new t_KDescriptor();
 		desc->server = this;
 		desc->user = new User();
@@ -75,15 +82,12 @@ void Server::start(void) {
 	}
 }
 
-bool Server::testConnection(s_KDescriptor *desc)
-{
-	char input[256];
-
-	bzero(input, 256);
-	if (recv(desc->user->getSocket(), input, 255, MSG_DONTWAIT) == EAGAIN)
-		return false;
-	return true;
-}
+// void	Server::closeServer(const int signal)
+// {
+// 	(void)signal;
+// 	delete _server;
+// 	return;
+// }
 
 string Server::readSocket(int socket) {
 	char input[256];
@@ -119,7 +123,8 @@ void Server::handleConnection(t_KDescriptor* desc) {
 		}
 		if ((*it).find("PASS") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED) {
 			try {
-				manip->check_password((*it), desc->server, desc->user->getSocket());
+				if (manip->check_password((*it), desc, desc->user->getSocket()) == 1)
+					return;
 			}
 			catch (exception& e) {
 				send(desc->user->getSocket(), ":0 464 0 :Password incorrect\r\n", strlen(":0 464 0 :Password incorrect\r\n"), 0);
@@ -128,7 +133,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 				this->userDB->removeUser(*desc->user);
 				return;
 			}
-		} else if ((*it).find("NICK") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED) {
+		} else if ((*it).find("NICK") != string::npos && desc->user->getActiveStatus() == PASSED) {
 			nickname = manip->parseNickname((*it));
 			if (nickname.empty() == true) {
 				logError(string("Logging in server"), *it, "Bad nickname");
@@ -143,7 +148,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 				return;
 			}
 			desc->user->setNickName(nickname);
-		} else if ((*it).find("USER") != string::npos && desc->user->getActiveStatus() == NOT_CONNECTED) {
+		} else if ((*it).find("USER") != string::npos && desc->user->getActiveStatus() == PASSED) {
 			id = manip->createUser((*it), desc);
 			if (id < 0) {
 				logError(string("Logging in server"), *it, "Create user fail");
@@ -163,7 +168,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 			command->welcome(desc->user);
 			desc->user->setActiveStatus(CONNECTED);
 		}
-		else if ((desc->user->getActiveStatus() == CONNECTED) || (desc->user->getActiveStatus() == AWAY)) {
+		else if ((desc->user->getActiveStatus() == CONNECTED)) {
 			command->select((*it), desc->user);
 		}
 		else if (desc->user->getActiveStatus() == BANNED)

@@ -59,19 +59,13 @@ class ChanOpeNeeded : public exception
 #define CMD_PART	1
 #define CMD_QUIT	2
 #define CMD_NICK	3
-#define CMD_USER	4
-#define CMD_PONG	5
-#define CMD_PRIVMSG	6
+#define CMD_PONG	4
+#define CMD_PRIVMSG	5
+#define CMD_NOTICE	6
 #define CMD_TOPIC	7
 #define CMD_OPER	8
 #define CMD_KICK	9
 #define CMD_MODE	10
-#define CMD_AWAY	11
-#define CMD_NAMES	12
-#define CMD_LIST 	13
-#define CMD_NOTICE	14
-#define CMD_PASS	15
-#define CMD_WELCOME	16
 
 class Command {
 	private:

@@ -92,7 +92,7 @@ ttest: directories $(OBJECTS)
 leaks: directories $(OBJECTS)
 	$(CC) -o $(TARGETDIR)/$(TARGET) $(OBJECTS)
 	@clear
-	leaks --atExit -- ./$(TARGETDIR)/$(TARGET) $(ARG)
+	leaks -atExit -- ./$(TARGETDIR)/$(TARGET) $(ARG)
 
 check: all
 	@mkdir -p $(CHECKOUTDIR)

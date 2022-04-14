@@ -24,7 +24,6 @@ class Message {
 	ssize_t	getUid(void);
 	timeval	getTime(void);
 	string	getContent(void);
-	// TODO add specific func to separate sender and contnt getters
 };
 
 #endif

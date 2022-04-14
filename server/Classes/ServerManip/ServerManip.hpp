@@ -25,7 +25,7 @@ class ServerManip {
         string  getInput(void);
         string  getBuf(void);
 
-        int     check_password(string input, Server *irc_serv, int socket);
+        int     check_password(string input, t_KDescriptor *desc, int socket);
         size_t  ft_find(string input);
         ssize_t createUser(string input, t_KDescriptor *desc);
         string  parseNickname(string input);

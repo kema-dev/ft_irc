@@ -42,14 +42,14 @@ void Command::parse(string smessage) {
 	_commands_v.push_back("NICK");
 	_commands_v.push_back("PONG");
 	_commands_v.push_back("PRIVMSG");
+	_commands_v.push_back("NOTICE");
 	_commands_v.push_back("TOPIC");
 	_commands_v.push_back("OPER");
 	_commands_v.push_back("KICK");
 	_commands_v.push_back("MODE");
-	_commands_v.push_back("AWAY");
-	_commands_v.push_back("NAMES");
-	_commands_v.push_back("LIST");
-	_commands_v.push_back("NOTICE");
+	// _commands_v.push_back("AWAY");
+	// _commands_v.push_back("NAMES");
+	// _commands_v.push_back("LIST");
 }
 
 void Command::welcome(User* user) {
@@ -60,9 +60,7 @@ void Command::select(string smessage, User* user) {
 	try {
 		parse(smessage);
 	} catch (EmptyCommand& e) {
-		// TODO send ERR_empty_command, maybe we should not pass here
 		logError("Received command", smessage, "Empty command");
-		// throw EmptyCommand();
 		return;
 	}
 	try {
@@ -71,6 +69,7 @@ void Command::select(string smessage, User* user) {
 		if (it != _commands_v.end()) {
 			index = it - _commands_v.begin();
 		} else {
+			// send(user->getSocket(), "0 421 0: " + smessage + " :Unknown command\r\n", strlen("0 421 0: ") + smessage.length() + strlen(" :Unknown command\r\n"), 0);
 			// TODO send unknown command
 			logError("Received command", smessage, "Unknown command");
 			throw UnknownCommand();
@@ -116,18 +115,6 @@ void Command::select(string smessage, User* user) {
 				break;
 			}
 			case CMD_MODE: {
-				break;
-			}
-			case CMD_AWAY: { // TODO
-				_exec.away(user, _args_v);
-				break;
-			}
-			case CMD_NAMES: { // TODO
-				_exec.names(user, _args_v);
-				break;
-			}
-			case CMD_LIST: { // TODO
-				_exec.list(user, _args_v);
 				break;
 			}
 			default: {

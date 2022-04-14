@@ -124,7 +124,8 @@ class NickExists : public exception
 #define WELCOME         2
 #define BANNED			3
 #define UNKNOWN			4
-#define AWAY			5
+#define PASSED			5
+
 
 class User {
 	private:

@@ -320,7 +320,6 @@ void User::getKicked(Channel& chan, User& banner, string msg) {
 		return;
 	}
 	chan.userKick(*this, banner, msg);
-	// TODO Send ban info to *this
 }
 
 // ? Set <serv> password with password <pass>

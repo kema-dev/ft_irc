@@ -2,8 +2,6 @@
 
 ## Ongoing
 
-- [ ] join and welcome
-
 ## Commands
 
 - [x] JOIN
@@ -15,9 +13,7 @@
 - [x] TOPIC
 - [x] OPER
 - [x] KICK
-- [ ] AWAY -> jej
-- [ ] NAMES -> jej
-- [ ] LIST -> dOD
+
 
 ## Check
 
@@ -34,3 +30,4 @@ PASS password
 NICK jej
 USER jjourdan 0 * :Jeremy Jourdan
 JOIN #test
+

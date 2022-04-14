@@ -39,9 +39,14 @@ size_t ServerManip::ft_find(string input) {
 	}
 }
 
-int ServerManip::check_password(string input, Server* irc_serv, int socket) {
+int ServerManip::check_password(string input, t_KDescriptor *desc, int socket) {
 	string hash;
-	(void)socket;
+	if (input.length() - strlen("PASS ") < 1)
+	{
+		logError("Checking password", "Failure", "Bad number of arguments");
+		send(socket, ":0 461 0 PASS :Not enough parameters\r\n", strlen(":0 461 0 PASS :Not enough parameters\r\n"),0);
+		return(1);
+	}
 	if (input.find("PASS") != std::string::npos) {
 		std::string password = input.substr(strlen("PASS "), input.length() - strlen("PASS "));
 		try {
@@ -50,13 +55,14 @@ int ServerManip::check_password(string input, Server* irc_serv, int socket) {
 			logError(string("Invalid password"), "", e.what());
 			throw BadPasswd();
 		}
-		if (hash != irc_serv->getHash()) {
+		if (hash != desc->server->getHash()) {
 			logError(string("Invalid password"), "", "Bad password");
 			throw BadPasswd();
 		}
 	} else {
 		throw BadPasswd();
 	}
+	desc->user->setActiveStatus(PASSED);
 	return (0);
 }
 
@@ -84,7 +90,6 @@ ssize_t ServerManip::createUser(string input, t_KDescriptor* desc) {
 		return (-1);
 	cmd = input;
 	cmd.erase(0, strlen("USER "));
-	// ! FIXME this is dangerous
 	sscanf(cmd.c_str(), "%25s %25s %25s", username, hostname, servername);
 	cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
 	if (cmd.find(' ') == string::npos)

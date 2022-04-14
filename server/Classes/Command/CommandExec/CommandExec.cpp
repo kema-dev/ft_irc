@@ -160,11 +160,11 @@ void CommandExec::quit(User* user, vector<string> args) {
 
 void CommandExec::nick(User* user, vector<string> args) {
 	if (args.size() == 0) {
-		// TODO send ERR_NONICKNAMEGIVEN
+		send_op->reply(user, user, ERR_NONICKNAMEGIVEN, HEADER_SERVER, ERR_NONICKNAMEGIVEN_FORMAT);
 		logError("Nick command", "Empty argument", "No nickname specified");
 		return;
 	} else if (args.size() > 1) {
-		// TODO send ERR_ERRONEUSNICKNAME
+		send_op->reply(user, user, ERR_NONICKNAMEGIVEN, HEADER_SERVER, ERR_NONICKNAMEGIVEN_FORMAT);
 		logError("Nick command", "Too many arguments", itos(args.size()));
 	} else {
 		string nick = *args.begin();
@@ -172,7 +172,7 @@ void CommandExec::nick(User* user, vector<string> args) {
 		try {
 			user->getServer()->userDB->chkNickDuplicate(nick);
 		} catch (UserDuplicate& e) {
-			// TODO send ERR_NICKNAMEINUSE
+			send_op->reply(user, user, ERR_NICKNAMEINUSE, HEADER_SERVER, ERR_NICKNAMEINUSE_FORMAT, nick.c_str());
 			logError("Nick command " + nick, uid, e.what());
 			return;
 		} catch (exception& e) {
@@ -181,7 +181,6 @@ void CommandExec::nick(User* user, vector<string> args) {
 			return;
 		}
 	}
-	// TODO send NICK to all channels
 }
 
 void CommandExec::privmsg(User* user, vector<string> args) {
@@ -215,10 +214,6 @@ void CommandExec::privmsg(User* user, vector<string> args) {
 			} catch (NoSuchUser& e) {
 				send_op->reply(user, user, ERR_NOSUCHNICK, HEADER_CLIENT, ERR_NOSUCHNICK_FORMAT, receiver.c_str());
 				logError("Privmsg to " + receiver, uid, e.what());
-			}
-			// TODO send PRIVMSG <receiver> and mind if <receiver> is away
-			if (user->getServer()->userDB->search(receiver)->getConnectStatus() == AWAY) {
-				send_op->reply(user, user, RPL_AWAY, HEADER_SERVER, RPL_AWAY_FORMAT, receiver.c_str(), user->getServer()->userDB->search(receiver)->getAwayMessage().c_str());
 			}
 			send_op->reply(user, user->getServer()->userDB->search(receiver), RPL_CUSTOM, HEADER_CLIENT, "PRIVMSG %s :%s\r\n", user->getServer()->userDB->search(receiver)->getNickName().c_str(), msg.c_str());
 			log(string(LIGHT_MAGENTA) + "User " + string(GREEN) + user->getNickName() + string(LIGHT_BLUE) + " sent PRIVMSG to " + string(GREEN) + receiver + string(LIGHT_MAGENTA) + ": " + string(LIGHT_BLUE) + msg + DEFAULT);
@@ -313,9 +308,6 @@ void CommandExec::topic(User* user, vector<string> args) {
 	}
 }
 
-// ? "3 This server was created <date>"
-#define SEND_RPL_CREATED "3 This server was created %s\r\n"
-
 void CommandExec::oper(User* user, vector<string> args) {
 	if (args.size() != 2) {
 		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_SERVER, ERR_NEEDMOREPARAMS_FORMAT);
@@ -336,7 +328,6 @@ void CommandExec::oper(User* user, vector<string> args) {
 		logError("Oper command " + nick, "Unknown error", e.what());
 		return;
 	}
-	//TODO send to all the server
 	send_op->reply(user, user, RPL_YOUREOPER, HEADER_SERVER, RPL_YOUREOPER_FORMAT);
 }
 
@@ -410,10 +401,6 @@ void CommandExec::notice(User *user, vector<string> args){
 			try {
 				user->getServer()->userDB->search(receiver);
 			} catch (NoSuchUser& e) {}
-			// TODO send PRIVMSG <receiver> and mind if <receiver> is away
-			if (user->getServer()->userDB->search(receiver)->getConnectStatus() == AWAY) {
-				send_op->reply(user, user, RPL_AWAY, HEADER_SERVER, RPL_AWAY_FORMAT, receiver.c_str(), user->getServer()->userDB->search(receiver)->getAwayMessage().c_str());
-			}
 			send_op->reply(user, user->getServer()->userDB->search(receiver), RPL_CUSTOM, HEADER_CLIENT, "NOTICE %s :%s\r\n", user->getServer()->userDB->search(receiver)->getNickName().c_str(), msg.c_str());
 			log(string(LIGHT_MAGENTA) + "User " + string(GREEN) + user->getNickName() + string(LIGHT_BLUE) + " sent NOTICE to " + string(GREEN) + receiver + string(LIGHT_MAGENTA) + ": " + string(LIGHT_BLUE) + msg + DEFAULT);
 			return;
@@ -436,75 +423,74 @@ void CommandExec::notice(User *user, vector<string> args){
 	}
 }
 
-void CommandExec::away(User* user, vector<string> args) {
-	if (args.empty() == true) {
-		if (user->getActiveStatus() == CONNECTED) {
-			// ? Already active
-			return;
-		} else {
-			user->setActiveStatus(true);
-			// TODO send RPL_NOWAWAY
-		}
-		user->setActiveStatus(CONNECTED);
-		user->setAwayMessage("");
-		// TODO RPL_UNAWAY to <user>
-		log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(user->getNickName()) + string(LIGHT_BLUE) + string(" came back on ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + string(DEFAULT));
-		return;
-	}
-	else {
-		string msg = "";
-		while (args.empty() == false) {
-			msg += *args.begin();
-			msg += " ";
-			args.erase(args.begin());
-		}
-		if ((user->getActiveStatus() == AWAY) && (user->getAwayMessage() == msg)) {
-			// ? Already away with same msg
-			return;
-		}
-		user->setActiveStatus(AWAY);
-		user->setAwayMessage(msg);
-		log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(user->getNickName()) + string(LIGHT_BLUE) + string(" is now away from ") + string(LIGHT_MAGENTA) + string("server ") + string(RED) + user->getServer()->name + string(LIGHT_BLUE) + " with message " + string(RED) + msg + string(DEFAULT));
-		// TODO send RPL_NOWAWAY
-	}
-}
+// void CommandExec::away(User* user, vector<string> args) {
+// 	if (args.empty() == true) {
+// 		if (user->getActiveStatus() == CONNECTED) {
+// 			// ? Already active
+// 			return;
+// 		} else {
+// 			user->setActiveStatus(true);
+// 			// TO\DO send RPL_NOWAWAY
+// 		}
+// 		user->setActiveStatus(CONNECTED);
+// 		user->setAwayMessage("");
+// 		// TO\DO RPL_UNAWAY to <user>
+// 		log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(user->getNickName()) + string(LIGHT_BLUE) + string(" came back on ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + string(DEFAULT));
+// 		return;
+// 	}
+// 	else {
+// 		string msg = "";
+// 		while (args.empty() == false) {
+// 			msg += *args.begin();
+// 			msg += " ";
+// 			args.erase(args.begin());
+// 		}
+// 		if ((user->getActiveStatus() == AWAY) && (user->getAwayMessage() == msg)) {
+// 			// ? Already away with same msg
+// 			return;
+// 		}
+// 		user->setActiveStatus(AWAY);
+// 		user->setAwayMessage(msg);
+// 		log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(user->getNickName()) + string(LIGHT_BLUE) + string(" is now away from ") + string(LIGHT_MAGENTA) + string("server ") + string(RED) + user->getServer()->name + string(LIGHT_BLUE) + " with message " + string(RED) + msg + string(DEFAULT));
+// 		// TO\DO send RPL_NOWAWAY
+// 	}
+// }
 
-void CommandExec::names(User* user, vector<string> args) {
-	if (args.size() == 0) {
-		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "NAMES");
-		logError("Names command", "Empty argument", "No channel specified");
-		return;
-	}
-	else if (args.size() > 1) {
-		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "NAMES");
-		logError("Names command", "Too much arguments", itos(args.size()));
-		return;
-	}
-	string chan = *args.begin();
-	string uid = itos(user->getUid());
-	vector<string> lst;
-	try {
-		lst = user->getServer()->chanDB->search(chan)->getNickLst();
-	} catch (NoSuchChan& e) {
-		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_CLIENT, ERR_NOSUCHCHANNEL_FORMAT, chan.c_str());
-		logError("Names from channel " + chan, "No such channel", e.what());
-		return;
-	}
-	string users = "";
-	vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
-	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
-		if (user->getServer()->userDB->isOper(user->getServer()->userDB->search(*it)->getNickName()) == true) {
-			users += "@";
-		}
-		users += *it + " ";
-	}
-	send_op->reply(user, user, RPL_NAMREPLY, HEADER_SERVER, RPL_NAMREPLY_FORMAT, chan.c_str(), users.c_str());
-	send_op->reply(user, user, RPL_ENDOFNAMES, HEADER_SERVER, RPL_ENDOFNAMES_FORMAT, chan.c_str());
-}
+// void CommandExec::names(User* user, vector<string> args) {
+// 	if (args.size() == 0) {
+// 		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "NAMES");
+// 		logError("Names command", "Empty argument", "No channel specified");
+// 		return;
+// 	}
+// 	else if (args.size() > 1) {
+// 		send_op->reply(user, user, ERR_NEEDMOREPARAMS, HEADER_CLIENT, ERR_NEEDMOREPARAMS_FORMAT, "NAMES");
+// 		logError("Names command", "Too much arguments", itos(args.size()));
+// 		return;
+// 	}
+// 	string chan = *args.begin();
+// 	string uid = itos(user->getUid());
+// 	vector<string> lst;
+// 	try {
+// 		lst = user->getServer()->chanDB->search(chan)->getNickLst();
+// 	} catch (NoSuchChan& e) {
+// 		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_CLIENT, ERR_NOSUCHCHANNEL_FORMAT, chan.c_str());
+// 		logError("Names from channel " + chan, "No such channel", e.what());
+// 		return;
+// 	}
+// 	string users = "";
+// 	vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
+// 	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
+// 		if (user->getServer()->userDB->isOper(user->getServer()->userDB->search(*it)->getNickName()) == true) {
+// 			users += "@";
+// 		}
+// 		users += *it + " ";
+// 	}
+// 	send_op->reply(user, user, RPL_NAMREPLY, HEADER_SERVER, RPL_NAMREPLY_FORMAT, chan.c_str(), users.c_str());
+// 	send_op->reply(user, user, RPL_ENDOFNAMES, HEADER_SERVER, RPL_ENDOFNAMES_FORMAT, chan.c_str());
+// }
 
-void	CommandExec::list(User* user, vector<string> args)
-{
-	//TODO
-	(void)user;
-	(void)args;
-}
+// void	CommandExec::list(User* user, vector<string> args)
+// {
+// 	(void)user;
+// 	(void)args;
+// }

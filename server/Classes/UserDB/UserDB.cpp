@@ -2,6 +2,13 @@
 
 using namespace std;
 
+
+UserDB::UserDB(string name) 
+{
+	_name = name; 
+	_oper = sha256("password");
+}
+
 // ? Add a <usr> to database
 ssize_t UserDB::add(User& usr) {
 	_db.push_back(pair<User&, bool>(usr, USER));
