@@ -51,8 +51,8 @@ class Channel {
     string          _topic;
 	ssize_t			_next_uid;
 	vector<Message>	_hist;
-	vector<pair<User&, int> >	_log;
-	// vector<pair<User&, bool> >	_roles;
+	vector<pair<User*, int> >	_log;
+	// vector<pair<User*, bool> >	_roles;
 
 	public:
 	// Channel(string name, string pass, string oper_pass, string topic);
@@ -64,22 +64,22 @@ class Channel {
 	ssize_t	getUidAfter(timeval time);
 	ssize_t	getNextUid(void);
     void    setTopic(string topic);
-	bool	userJoin(User& usr, string pass);
-	bool	userLeave(User& usr);
-	void	receiveMsg(Message& msg);
+	bool	userJoin(User* usr, string pass);
+	bool	userLeave(User* usr);
+	// void	receiveMsg(Message& msg);
 	void	printAllMsg(void);
-	int		isLog(User& usr);
-	// string	getMsgHist(User& usr);
+	int		isLog(User* usr);
+	// string	getMsgHist(User* usr);
 	vector<string>	getNickLst(void);
-	bool	userKick(User& usr, User& banner, string msg);
+	bool	userKick(User* usr, User* banner, string msg);
 	// bool	isOper(string nickname);
 	bool	setPasswd(string pass);
 	// bool	checkOperPasswd(string pass);
 	// bool	setOperPasswd(string oper_pass);
-	// bool	addOper(User& usr);
-	// bool	removeOper(User& usr);
+	// bool	addOper(User* usr);
+	// bool	removeOper(User* usr);
 
-	void	removeUser(User& user);
+	void	removeUser(User* user);
 };
 
 #endif

@@ -52,7 +52,7 @@ class DuplicateNickname : public exception
 
 class   UserDB {
 	private:
-	vector<pair<User&, bool> >	_db;
+	vector<pair<User*, bool> >	_db;
 	string			_oper;
 	string			_name;
 
@@ -60,8 +60,8 @@ class   UserDB {
 	UserDB(string name);
 	~UserDB() {};
 
-	ssize_t	add(User& usr);
-	User*	search(User& usr);
+	ssize_t	add(User* usr);
+	User*	search(User* usr);
 	User*	search(ssize_t id);
     User*	search(string nickname);
     void	chkNickDuplicate(string nickname);
@@ -70,10 +70,10 @@ class   UserDB {
 	bool	isOper(string nickname);
 	bool	checkOperPasswd(string pass);
 	bool	setOperPasswd(string oper_pass);
-	bool	addOper(User& usr);
-	bool	removeOper(User& usr);
-	void	removeUser(User& usr);
-    vector<pair<User&, bool> > getDB();
+	bool	addOper(User* usr);
+	bool	removeOper(User* usr);
+	void	removeUser(User* usr);
+    vector<pair<User*, bool> > getDB();
 
 };
 

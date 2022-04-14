@@ -10,19 +10,19 @@ UserDB::UserDB(string name)
 }
 
 // ? Add a <usr> to database
-ssize_t UserDB::add(User& usr) {
-	_db.push_back(pair<User&, bool>(usr, USER));
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been added to ") + string(LIGHT_MAGENTA) + string("userDB ") + string(GREEN) + string(this->_name) + string(DEFAULT));
-	return usr.getUid();
+ssize_t UserDB::add(User* usr) {
+	_db.push_back(pair<User*, bool>(usr, USER));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr->getNickName()) + string(LIGHT_BLUE) + string(" has been added to ") + string(LIGHT_MAGENTA) + string("userDB ") + string(GREEN) + string(this->_name) + string(DEFAULT));
+	return usr->getUid();
 }
 
 // ? Search <usr> in database (from reference)
-User* UserDB::search(User& usr) {
-	vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
-	ssize_t id = usr.getUid();
+User* UserDB::search(User* usr) {
+	vector<pair<User*, bool> >::iterator it = _db.begin(), end = _db.end();
+	ssize_t id = usr->getUid();
 	while (it != end) {
-		if (it->first.getUid() == id) {
-			return &(it->first);
+		if (it->first->getUid() == id) {
+			return (it->first);
 		}
 		it++;
 	}
@@ -32,10 +32,10 @@ User* UserDB::search(User& usr) {
 
 // ? Search user in database from ID <id>
 User* UserDB::search(ssize_t id) {
-	vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
+	vector<pair<User*, bool> >::iterator it = _db.begin(), end = _db.end();
 	while (it != end) {
-		if (it->first.getUid() == id) {
-			return &(it->first);
+		if (it->first->getUid() == id) {
+			return (it->first);
 		}
 		it++;
 	}
@@ -45,10 +45,10 @@ User* UserDB::search(ssize_t id) {
 
 // ? Search user in database from NickName <nickname>
 User* UserDB::search(string nickname) {
-	vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
+	vector<pair<User*, bool> >::iterator it = _db.begin(), end = _db.end();
 	while (it != end) {
-		if (it->first.getNickName() == nickname) {
-			return &(it->first);
+		if (it->first->getNickName() == nickname) {
+			return (it->first);
 		}
 		it++;
 	}
@@ -57,15 +57,15 @@ User* UserDB::search(string nickname) {
 }
 
 // ? Return User database
-vector<pair<User&, bool> > UserDB::getDB() {
+vector<pair<User*, bool> > UserDB::getDB() {
 	return _db;
 }
 
 void UserDB::chkNickDuplicate(string nickname) {
 	try {
-		vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
+		vector<pair<User*, bool> >::iterator it = _db.begin(), end = _db.end();
 		while (it != end) {
-			if (it->first.getNickName() == nickname) {
+			if (it->first->getNickName() == nickname) {
 				throw DuplicateNickname();
 			}
 			it++;
@@ -79,15 +79,15 @@ void UserDB::chkNickDuplicate(string nickname) {
 // ? Check if <username>, <fullname> and <nickname> are uniques
 void UserDB::chkDuplicate(string username, string fullname) {
 	try {
-		vector<pair<User&, bool> >::iterator it = _db.begin(), end = _db.end();
+		vector<pair<User*, bool> >::iterator it = _db.begin(), end = _db.end();
 		while (it != end) {
-			if (it->first.getUserName() == username) {
+			if (it->first->getUserName() == username) {
 				throw DuplicateUsername();
 			}
-			if (it->first.getFullName() == fullname) {
+			if (it->first->getFullName() == fullname) {
 				throw DuplicateFullname();
 			}
-			// if (it->first.getNickName() == nickname) {
+			// if (it->first->getNickName() == nickname) {
 			// 	throw DuplicateNickname();
 			// }
 			it++;
@@ -119,12 +119,12 @@ void UserDB::chkDuplicate(string username, string fullname) {
 
 // ? Check if <usr> has operator permissions for server <this>
 bool UserDB::isOper(string nickname) {
-	vector<pair<User&, bool> >::iterator it, end;
+	vector<pair<User*, bool> >::iterator it, end;
 	it = _db.begin();
 	end = _db.end();
-	// ssize_t	id = usr.getUid();
+	// ssize_t	id = usr->getUid();
 	while (it != end) {
-		if (it->first.getNickName() == nickname) {
+		if (it->first->getNickName() == nickname) {
 			if (it->second == OPERATOR) {
 				return true;
 			}
@@ -149,17 +149,17 @@ bool UserDB::setOperPasswd(string oper_pass) {
 }
 
 // ? Set <usr> role as operator for server <this>
-bool UserDB::addOper(User& usr) {
-	if (usr.getActiveStatus() != true) {
+bool UserDB::addOper(User* usr) {
+	if (usr->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return false;
 	}
-	vector<pair<User&, bool> >::iterator it, end;
+	vector<pair<User*, bool> >::iterator it, end;
 	it = _db.begin();
 	end = _db.end();
-	ssize_t id = usr.getUid();
+	ssize_t id = usr->getUid();
 	while (it != end) {
-		if (it->first.getUid() == id) {
+		if (it->first->getUid() == id) {
 			it->second = OPERATOR;
 			return true;
 		}
@@ -170,17 +170,17 @@ bool UserDB::addOper(User& usr) {
 }
 
 // ? Set <usr> role as user for server <this>
-bool UserDB::removeOper(User& usr) {
-	if (usr.getActiveStatus() != true) {
+bool UserDB::removeOper(User* usr) {
+	if (usr->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return false;
 	}
-	vector<pair<User&, bool> >::iterator it, end;
+	vector<pair<User*, bool> >::iterator it, end;
 	it = _db.begin();
 	end = _db.end();
-	ssize_t id = usr.getUid();
+	ssize_t id = usr->getUid();
 	while (it != end) {
-		if (it->first.getUid() == id) {
+		if (it->first->getUid() == id) {
 			it->second = USER;
 			return true;
 		}
@@ -190,14 +190,14 @@ bool UserDB::removeOper(User& usr) {
 	return false;
 }
 
-void	UserDB::removeUser(User& usr)
+void	UserDB::removeUser(User* usr)
 {
-	vector<pair<User&, bool> >::iterator it, end;
+	vector<pair<User*, bool> >::iterator it, end;
 	it = _db.begin();
 	end = _db.end();
 	while (it != end) {
-		if (it->first.getNickName() == usr.getNickName()) {
-			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been removed from ") + string(LIGHT_MAGENTA) + string("userDB ") + string(RED) + string(this->_name) + string(DEFAULT));
+		if (it->first->getNickName() == usr->getNickName()) {
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr->getNickName()) + string(LIGHT_BLUE) + string(" has been removed from ") + string(LIGHT_MAGENTA) + string("userDB ") + string(RED) + string(this->_name) + string(DEFAULT));
 			_db.erase(it);
 			break;
 		}

@@ -72,32 +72,32 @@ void	Channel::setTopic(string topic) {
 }
 
 // ? Make <usr> log to channel <this> using password <pass>
-bool	Channel::userJoin(User& usr, string pass) {
-	if (usr.getActiveStatus() != CONNECTED) {
+bool	Channel::userJoin(User* usr, string pass) {
+	if (usr->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return false;
 	}
 	if (sha256(pass) != _hash) {
 		return false;
 	}
-	_log.push_back(pair<User&, int>(usr, CONNECTED));
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" joined ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(_name) + string(DEFAULT));
+	_log.push_back(pair<User*, int>(usr, CONNECTED));
+	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(usr->getNickName()) + string(LIGHT_BLUE) + string(" joined ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(_name) + string(DEFAULT));
 	return true;
 }
 
 // ? Make <usr> leave channel channel <this>
-bool	Channel::userLeave(User& usr) {
-	if (usr.getActiveStatus() != CONNECTED) {
+bool	Channel::userLeave(User* usr) {
+	if (usr->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return false;
 	}
-	vector<pair<User&, int> >::iterator	it, end;
+	vector<pair<User*, int> >::iterator	it, end;
 	it = _log.begin();
 	end = _log.end();
 	while (it != end) {
-		if (it->first.getNickName() == usr.getNickName()) {
+		if (it->first->getNickName() == usr->getNickName()) {
 			_log.erase(it);
-			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr->getNickName()) + string(LIGHT_BLUE) + string(" left ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(DEFAULT));
 			return true;
 		}
 		it++;
@@ -107,9 +107,9 @@ bool	Channel::userLeave(User& usr) {
 }
 
 // ? Receive message <msg>
-void	Channel::receiveMsg(Message& msg) {
-	_hist.push_back(msg);
-}
+// void	Channel::receiveMsg(Message& msg) {
+// 	_hist.push_back(msg);
+// }
 
 // ? Get next message UID of channel <this>
 ssize_t	Channel::getNextUid(void) {
@@ -134,13 +134,13 @@ void	Channel::printAllMsg(void) {
 }
 
 // ? Check if <usr> is logged to channel <this>
-int	Channel::isLog(User& usr) {
-	vector<pair<User&, int> >::iterator	it, end;
+int	Channel::isLog(User* usr) {
+	vector<pair<User*, int> >::iterator	it, end;
 	it = _log.begin();
 	end = _log.end();
-	ssize_t	id = usr.getUid();
+	ssize_t	id = usr->getUid();
 	while (it != end) {
-		if (it->first.getUid() == id) {
+		if (it->first->getUid() == id) {
 			return it->second;
 		}
 		it++;
@@ -149,14 +149,14 @@ int	Channel::isLog(User& usr) {
 }
 
 // ? Get channel <this> message history
-// string	Channel::getMsgHist(User& usr) {
+// string	Channel::getMsgHist(User* usr) {
 // 	if (isLog(usr) == CONNECTED) {
-// 		vector<pair<User&, int> >::iterator	it, end;
+// 		vector<pair<User*, int> >::iterator	it, end;
 // 		it = _log.begin();
 // 		end = _log.end();
-// 		ssize_t	id = usr.getUid();
+// 		ssize_t	id = usr->getUid();
 // 		while (it != end) {
-// 			if (it->first.getUid() == id) {
+// 			if (it->first->getUid() == id) {
 // 				ssize_t pad = getUidAfter(it->second);
 // 				vector<Message>::iterator	itm, endm;
 // 				itm = _hist.begin() + pad + 1;
@@ -178,36 +178,36 @@ int	Channel::isLog(User& usr) {
 // ? Get the list of users' connected to channel <this> nicknames (as a vector)
 vector<string>	Channel::getNickLst(void) {
 	vector<string>vec;
-	vector<pair<User&, int> >::iterator	it, end;
+	vector<pair<User*, int> >::iterator	it, end;
 	it = _log.begin();
 	end = _log.end();
 	while (it != end) {
-		if (it->first.getActiveStatus() != CONNECTED)
+		if (it->first->getActiveStatus() != CONNECTED)
 		{	
 			it++;
 			continue;
 		}
-		vec.push_back(it->first.getNickName());
+		vec.push_back(it->first->getNickName());
 		it++;
 	}
 	return vec;
 }
 
 // ? Ban <usr> from channel <this> by <banner>
-bool	Channel::userKick(User& usr, User& banner, string msg) {
-	if (usr.getActiveStatus() != true) {
+bool	Channel::userKick(User* usr, User* banner, string msg) {
+	if (usr->getActiveStatus() != true) {
 		throw NotLoggedGlobal();
 		return false;
 	}
-	vector<pair<User&, int> >::iterator	it, end;
+	vector<pair<User*, int> >::iterator	it, end;
 	it = _log.begin();
 	end = _log.end();
-	ssize_t	id = usr.getUid();
+	ssize_t	id = usr->getUid();
 	while (it != end) {
-		if (it->first.getUid() == id) {
-			it->first.setActiveStatus(BANNED);
+		if (it->first->getUid() == id) {
+			it->first->setActiveStatus(BANNED);
 			_log.erase(it);
-			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been kicked from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(LIGHT_BLUE) + string(" by ") + string(RED) + string(banner.getNickName()) + string(LIGHT_BLUE) + string(" with message ") + string(RED) + msg + string(DEFAULT));
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr->getNickName()) + string(LIGHT_BLUE) + string(" has been kicked from ") + string(LIGHT_MAGENTA) + string("channel ") + string(RED) + string(_name) + string(LIGHT_BLUE) + string(" by ") + string(RED) + string(banner->getNickName()) + string(LIGHT_BLUE) + string(" with message ") + string(RED) + msg + string(DEFAULT));
 			return true;
 		}
 		it++;
@@ -225,12 +225,12 @@ bool	Channel::setPasswd(string pass) {
 
 // // ? Check if <usr> has operator permissions for channel <this>
 // bool	Channel::isOper(string nickname) {
-// 	vector<pair<User&, bool> >::iterator	it, end;
+// 	vector<pair<User*, bool> >::iterator	it, end;
 // 	it = _roles.begin();
 // 	end = _roles.end();
-// 	// ssize_t	id = usr.getUid();
+// 	// ssize_t	id = usr->getUid();
 // 	while (it != end) {
-// 		if (it->first.getNickName() == nickname) {
+// 		if (it->first->getNickName() == nickname) {
 // 			if (it->second == OPERATOR) {
 // 				return true;
 // 			}
@@ -256,17 +256,17 @@ bool	Channel::setPasswd(string pass) {
 // }
 
 // // ? Set <usr> role as operator for channel <this>
-// bool	Channel::addOper(User& usr) {
-// 	if (usr.getActiveStatus() != true) {
+// bool	Channel::addOper(User* usr) {
+// 	if (usr->getActiveStatus() != true) {
 // 		throw NotLoggedGlobal();
 // 		return false;
 // 	}
-// 	vector<pair<User&, bool> >::iterator	it, end;
+// 	vector<pair<User*, bool> >::iterator	it, end;
 // 	it = _roles.begin();
 // 	end = _roles.end();
-// 	ssize_t	id = usr.getUid();
+// 	ssize_t	id = usr->getUid();
 // 	while (it != end) {
-// 		if (it->first.getUid() == id) {
+// 		if (it->first->getUid() == id) {
 // 			it->second = OPERATOR;
 // 			return true;
 // 		}
@@ -277,17 +277,17 @@ bool	Channel::setPasswd(string pass) {
 // }
 
 // // ? Set <usr> role as user for channel <this>
-// bool	Channel::removeOper(User& usr) {
-// 	if (usr.getActiveStatus() != true) {
+// bool	Channel::removeOper(User* usr) {
+// 	if (usr->getActiveStatus() != true) {
 // 		throw NotLoggedGlobal();
 // 		return false;
 // 	}
-// 	vector<pair<User&, bool> >::iterator	it, end;
+// 	vector<pair<User*, bool> >::iterator	it, end;
 // 	it = _roles.begin();
 // 	end = _roles.end();
-// 	ssize_t	id = usr.getUid();
+// 	ssize_t	id = usr->getUid();
 // 	while (it != end) {
-// 		if (it->first.getUid() == id) {
+// 		if (it->first->getUid() == id) {
 // 			it->second = USER;
 // 			return true;
 // 		}

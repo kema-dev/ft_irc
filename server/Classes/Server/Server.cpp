@@ -38,9 +38,9 @@ void Server::start(void) {
 		for (unsigned long j = 0; j < userDB->getDB().size(); j++) {
 			t_KDescriptor* desc = new t_KDescriptor();
 			desc->server = this;
-			desc->user = &userDB->getDB()[j].first;
+			desc->user = userDB->getDB()[j].first;
 			_descriptors.push_back(desc);
-			EV_SET(&mEvents[k], userDB->getDB()[j].first.getSocket(), EVFILT_READ, EV_ADD | EV_ERROR, 0, 0, _descriptors.back());
+			EV_SET(&mEvents[k], userDB->getDB()[j].first->getSocket(), EVFILT_READ, EV_ADD | EV_ERROR, 0, 0, _descriptors.back());
 			k++;
 		}
 
@@ -56,13 +56,13 @@ void Server::start(void) {
 					if (desc->user->getConnectStatus() == true) {
 						desc->user->setConnectStatus(false);
 						close(desc->user->getSocket());
-						this->userDB->removeUser(*desc->user);
+						this->userDB->removeUser(desc->user);
 					}
 				} else if (tEvents[i].flags & EV_ERROR) {
 					if (desc->user->getConnectStatus() == true) {
 						close(desc->user->getSocket());
 						desc->user->setConnectStatus(false);
-						this->userDB->removeUser(*desc->user);
+						this->userDB->removeUser(desc->user);
 					}
 				} else {
 					if (desc->user->getConnectStatus() == false) {
@@ -130,7 +130,7 @@ void Server::handleConnection(t_KDescriptor* desc) {
 				send(desc->user->getSocket(), ":0 464 0 :Password incorrect\r\n", strlen(":0 464 0 :Password incorrect\r\n"), 0);
 				desc->user->setConnectStatus(false);
 				close(desc->user->getSocket());
-				this->userDB->removeUser(*desc->user);
+				this->userDB->removeUser(desc->user);
 				return;
 			}
 		} else if ((*it).find("NICK") != string::npos && desc->user->getActiveStatus() == PASSED) {
@@ -265,7 +265,7 @@ void Server::addChan(string name, string pass, string topic) {
 		throw ChanAddFail();
 		return;
 	}
-	this->chanDB->add(*chan);
+	this->chanDB->add(chan);
 }
 
 // ? Get <this> socket
@@ -283,7 +283,7 @@ string Server::getHash() {
 }
 
 void Server::addVoidUser(User* user) {
-	this->userDB->add(*user);
+	this->userDB->add(user);
 	return;
 }
 

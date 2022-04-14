@@ -198,7 +198,7 @@ void User::setAwayMessage(string msg) {
 
 // ? Log in to <server>
 void User::logIn(Server& server) {
-	if ((server.userDB->search(*this) == NULL) || (server.userDB->search(*this)->getActiveStatus() != NOT_CONNECTED)) {
+	if ((server.userDB->search(this) == NULL) || (server.userDB->search(this)->getActiveStatus() != NOT_CONNECTED)) {
 		throw AlreadyLoggedGlobal();
 	}
 	this->setActiveStatus(WELCOME);
@@ -207,7 +207,7 @@ void User::logIn(Server& server) {
 
 // ? Log out from <server>
 void User::logOut(Server& server, string msg) {
-	if ((server.userDB->search(*this) == NULL) || (server.userDB->search(*this)->getActiveStatus() != CONNECTED)) {
+	if ((server.userDB->search(this) == NULL) || (server.userDB->search(this)->getActiveStatus() != CONNECTED)) {
 		throw NotLoggedGlobal();
 	}
 	this->setActiveStatus(NOT_CONNECTED);
@@ -215,32 +215,32 @@ void User::logOut(Server& server, string msg) {
 }
 
 // ? Send <content> to <chan>
-void User::sendMessage(string content, Channel& chan) {
-	if (this->getActiveStatus() != CONNECTED) {
-		throw NotLoggedGlobal();
-		return;
-	}
-	if (chan.isLog(*this) != true) {
-		throw NotLogged();
-		return;
-	}
-	Message msg = Message(content, this->getNickName(), chan.getNextUid());
-	chan.receiveMsg(msg);
-	this->setNbMsg(getNbMsg() + 1);
-	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan.getName()) + string(DEFAULT));
-}
+// void User::sendMessage(string content, Channel* chan) {
+// 	if (this->getActiveStatus() != CONNECTED) {
+// 		throw NotLoggedGlobal();
+// 		return;
+// 	}
+// 	if (chan->isLog(this) != true) {
+// 		throw NotLogged();
+// 		return;
+// 	}
+// 	Message msg = Message(content, this->getNickName(), chan->getNextUid());
+// 	chan->receiveMsg(msg);
+// 	this->setNbMsg(getNbMsg() + 1);
+// 	log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" sent message to ") + string(LIGHT_MAGENTA) + string("channel ") + string(GREEN) + string(chan->getName()) + string(DEFAULT));
+// }
 
 // ? Join <chan> with password <pass>
-void User::joinChannel(Channel& chan, string pass) {
+void User::joinChannel(Channel* chan, string pass) {
 	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return;
 	}
-	if (chan.isLog(*this) == true) {
+	if (chan->isLog(this) == true) {
 		throw AlreadyLogged();
 		return;
 	}
-	bool auth = chan.userJoin(*this, pass);
+	bool auth = chan->userJoin(this, pass);
 	if (auth == true) {
 		return;
 	}
@@ -259,11 +259,11 @@ void User::tryJoinChannel(string name, string pass, string topic, Server* server
 	} catch (exception& e) {
 		server->addChan(name, pass, topic);
 	}
-	if (server->chanDB->search(name)->isLog(*this) == true) {
+	if (server->chanDB->search(name)->isLog(this) == true) {
 		throw AlreadyLogged();
 		return;
 	}
-	bool auth = server->chanDB->search(name)->userJoin(*this, pass);
+	bool auth = server->chanDB->search(name)->userJoin(this, pass);
 	if (auth == true) {
 		return;
 	}
@@ -285,7 +285,7 @@ void	User::tryPartChannel(string name, string chan, Server* server)
 		return;
 	}
 	try{
-		if (server->chanDB->search(chan)->userLeave(*server->userDB->search(name)) == false)
+		if (server->chanDB->search(chan)->userLeave(server->userDB->search(name)) == false)
 			throw NotInChan();
 	}
 	catch (exception &e){
@@ -296,30 +296,30 @@ void	User::tryPartChannel(string name, string chan, Server* server)
 }
 
 // ? Ban <usr> form <chan>
-void User::kick(User& usr, Channel& chan, string msg) {
+void User::kick(User* usr, Channel* chan, string msg) {
 	if (this->getActiveStatus() != CONNECTED) {
 		throw NotLoggedGlobal();
 		return;
 	}
-	if (chan.isLog(usr) != true) {
+	if (chan->isLog(usr) != true) {
 		throw NotLogged();
 		return;
 	}
-	if (usr.getServer()->userDB->isOper(_nickname) != true) {
+	if (usr->getServer()->userDB->isOper(_nickname) != true) {
 		throw BadRole();
 		return;
 	}
-	usr.getKicked(chan, *this, msg);
+	usr->getKicked(chan, this, msg);
 	return;
 }
 
 // ? Get banned from <chan> by <banner>
-void User::getKicked(Channel& chan, User& banner, string msg) {
-	if (chan.isLog(banner) != true) {
+void User::getKicked(Channel* chan, User* banner, string msg) {
+	if (chan->isLog(banner) != true) {
 		throw NotLogged();
 		return;
 	}
-	chan.userKick(*this, banner, msg);
+	chan->userKick(this, banner, msg);
 }
 
 // ? Set <serv> password with password <pass>
@@ -359,7 +359,7 @@ void User::becomeOper(Server& serv, string pass) {
 		} else {
 			log(string(LIGHT_MAGENTA) + string("User ") + string(GREEN) + string(this->getNickName()) + string(LIGHT_BLUE) + string(" became operator of ") + string(LIGHT_MAGENTA) + string("server ") + string(GREEN) + serv.name + string(DEFAULT));
 		}
-		serv.userDB->addOper(*this);
+		serv.userDB->addOper(this);
 		return;
 	} else {
 		throw BadPasswd();

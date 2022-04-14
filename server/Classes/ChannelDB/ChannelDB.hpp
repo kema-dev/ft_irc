@@ -50,20 +50,20 @@ class DuplicateName : public exception
 
 class ChannelDB {
 	private:
-	vector<Channel>	_db;
-	string			_name;
+	vector<Channel*>	_db;
+	string				_name;
 
 	public:
 	ChannelDB(string name) {_name = name;};
 	~ChannelDB() {};
 
 	void		remove(string name);
-	void		add(Channel& chan);
-	Channel*	search(Channel& chan);
+	void		add(Channel* chan);
+	Channel*	search(Channel* chan);
 	Channel*	search(string name);
 	void		chkDuplicate(string name);
 
-	vector<Channel>	getDB(void);
+	vector<Channel*>	getDB(void);
 };
 
 #endif

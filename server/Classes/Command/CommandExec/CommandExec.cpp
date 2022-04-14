@@ -145,10 +145,10 @@ void CommandExec::quit(User* user, vector<string> args) {
 		args.erase(args.begin());
 	}
 	User *userCpy = new User(*user);
-	vector<Channel> chans = user->getServer()->chanDB->getDB();
-	for (vector<Channel>::iterator it = chans.begin(); it != chans.end(); ++it) {
+	vector<Channel*> chans = user->getServer()->chanDB->getDB();
+	for (vector<Channel*>::iterator it = chans.begin(); it != chans.end(); ++it) {
 		try{
-			if (user->getServer()->chanDB->search(*it)->userLeave(*userCpy) == true)
+			if (user->getServer()->chanDB->search(*it)->userLeave(userCpy) == true)
 				continue;
 		}
 		catch(exception &e){
@@ -158,7 +158,7 @@ void CommandExec::quit(User* user, vector<string> args) {
 	userCpy->setActiveStatus(NOT_CONNECTED);
 	userCpy->setConnectStatus(NOT_CONNECTED);
 	close(userCpy->getSocket());
-	userCpy->getServer()->userDB->removeUser(*user);
+	userCpy->getServer()->userDB->removeUser(user);
 	delete userCpy;
 }
 
@@ -224,7 +224,7 @@ void CommandExec::privmsg(User* user, vector<string> args) {
 			return;
 		}
 		// ? Is a channel
-		if (user->getServer()->chanDB->search(receiver)->isLog(*user) == UNKNOWN) {
+		if (user->getServer()->chanDB->search(receiver)->isLog(user) == UNKNOWN) {
 			send_op->reply(user, user, ERR_NOTONCHANNEL, HEADER_CLIENT, ERR_NOTONCHANNEL_FORMAT, receiver.c_str());
 			logError("Privmsg to " + receiver, uid, "User is not in channel");
 			return;
@@ -276,7 +276,7 @@ void CommandExec::topic(User* user, vector<string> args) {
 			return;
 		}
 		try {
-			if (user->getServer()->chanDB->search(*args.begin())->isLog(*user) != CONNECTED)
+			if (user->getServer()->chanDB->search(*args.begin())->isLog(user) != CONNECTED)
 				throw NotInChan();
 		}
 		catch (NotInChan& e) {
@@ -353,7 +353,7 @@ void CommandExec::kick(User* user, vector<string> args) {
 	User *userCpy = new User(*user->getServer()->userDB->search(target));
 	string uid = itos(user->getUid());
 	try {
-		user->getServer()->userDB->search(user->getNickName())->kick(*(user->getServer()->userDB->search(target)), *(user->getServer()->chanDB->search(chan)), msg);
+		user->getServer()->userDB->search(user->getNickName())->kick((user->getServer()->userDB->search(target)), (user->getServer()->chanDB->search(chan)), msg);
 		// user->getServer()->chanDB->search(chan)->userLeave(*user->getServer()->userDB->search(target));
 	} catch (NoSuchChan& e) {
 		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_SERVER, ERR_NOSUCHCHANNEL_FORMAT, chan.c_str());
@@ -415,7 +415,7 @@ void CommandExec::notice(User *user, vector<string> args){
 			return;
 		}
 		// ? Is a channel
-		if (user->getServer()->chanDB->search(receiver)->isLog(*user) == UNKNOWN) {
+		if (user->getServer()->chanDB->search(receiver)->isLog(user) == UNKNOWN) {
 			return;
 		}
 		vector<string> users_v = user->getServer()->chanDB->search(receiver)->getNickLst();
