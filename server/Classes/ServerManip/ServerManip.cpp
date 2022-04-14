@@ -80,21 +80,44 @@ string ServerManip::parseNickname(string input) {
 
 ssize_t ServerManip::createUser(string input, t_KDescriptor* desc) {
 	ssize_t id;
-	string fullname;
-	char username[26];
-	char hostname[26];
-	char servername[26];
+	string fullname = "";
+	string username;
+	string hostname;
+	string servername;
 	string cmd;
+	vector<string> args_v;
 
 	if (input.empty() || desc->user->getNickName().empty())
 		return (-1);
+
 	cmd = input;
-	cmd.erase(0, strlen("USER "));
-	sscanf(cmd.c_str(), "%25s %25s %25s", username, hostname, servername);
-	cmd.erase(0, cmd.length() - (cmd.length() - cmd.find(":")) + 1);
-	if (cmd.find(' ') == string::npos)
+	if (cmd[0] == '/') {
+		cmd = cmd.substr(1);
+	}
+	size_t pos;
+	pos = cmd.find(' ');
+	if (pos == string::npos)
+		pos = cmd.length();
+	if (pos < cmd.length()) {
+		// ? Add args
+		cmd.erase(0, pos + 1);
+		while (cmd.length() > 0) {
+			pos = cmd.find(' ');
+			if (pos == string::npos)
+				pos = cmd.length();
+			args_v.push_back(cmd.substr(0, pos));
+			cmd.erase(0, pos + 1);
+		}
+	}
+	if (args_v.size() < 5)
 		return (-1);
-	fullname = cmd.substr(0, cmd.length());
+	username = args_v[0];
+	hostname = args_v[1];
+	servername = args_v[2];
+	for (size_t i = 3; i < args_v.size(); i++)
+		fullname += args_v[i] + " ";
+	if ((fullname.length() > 0) && (fullname[0] == ':'))
+		fullname.erase(0, 1);
 	try {
 		id = desc->server->addUser(desc, username, fullname, hostname, servername);
 		// cout << "User created!" << endl;

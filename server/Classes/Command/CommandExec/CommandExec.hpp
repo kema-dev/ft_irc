@@ -446,6 +446,7 @@ class CommandExec {
 		void	notice(User* user, vector<string> args);
 		void	oper(User* user, vector<string> args);
 		void	kick(User* user, vector<string> args);
+		void	shutdown(User* user);
 		// void	away(User* user, vector<string> args);
 		// void	names(User* user, vector<string> args);
 		// void	list(User* user, vector<string> args);

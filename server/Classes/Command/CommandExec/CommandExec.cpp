@@ -102,37 +102,31 @@ void CommandExec::part(User* user, vector<string> args) {
 		return;
 	}
 	string uid = itos(user->getUid());
-	User *userCpy = new User(*user);
 	try {	
-		userCpy->tryPartChannel(userCpy->getNickName(), chan, userCpy->getServer());
+		user->tryPartChannel(user->getNickName(), chan, user->getServer());
 	} catch (NotLoggedGlobal& e) {
 		// * Maybe we should not pass here
 		logError("Part channel " + chan, uid, e.what());
-		delete userCpy;
 		return;
 	} catch (NoSuchChan& e) {
 		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_CLIENT, ERR_NOSUCHCHANNEL_FORMAT);
 		logError("Part channel " + chan, uid, e.what());
-		delete userCpy;
 		return;
 	} catch (NotInChan& e) {
 		send_op->reply(user, user, ERR_NOTONCHANNEL, HEADER_CLIENT, ERR_NOTONCHANNEL_FORMAT);
 		logError("Part channel " + chan, uid, e.what());
-		delete userCpy;
 		return;
 	} catch (exception& e) {
 		// * Maybe we should not pass here
 		logError("Part command", "Unknown error", e.what());
-		delete userCpy;
 		return;
 	}
-	send_op->reply(userCpy, userCpy, RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "PART", chan.c_str());
+	send_op->reply(user, user, RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "PART", chan.c_str());
 	vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
 	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
-		if (user->getServer()->userDB->search(*it)->getSocket() != userCpy->getSocket())
-			send_op->reply(userCpy, user->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "PART", chan.c_str());
+		if (user->getServer()->userDB->search(*it)->getSocket() != user->getSocket())
+			send_op->reply(user, user->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "PART", chan.c_str());
 	}
-	delete userCpy;
 }
 
 void CommandExec::quit(User* user, vector<string> args) {
@@ -144,22 +138,20 @@ void CommandExec::quit(User* user, vector<string> args) {
 		msg += *args.begin();
 		args.erase(args.begin());
 	}
-	User *userCpy = new User(*user);
 	vector<Channel*> chans = user->getServer()->chanDB->getDB();
 	for (vector<Channel*>::iterator it = chans.begin(); it != chans.end(); ++it) {
 		try{
-			if (user->getServer()->chanDB->search(*it)->userLeave(userCpy) == true)
+			if (user->getServer()->chanDB->search(*it)->userLeave(user) == true)
 				continue;
 		}
 		catch(exception &e){
 		}
 	}
-	send_op->reply(userCpy, userCpy, RPL_CUSTOM, HEADER_CLIENT, "%s :%s\r\n", "QUIT", msg.c_str());
-	userCpy->setActiveStatus(NOT_CONNECTED);
-	userCpy->setConnectStatus(NOT_CONNECTED);
-	close(userCpy->getSocket());
-	userCpy->getServer()->userDB->removeUser(user);
-	delete userCpy;
+	send_op->reply(user, user, RPL_CUSTOM, HEADER_CLIENT, "%s :%s\r\n", "QUIT", msg.c_str());
+	user->setActiveStatus(NOT_CONNECTED);
+	user->setConnectStatus(NOT_CONNECTED);
+	close(user->getSocket());
+	user->getServer()->userDB->removeUser(user);
 }
 
 void CommandExec::nick(User* user, vector<string> args) {
@@ -258,7 +250,7 @@ void CommandExec::topic(User* user, vector<string> args) {
 		try {
 			user->getServer()->chanDB->search(*args.begin());
 		}
-		catch (NoSuchChan& e) {
+		catch (NoSuchChan e) {
 			logError("Changing topic of " + *args.begin(), "" ,e.what());
 		}
 		if (user->getServer()->chanDB->search(*args.begin())->getTopic().empty() == false)
@@ -350,7 +342,6 @@ void CommandExec::kick(User* user, vector<string> args) {
 		msg += *args.begin() + " ";
 		args.erase(args.begin());
 	}
-	User *userCpy = new User(*user->getServer()->userDB->search(target));
 	string uid = itos(user->getUid());
 	try {
 		user->getServer()->userDB->search(user->getNickName())->kick((user->getServer()->userDB->search(target)), (user->getServer()->chanDB->search(chan)), msg);
@@ -358,35 +349,29 @@ void CommandExec::kick(User* user, vector<string> args) {
 	} catch (NoSuchChan& e) {
 		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_SERVER, ERR_NOSUCHCHANNEL_FORMAT, chan.c_str());
 		logError("Kick command " + chan, uid, e.what());
-		delete userCpy;
 		return;
 	} catch (NoSuchUser& e) {
 		send_op->reply(user, user, ERR_NOSUCHNICK, HEADER_SERVER, ERR_NOSUCHNICK_FORMAT, user->getNickName().c_str());
 		logError("Kick command " + target, uid, e.what());
-		delete userCpy;
 		return;
 	} catch (BadRole& e) {
 		send_op->reply(user, user, ERR_CHANOPRIVSNEEDED, HEADER_SERVER, ERR_CHANOPRIVSNEEDED_FORMAT, chan.c_str());
 		logError("Kick command " + target, uid, e.what());
-		delete userCpy;
 		return;
 	} catch (NotLogged& e) {
 		send_op->reply(user, user, ERR_NOTONCHANNEL, HEADER_SERVER, ERR_NOTONCHANNEL_FORMAT, chan.c_str());
 		logError("Kick command " + target, uid, e.what());
-		delete userCpy;
 		return;
 	} catch (exception& e) {
 		// * Maybe we should not pass here
 		logError("Kick command " + target, "Unknown error", e.what());
-		delete userCpy;
 		return;
 	}
-	send_op->reply(user, userCpy, RPL_CUSTOM, HEADER_CLIENT, "%s %s %s %s\r\n", "KICK", chan.c_str(), target.c_str(), msg.c_str());
-	vector<string> users_v = userCpy->getServer()->chanDB->search(chan)->getNickLst();
+	send_op->reply(user, user, RPL_CUSTOM, HEADER_CLIENT, "%s %s %s %s\r\n", "KICK", chan.c_str(), target.c_str(), msg.c_str());
+	vector<string> users_v = user->getServer()->chanDB->search(chan)->getNickLst();
 	for (vector<string>::iterator it = users_v.begin(); it != users_v.end(); ++it) {
-		send_op->reply(user, userCpy->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "%s %s %s %s\r\n", "KICK", chan.c_str(), target.c_str(), msg.c_str());
+		send_op->reply(user, user->getServer()->userDB->search(*it), RPL_CUSTOM, HEADER_CLIENT, "%s %s %s %s\r\n", "KICK", chan.c_str(), target.c_str(), msg.c_str());
 	}
-	delete userCpy;
 }
 
 void CommandExec::notice(User *user, vector<string> args){
@@ -429,6 +414,16 @@ void CommandExec::notice(User *user, vector<string> args){
 			catch (NoSuchUser& e) {}
 		}
 		log(string(LIGHT_MAGENTA) + "User " + string(GREEN) + user->getNickName() + string(LIGHT_BLUE) + " sent NOTICE to " + string(GREEN) + receiver + string(LIGHT_MAGENTA) + ": " + string(LIGHT_BLUE) + msg + DEFAULT);
+	}
+}
+
+void CommandExec::shutdown(User *user){
+	if (user->getServer()->userDB->isOper(user->getNickName()) == true) {
+		log(string(LIGHT_MAGENTA) + "Server is shutting down" + DEFAULT);
+		exit(0);
+	} else {
+		send_op->reply(user, user, ERR_NOPRIVILEGES, HEADER_SERVER, ERR_NOPRIVILEGES_FORMAT);
+		logError("Shutdown command", user->getNickName(), "User has no privileges");
 	}
 }
 

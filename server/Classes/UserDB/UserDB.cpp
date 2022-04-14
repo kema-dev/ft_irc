@@ -203,5 +203,5 @@ void	UserDB::removeUser(User* usr)
 		}
 		it++;
 	}
-	delete &usr;
+	delete usr;
 }

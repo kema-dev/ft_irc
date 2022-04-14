@@ -66,6 +66,7 @@ class ChanOpeNeeded : public exception
 #define CMD_OPER	8
 #define CMD_KICK	9
 #define CMD_MODE	10
+#define CMD_SHUTDOWN	11
 
 class Command {
 	private:

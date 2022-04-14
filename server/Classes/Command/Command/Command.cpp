@@ -47,6 +47,7 @@ void Command::parse(string smessage) {
 	_commands_v.push_back("OPER");
 	_commands_v.push_back("KICK");
 	_commands_v.push_back("MODE");
+	_commands_v.push_back("SHUTDOWN");
 	// _commands_v.push_back("AWAY");
 	// _commands_v.push_back("NAMES");
 	// _commands_v.push_back("LIST");
@@ -115,6 +116,10 @@ void Command::select(string smessage, User* user) {
 				break;
 			}
 			case CMD_MODE: {
+				break;
+			}
+			case CMD_SHUTDOWN: {
+				_exec.shutdown(user);
 				break;
 			}
 			default: {
