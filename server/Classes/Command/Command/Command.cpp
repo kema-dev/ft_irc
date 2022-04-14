@@ -69,8 +69,8 @@ void Command::select(string smessage, User* user) {
 		if (it != _commands_v.end()) {
 			index = it - _commands_v.begin();
 		} else {
-			// send(user->getSocket(), "0 421 0: " + smessage + " :Unknown command\r\n", strlen("0 421 0: ") + smessage.length() + strlen(" :Unknown command\r\n"), 0);
-			// TODO send unknown command
+			Send	sender = Send();
+			sender.reply(user, user, ERR_UNKNOWNCOMMAND, HEADER_SERVER, ERR_UNKNOWNCOMMAND_FORMAT, smessage.c_str());
 			logError("Received command", smessage, "Unknown command");
 			throw UnknownCommand();
 		}

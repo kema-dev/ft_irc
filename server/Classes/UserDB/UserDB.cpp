@@ -197,6 +197,7 @@ void	UserDB::removeUser(User& usr)
 	end = _db.end();
 	while (it != end) {
 		if (it->first.getNickName() == usr.getNickName()) {
+			log(string(LIGHT_MAGENTA) + string("User ") + string(RED) + string(usr.getNickName()) + string(LIGHT_BLUE) + string(" has been removed from ") + string(LIGHT_MAGENTA) + string("userDB ") + string(RED) + string(this->_name) + string(DEFAULT));
 			_db.erase(it);
 			break;
 		}

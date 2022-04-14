@@ -15,6 +15,7 @@ string	sha256(string str) {
 	char c = 0;
 
 	if (0 == (fpipe = (FILE*)popen(command, "r"))) {
+		delete command;
 		throw (PopopenFail());
 	}
 	string out;

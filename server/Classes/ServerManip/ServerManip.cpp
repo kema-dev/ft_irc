@@ -71,7 +71,7 @@ string ServerManip::parseNickname(string input) {
 
 	if (input.empty())
 		return (NULL);
-	if (input.find("NICK") == std::string::npos)
+	if (input.find("NICK ") == std::string::npos)
 		return (NULL);
 	else
 		nickname = input.substr(strlen("NICK "), input.length() - strlen("NICK ") - (input.length() - ft_find(input)));

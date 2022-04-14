@@ -136,15 +136,18 @@ void Server::handleConnection(t_KDescriptor* desc) {
 		} else if ((*it).find("NICK") != string::npos && desc->user->getActiveStatus() == PASSED) {
 			nickname = manip->parseNickname((*it));
 			if (nickname.empty() == true) {
+				Send sender = Send();
+				sender.reply(desc->user, desc->user, ERR_NONICKNAMEGIVEN, HEADER_SERVER, ERR_NONICKNAMEGIVEN_FORMAT);
 				logError(string("Logging in server"), *it, "Bad nickname");
 				return;
 			}
 			try {
 				userDB->chkNickDuplicate(nickname);
-			} catch (exception& e) {
+			}
+			catch (exception& e) {
+				Send sender = Send();
+				sender.reply(desc->user, desc->user, ERR_NICKNAMEINUSE, HEADER_SERVER, ERR_NICKNAMEINUSE_FORMAT, nickname.c_str());
 				logError(string("Creating user"), nickname, e.what());
-				//TODO send proper errors ERR_NONICKNAMEGIVEN, ERR_ERRONEUSNICKNAME, ERR_NICKNAMEINUSE and ERR_NICKCOLLISION
-				// throw UserAddFail();
 				return;
 			}
 			desc->user->setNickName(nickname);

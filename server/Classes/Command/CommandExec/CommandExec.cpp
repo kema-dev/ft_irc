@@ -108,18 +108,22 @@ void CommandExec::part(User* user, vector<string> args) {
 	} catch (NotLoggedGlobal& e) {
 		// * Maybe we should not pass here
 		logError("Part channel " + chan, uid, e.what());
+		delete userCpy;
 		return;
 	} catch (NoSuchChan& e) {
 		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_CLIENT, ERR_NOSUCHCHANNEL_FORMAT);
 		logError("Part channel " + chan, uid, e.what());
+		delete userCpy;
 		return;
 	} catch (NotInChan& e) {
 		send_op->reply(user, user, ERR_NOTONCHANNEL, HEADER_CLIENT, ERR_NOTONCHANNEL_FORMAT);
 		logError("Part channel " + chan, uid, e.what());
+		delete userCpy;
 		return;
 	} catch (exception& e) {
 		// * Maybe we should not pass here
 		logError("Part command", "Unknown error", e.what());
+		delete userCpy;
 		return;
 	}
 	send_op->reply(userCpy, userCpy, RPL_CUSTOM, HEADER_CLIENT, "%s %s\r\n", "PART", chan.c_str());
@@ -354,22 +358,27 @@ void CommandExec::kick(User* user, vector<string> args) {
 	} catch (NoSuchChan& e) {
 		send_op->reply(user, user, ERR_NOSUCHCHANNEL, HEADER_SERVER, ERR_NOSUCHCHANNEL_FORMAT, chan.c_str());
 		logError("Kick command " + chan, uid, e.what());
+		delete userCpy;
 		return;
 	} catch (NoSuchUser& e) {
 		send_op->reply(user, user, ERR_NOSUCHNICK, HEADER_SERVER, ERR_NOSUCHNICK_FORMAT, user->getNickName().c_str());
 		logError("Kick command " + target, uid, e.what());
+		delete userCpy;
 		return;
 	} catch (BadRole& e) {
 		send_op->reply(user, user, ERR_CHANOPRIVSNEEDED, HEADER_SERVER, ERR_CHANOPRIVSNEEDED_FORMAT, chan.c_str());
 		logError("Kick command " + target, uid, e.what());
+		delete userCpy;
 		return;
 	} catch (NotLogged& e) {
 		send_op->reply(user, user, ERR_NOTONCHANNEL, HEADER_SERVER, ERR_NOTONCHANNEL_FORMAT, chan.c_str());
 		logError("Kick command " + target, uid, e.what());
+		delete userCpy;
 		return;
 	} catch (exception& e) {
 		// * Maybe we should not pass here
 		logError("Kick command " + target, "Unknown error", e.what());
+		delete userCpy;
 		return;
 	}
 	send_op->reply(user, userCpy, RPL_CUSTOM, HEADER_CLIENT, "%s %s %s %s\r\n", "KICK", chan.c_str(), target.c_str(), msg.c_str());
