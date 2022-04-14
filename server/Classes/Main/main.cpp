@@ -95,6 +95,7 @@ int main(int argc, char **argv) {
 	// NOTE Create only one server
 	Server *irc_serv = NULL;
 	string servername = "IRC_SERV";
+	clearLog();
 	try {
 		irc_serv = new Server(servername, argv[2], listenFd);
 	} catch (exception &e) {
