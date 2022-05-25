@@ -12,7 +12,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="img/logo.png" alt="Logo" width="250" height="250">
+   <img src="img/logo.png" alt="Logo" width="250" height="250">
   </a>
 </div>
 
@@ -20,23 +20,23 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+   <li>
+    <a href="#about-the-project">About The Project</a>
+    <ul>
+      <li><a href="#built-with">Built With</a></li>
+    </ul>
+   </li>
+   <li>
+    <a href="#getting-started">Getting Started</a>
+    <ul>
+      <li><a href="#prerequisites">Prerequisites</a></li>
+      <li><a href="#installation">Installation</a></li>
+    </ul>
+   </li>
+   <li><a href="#usage">Usage</a></li>
+   <li><a href="#roadmap">Roadmap</a></li>
+   <li><a href="#contact">Contact</a></li>
+   <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -45,9 +45,9 @@
 
 <img src=https://github.com/kemadev/ft_irc/blob/b954ea38e42e1cb009e44efb1530bbfc73e8e54b/img/screenshot.png></img>
 
-ft_irc is a 42 project, aiming to create an IRC server written in C++
+ft_irc is a 42 project, aiming to create an IRC server written in C++, compliant with IRC's RFC
 
-You can find the full subject <a href="/doc/en.subject.pdf">here</a>
+You can find full subject <a href="/docs">here</a>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -69,13 +69,16 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
 ### Installation
 
 1. Clone the repo
-   ```sh
-   git clone https://github.com/kemadev/ft_irc.git
-   ```
-2. Build the project using make
-   ```sh
-   make
-   ```
+
+  ```sh
+  git clone https://github.com/kemadev/ft_irc.git
+  ```
+
+1. Build the project using make
+
+  ```sh
+  make
+  ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -83,23 +86,19 @@ You can find the full subject <a href="/doc/en.subject.pdf">here</a>
 ## Usage
 
 1. Launch the program
-   ```sh
-   ./bin/irc_server <port> <password>
-   ```
-2. Connect your IRC client to the server using appropriate port and password
+
+  ```sh
+  ./bin/irc_server <port> <password>
+  ```
+
+1. Connect your IRC client to the server using appropriate port and password
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [X] Create the core of the project (Makefile, folders...)
-- [X] Create GitHub Actions to automate testing
-- [X] Learn how an IRC server works
-- [X] Create the first basic server
-- [X] Make server / client connection work
-- [ ] Implement commands
-- [ ] Make multi-client work
+- The project is finished and no further work is planned on it
 
 See the [open issues](https://github.com/kemadev/ft_irc/issues) for a full list of proposed features (and known issues).
 
