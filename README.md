@@ -68,13 +68,13 @@ You can find full subject <a href="/docs">here</a>
 
 ### Installation
 
-1. Clone the repo
+* Clone the repo
 
   ```sh
   git clone https://github.com/kemadev/ft_irc.git
   ```
 
-1. Build the project using make
+* Build the project using make
 
   ```sh
   make
@@ -85,13 +85,13 @@ You can find full subject <a href="/docs">here</a>
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-1. Launch the program
+* Launch the program
 
   ```sh
   ./bin/irc_server <port> <password>
   ```
 
-1. Connect your IRC client to the server using appropriate port and password
+* Connect your IRC client to the server using appropriate port and password
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
