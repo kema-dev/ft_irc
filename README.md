@@ -1,11 +1,11 @@
 <div id="top"></div>
 <p align=center>
-  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/kemadev/ft_irc">
-  <img alt="GitHub issues" src="https://img.shields.io/github/issues/kemadev/ft_irc">
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kemadev/ft_irc/C++ CI">
-  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/kemadev/ft_irc">
-  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/kemadev/ft_irc">
-  <img src="https://www.codefactor.io/repository/github/kemadev/ft_irc/badge">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/kema-dev/ft_irc">
+  <img alt="GitHub issues" src="https://img.shields.io/github/issues/kema-dev/ft_irc">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kema-dev/ft_irc/C++ CI">
+  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/kema-dev/ft_irc">
+  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/kema-dev/ft_irc">
+  <img src="https://www.codefactor.io/repository/github/kema-dev/ft_irc/badge">
 </p>
 
 <!-- PROJECT LOGO -->
@@ -43,7 +43,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src=https://github.com/kemadev/ft_irc/blob/b954ea38e42e1cb009e44efb1530bbfc73e8e54b/img/screenshot.png></img>
+<img src=https://github.com/kema-dev/ft_irc/blob/b954ea38e42e1cb009e44efb1530bbfc73e8e54b/img/screenshot.png></img>
 
 ft_irc is a 42 project, aiming to create an IRC server written in C++, compliant with IRC's RFC
 
@@ -71,7 +71,7 @@ You can find full subject <a href="/docs">here</a>
 * Clone the repo
 
   ```sh
-  git clone https://github.com/kemadev/ft_irc.git
+  git clone https://github.com/kema-dev/ft_irc.git
   ```
 
 * Build the project using make
@@ -98,9 +98,9 @@ You can find full subject <a href="/docs">here</a>
 <!-- ROADMAP -->
 ## Roadmap
 
-- The project is finished and no further work is planned on it
+* The project is finished and no further work is planned on it
 
-See the [open issues](https://github.com/kemadev/ft_irc/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/kema-dev/ft_irc/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -109,7 +109,7 @@ See the [open issues](https://github.com/kemadev/ft_irc/issues) for a full list 
 
 We are two creators :
 
-kemadev - [GitHub](https://github.com/kemadev)
+kema-dev - [GitHub](https://github.com/kema-dev)
 
 dorianginisty - [GitHub](https://github.com/dorianginisty)
 
