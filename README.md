@@ -41,8 +41,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src=https://github.com/kema-dev/ft_irc/blob/b954ea38e42e1cb009e44efb1530bbfc73e8e54b/img/screenshot.png></img>
-
 ft_irc is a 42 project, aiming to create an IRC server written in C++, compliant with IRC's RFC
 
 You can find full subject <a href="/docs">here</a>
