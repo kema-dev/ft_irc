@@ -47,13 +47,9 @@ ft_irc is a 42 project, aiming to create an IRC server written in C++, compliant
 
 You can find full subject <a href="/docs">here</a>
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 ### Built With
 
 * [C++](https://en.wikipedia.org/wiki/C%2B%2B)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -78,8 +74,6 @@ You can find full subject <a href="/docs">here</a>
   make
   ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 
@@ -91,16 +85,12 @@ You can find full subject <a href="/docs">here</a>
 
 * Connect your IRC client to the server using appropriate port and password
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 <!-- ROADMAP -->
 ## Roadmap
 
 * The project is finished and no further work is planned on it
 
 See the [open issues](https://github.com/kema-dev/ft_irc/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- CONTACT -->
 ## Contact
@@ -111,11 +101,7 @@ kema-dev - [GitHub](https://github.com/kema-dev)
 
 dorianginisty - [GitHub](https://github.com/dorianginisty)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 ## Acknowledgments
 
 * [Img Shields](https://shields.io)
 * [README.MD-Template](https://github.com/othneildrew/Best-README-Template)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
