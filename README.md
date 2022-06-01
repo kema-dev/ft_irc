@@ -56,9 +56,9 @@ You can find full subject <a href="/docs">here</a>
 
 ### Prerequisites
 
-* clang
+* [clang](https://clang.llvm.org/)
 
-* Lime Chat (for Mac OS)
+* [Lime Chat (for Mac OS)](https://apps.apple.com/fr/app/limechat-irc-client/id298766460)
 
 ### Installation
 
