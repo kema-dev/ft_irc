@@ -1,7 +1,5 @@
 <div id="top"></div>
 <p align=center>
-  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/kema-dev/ft_irc">
-  <img alt="GitHub issues" src="https://img.shields.io/github/issues/kema-dev/ft_irc">
   <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kema-dev/ft_irc/C++ CI">
   <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/kema-dev/ft_irc">
   <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/kema-dev/ft_irc">
