@@ -1,9 +1,8 @@
 <div id="top"></div>
 <p align=center>
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/kema-dev/ft_irc/C++ CI">
-  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/kema-dev/ft_irc">
-  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/kema-dev/ft_irc">
-  <img src="https://www.codefactor.io/repository/github/kema-dev/ft_irc/badge">
+  <img alt="Project's status" src="https://img.shields.io/badge/Status-Old%20and%20not%20maintained-red">
+  <img alt="Project's primary language" src="https://img.shields.io/badge/Language-C++-blue">
+  <img alt="Project's focus" src="https://img.shields.io/badge/Focus-Web%20communication-blue">
 </p>
 
 <!-- PROJECT LOGO -->
